@@ -656,13 +656,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
     <button class="nav-item" data-page="orcamento" onclick="goTo('orcamento')"><span class="nav-icon">📋</span>Orçamentos<span class="nav-badge" id="badge-orc">0</span></button>
     <button class="nav-item" data-page="agenda" onclick="goTo('agenda')"><span class="nav-icon">📅</span>Agenda</button>
+    <button class="nav-item" data-page="financeiro" onclick="goTo('financeiro')"><span class="nav-icon">💰</span>Financeiro</button>
     <div class="nav-section">Operacional</div>
     <button class="nav-item" data-page="estoque" onclick="goTo('estoque')"><span class="nav-icon">📦</span>Estoque</button>
     <button class="nav-item" data-page="clientes" onclick="goTo('clientes')"><span class="nav-icon">👥</span>Clientes</button>
-    <button class="nav-item" data-page="financeiro" onclick="goTo('financeiro')"><span class="nav-icon">💰</span>Financeiro</button>
-    <div class="nav-section">Configuração</div>
     <button class="nav-item" data-page="catalogo" onclick="goTo('catalogo')"><span class="nav-icon">🏷️</span>Catálogo</button>
-    <button class="nav-item" data-page="config" onclick="goTo('config')"><span class="nav-icon">⚙️</span>Minha Empresa</button>
+    <div class="nav-section">Conta</div>
+    <button class="nav-item" data-page="config" onclick="goTo('config')"><span class="nav-icon">👤</span>Minha Conta</button>
   </div>
   <div class="sidebar-bottom">
     <button class="nav-item" onclick="doLogout()" style="color:var(--accent2)"><span class="nav-icon">🚪</span>Sair</button>
@@ -681,20 +681,74 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 <!-- DASHBOARD -->
 <div class="section active" id="s-dashboard">
   <div class="page-header">
-    <div><div class="page-title">Dashboard</div><div class="page-sub" id="dash-date"></div></div>
+    <div>
+      <div class="page-title" id="dash-greeting">Olá! 👋</div>
+      <div class="page-sub" id="dash-date"></div>
+    </div>
   </div>
+
+  <!-- ONBOARDING (aparece só quando está vazio) -->
+  <div id="onboarding-box" style="display:none;background:linear-gradient(135deg,var(--accent) 0%,#f59e0b 100%);border-radius:16px;padding:20px;margin-bottom:20px;color:#000">
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px">🚀 Bem-vindo ao FestaMais!</div>
+    <div style="font-size:13px;margin-bottom:14px;opacity:0.8">Siga os passos abaixo para configurar sua empresa</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div id="step-catalogo" class="onb-step" onclick="goTo('catalogo');setTimeout(abrirItem,100)" style="background:rgba(0,0,0,0.15);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <span id="step-catalogo-check" style="font-size:18px">⬜</span>
+        <div><div style="font-weight:700;font-size:13px">Adicione itens ao catálogo</div><div style="font-size:11px;opacity:0.8">Mesas, cadeiras, decoração...</div></div>
+        <span style="margin-left:auto;font-size:18px">→</span>
+      </div>
+      <div id="step-cliente" class="onb-step" onclick="goTo('clientes');setTimeout(abrirCli,100)" style="background:rgba(0,0,0,0.15);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <span id="step-cliente-check" style="font-size:18px">⬜</span>
+        <div><div style="font-weight:700;font-size:13px">Cadastre seu primeiro cliente</div><div style="font-size:11px;opacity:0.8">Nome, telefone e email</div></div>
+        <span style="margin-left:auto;font-size:18px">→</span>
+      </div>
+      <div id="step-orc" class="onb-step" onclick="goTo('orcamento');setTimeout(abrirOrc,100)" style="background:rgba(0,0,0,0.15);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <span id="step-orc-check" style="font-size:18px">⬜</span>
+        <div><div style="font-weight:700;font-size:13px">Crie seu primeiro orçamento</div><div style="font-size:11px;opacity:0.8">Selecione cliente e itens</div></div>
+        <span style="margin-left:auto;font-size:18px">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AÇÕES RÁPIDAS -->
   <div class="quick-actions">
     <div class="qa-card" onclick="goTo('orcamento');setTimeout(abrirOrc,100)"><div class="qa-icon">📋</div><div class="qa-label">Novo Orçamento</div></div>
     <div class="qa-card" onclick="goTo('clientes');setTimeout(abrirCli,100)"><div class="qa-icon">👤</div><div class="qa-label">Novo Cliente</div></div>
     <div class="qa-card" onclick="goTo('estoque')"><div class="qa-icon">📦</div><div class="qa-label">Ver Estoque</div></div>
     <div class="qa-card" onclick="goTo('catalogo');setTimeout(abrirItem,100)"><div class="qa-icon">🏷️</div><div class="qa-label">Novo Item</div></div>
   </div>
+
+  <!-- STATS -->
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Eventos este mês</div><div class="stat-value" id="st-ev">0</div><div class="stat-sub">agendados</div><div class="stat-icon">🎪</div></div>
-    <div class="stat-card"><div class="stat-label">Orçamentos abertos</div><div class="stat-value" id="st-orc">0</div><div class="stat-sub">pendentes</div><div class="stat-icon">📋</div></div>
-    <div class="stat-card"><div class="stat-label">A receber</div><div class="stat-value" id="st-recv">R$0</div><div class="stat-sub">saldo pendente</div><div class="stat-icon">💸</div></div>
-    <div class="stat-card"><div class="stat-label">Faturamento mês</div><div class="stat-value" id="st-fat">R$0</div><div class="stat-sub">confirmados</div><div class="stat-icon">💰</div></div>
+    <div class="stat-card" onclick="goTo('orcamento')" style="cursor:pointer">
+      <div class="stat-label">Orçamentos pendentes</div>
+      <div class="stat-value" id="st-orc">0</div>
+      <div class="stat-sub">aguardando resposta</div>
+      <div class="stat-icon">📋</div>
+    </div>
+    <div class="stat-card" onclick="goTo('agenda')" style="cursor:pointer">
+      <div class="stat-label">Eventos este mês</div>
+      <div class="stat-value" id="st-ev">0</div>
+      <div class="stat-sub">agendados</div>
+      <div class="stat-icon">🎪</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">A receber</div>
+      <div class="stat-value" id="st-recv">R$0</div>
+      <div class="stat-sub">saldo pendente</div>
+      <div class="stat-icon">💸</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Faturamento mês</div>
+      <div class="stat-value" id="st-fat">R$0</div>
+      <div class="stat-sub">confirmados</div>
+      <div class="stat-icon">💰</div>
+    </div>
   </div>
+
+  <!-- ALERTA ESTOQUE BAIXO -->
+  <div id="dash-estoque-alerta" style="display:none"></div>
+
   <div class="grid-2">
     <div class="card">
       <div class="card-title">📅 Próximos eventos</div>
@@ -869,10 +923,25 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 <!-- SEÇÃO MINHA EMPRESA -->
 <div class="section" id="s-config">
   <div class="page-header">
-    <div><div class="page-title">Minha Empresa</div><div class="page-sub">Configurações e perfil</div></div>
+    <div><div class="page-title">Minha Conta</div><div class="page-sub">Perfil e assinatura</div></div>
   </div>
 
   <div style="display:grid;gap:20px;max-width:700px">
+
+    <!-- PLANO ATUAL -->
+    <div class="card" id="plano-card" style="padding:24px;border:2px solid var(--accent)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:14px;font-weight:700;color:var(--text)">⚡ Meu Plano</div>
+        <span id="plano-badge" class="badge badge-yellow">Trial</span>
+      </div>
+      <div id="plano-email" style="font-size:13px;color:var(--text3);margin-bottom:8px">📧 email@exemplo.com</div>
+      <div id="plano-dias" style="font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px">7 dias restantes</div>
+      <div id="plano-desc" style="font-size:12px;color:var(--text3);margin-bottom:16px">Período de teste gratuito</div>
+      <div style="background:var(--surface2);border-radius:8px;height:8px;margin-bottom:16px">
+        <div id="plano-barra" style="background:var(--accent);height:8px;border-radius:8px;width:100%;transition:width .5s"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="verPlanos()">🚀 Ver planos</button>
+    </div>
 
     <!-- LOGO E NOME -->
     <div class="card" style="padding:24px">
@@ -970,11 +1039,75 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="bn-item" data-bn="orcamento" onclick="goTo('orcamento')"><span class="bn-icon">📋</span>Orçam.<span class="bn-badge" id="bn-badge" style="display:none">0</span></button>
     <button class="bn-item" data-bn="agenda" onclick="goTo('agenda')"><span class="bn-icon">📅</span>Agenda</button>
     <button class="bn-item" data-bn="financeiro" onclick="goTo('financeiro')"><span class="bn-icon">💰</span>Financ.</button>
-    <button class="bn-item" data-bn="clientes" onclick="goTo('clientes')"><span class="bn-icon">👥</span>Clientes</button>
+    <button class="bn-item" data-bn="estoque" onclick="goTo('estoque')"><span class="bn-icon">📦</span>Estoque</button>
   </div>
 </nav>
 
 <div class="toast-stack" id="toast-stack"></div>
+
+<!-- TELA DE PLANOS (BLOQUEIO) -->
+<div id="tela-bloqueio" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:99999;align-items:center;justify-content:center;padding:20px">
+  <div style="max-width:500px;width:100%;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🔒</div>
+    <div style="font-size:24px;font-weight:800;margin-bottom:8px">Seu período grátis acabou!</div>
+    <div style="color:var(--text3);margin-bottom:32px">Escolha um plano para continuar usando o FestaMais</div>
+    
+    <div style="display:grid;gap:16px;margin-bottom:24px">
+      <!-- Plano Mensal -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:left">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:700;font-size:16px">📅 Mensal</div>
+          <div style="font-size:22px;font-weight:800;color:var(--accent)">R$ 49<span style="font-size:13px;color:var(--text3)">/mês</span></div>
+        </div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Acesso completo, cancele quando quiser</div>
+        <button class="btn btn-primary" style="width:100%" onclick="contratarPlano('mensal')">Contratar Mensal</button>
+      </div>
+      
+      <!-- Plano Anual -->
+      <div style="background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:20px;text-align:left;position:relative">
+        <div style="position:absolute;top:-10px;right:16px;background:var(--accent);color:#000;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px">20% OFF</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="font-weight:700;font-size:16px">🏆 Anual</div>
+          <div style="font-size:22px;font-weight:800;color:var(--accent)">R$ 470<span style="font-size:13px;color:var(--text3)">/ano</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">equivale a R$ 39/mês</div>
+        <div style="font-size:13px;color:var(--accent3);margin-bottom:12px">💰 Economia de R$ 118 por ano!</div>
+        <button class="btn btn-primary" style="width:100%" onclick="contratarPlano('anual')">Contratar Anual</button>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="doLogout()">Sair da conta</button>
+  </div>
+</div>
+
+<!-- MODAL PLANOS (VER PLANOS) -->
+<div class="mo hide" id="m-planos">
+  <div class="modal" style="max-width:480px">
+    <div class="mh"><div class="mh-title">🚀 Escolha seu Plano</div><button class="mh-close" onclick="fechar('m-planos')">✕</button></div>
+    <div class="mb" style="padding:20px">
+      <div style="display:grid;gap:12px">
+        <div style="background:var(--surface2);border-radius:12px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700">📅 Mensal</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">R$ 49<span style="font-size:12px;color:var(--text3)">/mês</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Acesso completo, cancele quando quiser</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="contratarPlano('mensal')">Contratar via WhatsApp</button>
+        </div>
+        <div style="background:var(--surface2);border:2px solid var(--accent);border-radius:12px;padding:16px;position:relative">
+          <div style="position:absolute;top:-10px;right:12px;background:var(--accent);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px">MELHOR OPÇÃO</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+            <div style="font-weight:700">🏆 Anual</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">R$ 470<span style="font-size:12px;color:var(--text3)">/ano</span></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">equivale a R$ 39/mês · 20% de desconto</div>
+          <div style="font-size:12px;color:var(--accent3);margin-bottom:10px">Economia de R$ 118!</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="contratarPlano('anual')">Contratar via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL EXCLUSÃO -->
 <div class="mo hide" id="m-del">
@@ -1262,6 +1395,8 @@ function enterApp() {
   loadCatalogFromAPI();
   loadCompanyData();
   loadAllFromBackend();
+  // Verificar plano após carregar
+  setTimeout(function() { verificarPlano(); }, 500);
 }
 
 function doLogout() {
@@ -1648,6 +1783,78 @@ async function loadAllFromBackend() {
   await loadEventsFromBackend();
 }
 
+// ===== SISTEMA DE PLANOS =====
+var userPlan = { plan: 'trial', plan_expires_at: null, email: '' };
+
+function verificarPlano() {
+  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
+  if (!user.plan_expires_at) return;
+  
+  userPlan = user;
+  var expires = new Date(user.plan_expires_at);
+  var agora = new Date();
+  var diasRestantes = Math.ceil((expires - agora) / (1000 * 60 * 60 * 24));
+
+  // Atualizar card de plano na aba Minha Conta
+  var emailEl = document.getElementById("plano-email");
+  var diasEl = document.getElementById("plano-dias");
+  var descEl = document.getElementById("plano-desc");
+  var badgeEl = document.getElementById("plano-badge");
+  var barraEl = document.getElementById("plano-barra");
+
+  if (emailEl) emailEl.textContent = "📧 " + (user.email || "");
+
+  if (user.plan === 'trial') {
+    if (badgeEl) { badgeEl.textContent = "Trial"; badgeEl.className = "badge badge-yellow"; }
+    if (diasRestantes > 0) {
+      if (diasEl) diasEl.textContent = diasRestantes + " dia" + (diasRestantes > 1 ? "s" : "") + " restante" + (diasRestantes > 1 ? "s" : "");
+      if (descEl) descEl.textContent = "Período de teste gratuito";
+      if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 7) * 100) + "%";
+    } else {
+      // Expirou!
+      mostrarTelaBloqueio();
+    }
+  } else if (user.plan === 'mensal') {
+    if (badgeEl) { badgeEl.textContent = "Mensal"; badgeEl.className = "badge badge-green"; }
+    if (diasEl) diasEl.textContent = diasRestantes > 0 ? diasRestantes + " dias restantes" : "Vencido";
+    if (descEl) descEl.textContent = "Plano Mensal - R$ 49/mês";
+    if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 30) * 100) + "%";
+    if (diasRestantes <= 0) mostrarTelaBloqueio();
+  } else if (user.plan === 'anual') {
+    if (badgeEl) { badgeEl.textContent = "Anual"; badgeEl.className = "badge badge-green"; }
+    if (diasEl) diasEl.textContent = diasRestantes > 0 ? diasRestantes + " dias restantes" : "Vencido";
+    if (descEl) descEl.textContent = "Plano Anual - R$ 470/ano";
+    if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 365) * 100) + "%";
+    if (diasRestantes <= 0) mostrarTelaBloqueio();
+  }
+}
+
+function mostrarTelaBloqueio() {
+  var tela = document.getElementById("tela-bloqueio");
+  if (tela) tela.style.display = "flex";
+}
+
+function verPlanos() {
+  abrir("m-planos");
+}
+
+function contratarPlano(tipo) {
+  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
+  var msg = tipo === 'anual' 
+    ? "Olá! Quero contratar o Plano Anual do FestaMais por R$ 470/ano. Email: " + (user.email || "")
+    : "Olá! Quero contratar o Plano Mensal do FestaMais por R$ 49/mês. Email: " + (user.email || "");
+  var url = "https://wa.me/5538991558181?text=" + encodeURIComponent(msg);
+  window.open(url, "_blank");
+}
+
+function verificarAcessoBloqueado() {
+  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
+  if (!user.plan_expires_at) return false;
+  var expires = new Date(user.plan_expires_at);
+  var agora = new Date();
+  return agora > expires;
+}
+
 // Auto-login if token exists
 // Esconde TUDO enquanto verifica (evita flash)
 document.getElementById("login-screen").classList.add("hidden");
@@ -1693,13 +1900,16 @@ function toast(msg, t){
   var stack=document.getElementById('toast-stack');
   var el=document.createElement('div');
   el.className='toast '+(t||'ok');
-  el.textContent=msg;
+  // Adicionar ícone baseado no tipo
+  var icon = t === 'err' ? '❌ ' : t === 'warn' ? '⚠️ ' : '✅ ';
+  el.innerHTML = '<span style="margin-right:6px">'+icon+'</span><span>'+msg+'</span>';
   stack.appendChild(el);
   requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add('show'); }); });
+  var duracao = t === 'err' ? 5000 : 3500;
   setTimeout(function(){
     el.classList.remove('show');
     setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },400);
-  },3500);
+  }, duracao);
 }
 
 // ===== MODAIS =====
@@ -1932,6 +2142,7 @@ function topbarAction(){ var fn=document.getElementById('topbar-action')._fn; if
 
 // ===== ORÇAMENTOS =====
 function abrirOrc(){
+  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   orcItens=[];
   ['orc-nome','orc-tel','orc-local','orc-obs'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('orc-data').value='';
@@ -2471,6 +2682,7 @@ function renderEst(){
 
 // ===== CATÁLOGO =====
 function abrirItem(){
+  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   document.getElementById('item-eid').value='';
   document.getElementById('item-titulo').textContent='🏷️ Novo Item';
   ['item-nome','item-preco','item-qtd'].forEach(function(id){document.getElementById(id).value='';});
@@ -2569,6 +2781,7 @@ function renderCat(){
 
 // ===== CLIENTES =====
 function abrirCli(){
+  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   document.getElementById('cli-eid').value='';
   document.getElementById('cli-titulo').textContent='👤 Novo Cliente';
   ['cli-nome','cli-tel','cli-email','cli-end','cli-obs'].forEach(function(id){document.getElementById(id).value='';});
@@ -2756,15 +2969,59 @@ function renderFin(){
 
 // ===== DASHBOARD =====
 function renderDash(){
-  document.getElementById('dash-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Saudação personalizada
+  var hora = new Date().getHours();
+  var saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
+  var nomeEmpresa = userCompany.company_name || user.company_name || "";
+  document.getElementById('dash-greeting').textContent = saudacao + (nomeEmpresa ? ", " + nomeEmpresa + "! 👋" : "! 👋");
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Stats
   var n=new Date();var mes=n.getMonth(),ano=n.getFullYear();
   var evMes=D.eventos.filter(function(e){var p=e.dataEv.split('-');return parseInt(p[0])===ano&&parseInt(p[1])-1===mes;});
   document.getElementById('st-ev').textContent=evMes.length;
   document.getElementById('st-orc').textContent=D.orcamentos.filter(function(o){return o.status==='Pendente';}).length;
-  var recv=D.eventos.filter(function(e){return !e.pago;}).reduce(function(a,e){return a+((e.valor||0)-(e.sinal||0));},0);
+  var recv=D.orcamentos.filter(function(o){return o.status==='Confirmado';}).reduce(function(a,o){return a+(parseFloat(o.total)||0)-(parseFloat(o.sinal)||0);},0);
   document.getElementById('st-recv').textContent='R$ '+Math.max(0,recv).toFixed(2);
   var fat=evMes.filter(function(e){return e.pago;}).reduce(function(a,e){return a+(e.valor||0);},0);
-  document.getElementById('st-fat').textContent='R$ '+fat.toFixed(2);
+  // Também soma orçamentos confirmados do mês
+  var fatOrc=D.orcamentos.filter(function(o){
+    if(o.status!=='Confirmado') return false;
+    var p=(o.dataEv||'').split('-');
+    return parseInt(p[0])===ano&&parseInt(p[1])-1===mes;
+  }).reduce(function(a,o){return a+(parseFloat(o.total)||0);},0);
+  document.getElementById('st-fat').textContent='R$ '+(fat+fatOrc).toFixed(2);
+
+  // ONBOARDING
+  var temCatalogo = D.catalogo.length > 0;
+  var temCliente = D.clientes.length > 0;
+  var temOrc = D.orcamentos.length > 0;
+  var onbBox = document.getElementById('onboarding-box');
+  if (!temCatalogo || !temCliente || !temOrc) {
+    onbBox.style.display = 'block';
+    document.getElementById('step-catalogo-check').textContent = temCatalogo ? '✅' : '⬜';
+    document.getElementById('step-cliente-check').textContent = temCliente ? '✅' : '⬜';
+    document.getElementById('step-orc-check').textContent = temOrc ? '✅' : '⬜';
+  } else {
+    onbBox.style.display = 'none';
+  }
+
+  // ALERTA ESTOQUE BAIXO
+  var alertaEl = document.getElementById('dash-estoque-alerta');
+  var baixos = D.catalogo.filter(function(i){ return (i.estoque - (i.alugado||0)) <= 2 && i.estoque > 0; });
+  if (baixos.length > 0) {
+    alertaEl.style.display = 'block';
+    alertaEl.innerHTML = '<div style="background:rgba(239,68,68,0.1);border:1px solid var(--accent2);border-radius:12px;padding:14px;margin-bottom:16px">'
+      +'<div style="font-weight:700;color:var(--accent2);margin-bottom:8px">⚠️ Estoque baixo!</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px">'
+      +baixos.map(function(i){ return '<span style="background:var(--surface2);border-radius:8px;padding:4px 10px;font-size:12px">'+i.nome+' ('+( i.estoque-(i.alugado||0))+' disponíveis)</span>'; }).join('')
+      +'</div></div>';
+  } else {
+    alertaEl.style.display = 'none';
+  }
+
+  // Próximos eventos
   var hj=n.toISOString().slice(0,10);
   var prox=D.eventos.filter(function(e){return e.dataEv>=hj;}).sort(function(a,b){return a.dataEv.localeCompare(b.dataEv);}).slice(0,5);
   document.getElementById('dash-evs').innerHTML=prox.length?prox.map(function(e){
@@ -2773,19 +3030,21 @@ function renderDash(){
         +'<div style="font-size:18px;font-weight:800;color:var(--accent);line-height:1">'+e.dataEv.slice(8,10)+'</div>'
         +'<div style="font-size:10px;color:var(--text3)">'+['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][parseInt(e.dataEv.slice(5,7))-1]+'</div>'
       +'</div>'
-      +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+e.cliNome+'</div><div style="font-size:12px;color:var(--text2)">'+e.tipo+(e.valor?' · R$ '+e.valor.toFixed(2):'')+'</div></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+e.cliNome+'</div><div style="font-size:12px;color:var(--text2)">'+e.tipo+(e.valor?' · R$ '+parseFloat(e.valor).toFixed(2):'')+'</div></div>'
       +'<span class="badge '+(e.pago?'badge-green':'badge-yellow')+'">'+(e.pago?'Pago':'Pendente')+'</span>'
     +'</div>';
-  }).join(''):'<div class="empty"><div class="empty-icon">🎉</div><div class="empty-text">Nenhum evento próximo.</div></div>';
+  }).join(''):'<div class="empty"><div class="empty-icon">🎉</div><div class="empty-text">Nenhum evento próximo.</div><div class="empty-sub">Confirme um orçamento para criar um evento</div></div>';
+
+  // Orçamentos recentes
   var orcs=D.orcamentos.slice().reverse().slice(0,5);
   document.getElementById('dash-orcs').innerHTML=orcs.length?orcs.map(function(o){
     var bc=o.status==='Confirmado'?'badge-green':o.status==='Cancelado'?'badge-red':'badge-yellow';
     return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="goTo(\'orcamento\');setTimeout(function(){verOrc('+o.id+')},100)">'
-      +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+o.cliNome+'</div><div style="font-size:12px;color:var(--text2)">'+o.tipo+' · '+fmtD(o.dataEv)+'</div></div>'
-      +'<div style="font-weight:700;color:var(--accent)">R$ '+o.total.toFixed(2)+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+o.cliNome+'</div><div style="font-size:12px;color:var(--text2)">'+(o.tipo||'Evento')+' · '+fmtD(o.dataEv)+'</div></div>'
+      +'<div style="font-weight:700;color:var(--accent)">R$ '+parseFloat(o.total).toFixed(2)+'</div>'
       +'<span class="badge '+bc+'">'+o.status+'</span>'
     +'</div>';
-  }).join(''):'<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum orçamento.</div></div>';
+  }).join(''):'<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum orçamento ainda.</div><div class="empty-sub" style="margin-top:8px"><button class="btn btn-primary btn-sm" onclick="goTo(\'orcamento\');setTimeout(abrirOrc,100)">+ Criar primeiro orçamento</button></div></div>';
 }
 
 // ===== UTILS =====
@@ -2801,31 +3060,7 @@ renderCat();
 renderEst();
 updateBadge();
 </script>
-<!-- BOTTOM NAV MOBILE -->
-<div class="bottom-nav" id="bottom-nav">
-  <button class="bottom-nav-item active" data-page="dashboard" onclick="goTo('dashboard')">
-    <div class="bottom-nav-icon">📊</div>
-    <div class="bottom-nav-label">Dashboard</div>
-  </button>
-  <button class="bottom-nav-item" data-page="orcamento" onclick="goTo('orcamento')">
-    <div class="bottom-nav-icon">📋</div>
-    <div class="bottom-nav-label">Orçamentos</div>
-  </button>
-  <button class="bottom-nav-item" data-page="clientes" onclick="goTo('clientes')">
-    <div class="bottom-nav-icon">👥</div>
-    <div class="bottom-nav-label">Clientes</div>
-  </button>
-  <button class="bottom-nav-item" data-page="estoque" onclick="goTo('estoque')">
-    <div class="bottom-nav-icon">📦</div>
-    <div class="bottom-nav-label">Estoque</div>
-  </button>
-  <button class="bottom-nav-item" data-page="financeiro" onclick="goTo('financeiro')">
-    <div class="bottom-nav-icon">💰</div>
-    <div class="bottom-nav-label">Financeiro</div>
-  </button>
-</div>
 
 </body>
 </html>
-<!-- v6 -->
-<!-- v6 -->
+<!-- v7 -->

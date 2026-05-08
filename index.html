@@ -1266,10 +1266,18 @@ function enterApp() {
 
 function doLogout() {
   authToken = null;
-  localStorage.removeItem("fm_token");
-  localStorage.removeItem("fm_user");
+  // Limpa TUDO do localStorage
+  localStorage.clear();
+  // Reseta estado local
+  D = { catalogo:[], clientes:[], orcamentos:[], eventos:[], nextId:10 };
+  userCompany = {};
   document.getElementById("login-screen").classList.remove("hidden");
   document.getElementById("app-main").style.display = "none";
+  // Limpa campos de login
+  try {
+    document.getElementById("login-email").value = "";
+    document.getElementById("login-pass").value = "";
+  } catch(e) {}
 }
 
 async function apiGet(path) {
@@ -1641,20 +1649,24 @@ async function loadAllFromBackend() {
 }
 
 // Auto-login if token exists
+// Esconde TUDO enquanto verifica (evita flash)
+document.getElementById("login-screen").classList.add("hidden");
+document.getElementById("app-main").style.display = "none";
+document.body.style.background = "var(--bg)";
+
 if (authToken) {
   fetch(API_URL + "/health").then(function(r) {
-    if (r.ok) enterApp();
-    else {
+    if (r.ok) {
+      enterApp();
+    } else {
+      localStorage.clear();
       document.getElementById("login-screen").classList.remove("hidden");
-      document.getElementById("app-main").style.display = "none";
     }
   }).catch(function() {
     document.getElementById("login-screen").classList.remove("hidden");
-    document.getElementById("app-main").style.display = "none";
   });
 } else {
   document.getElementById("login-screen").classList.remove("hidden");
-  document.getElementById("app-main").style.display = "none";
 }
 </script>
 
@@ -2486,9 +2498,13 @@ function salvarItem(){
   if(eid){
     var idx=D.catalogo.findIndex(function(i){return i.id===parseInt(eid);});
     if(idx>-1){D.catalogo[idx].nome=nome;D.catalogo[idx].cat=cat;D.catalogo[idx].preco=preco;D.catalogo[idx].estoque=qtd;D.catalogo[idx].unid=unid;}
+    // Sync com backend
+    fetch(API_URL+"/catalog/"+eid,{method:"PUT",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid})}).catch(function(e){console.log("Erro sync catalogo:",e);});
     toast('Item atualizado! ✏️');
   } else {
     D.catalogo.push({id:D.nextId++,nome:nome,cat:cat,preco:preco,unid:unid,estoque:qtd,alugado:0});
+    // Sync com backend
+    fetch(API_URL+"/catalog",{method:"POST",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid})}).then(function(r){return r.json();}).then(function(data){if(data.id){loadCatalogFromAPI();}}).catch(function(e){console.log("Erro sync catalogo:",e);});
     toast('Item adicionado! 🏷️');
   }
   sv();fechar('m-item');renderCat();renderEst();
@@ -2497,6 +2513,8 @@ function delItem(id){
   var i=D.catalogo.find(function(x){return x.id===id;});if(!i)return;
   confirmar('Excluir <strong>'+i.nome+'</strong> do catálogo?',function(){
     D.catalogo=D.catalogo.filter(function(x){return x.id!==id;});
+    // Sync com backend
+    fetch(API_URL+"/catalog/"+id,{method:"DELETE",headers:{"Authorization":"Bearer "+authToken}}).catch(function(e){console.log("Erro delete catalogo:",e);});
     sv();renderCat();renderEst();toast('Item excluído.');
   });
 }
@@ -2809,4 +2827,4 @@ updateBadge();
 
 </body>
 </html>
-<!-- v2 -->
+<!-- v3 -->

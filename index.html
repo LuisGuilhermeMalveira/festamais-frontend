@@ -1205,9 +1205,23 @@ async function doLogin() {
     var data = await res.json();
     if (!res.ok) { showLoginError(data.error || "Erro ao fazer login"); return; }
 
+    // Verificar se é um usuário diferente do anterior
+    var oldUser = localStorage.getItem("fm_user");
+    if (oldUser) {
+      var oldUserObj = JSON.parse(oldUser);
+      if (oldUserObj.id !== data.user.id) {
+        // Usuário diferente! Limpar todos os dados locais
+        localStorage.clear();
+      }
+    }
+
     authToken = data.token;
     localStorage.setItem("fm_token", data.token);
     localStorage.setItem("fm_user", JSON.stringify(data.user));
+
+    // Resetar estado local
+    D = { catalogo:[], clientes:[], orcamentos:[], eventos:[], nextId:10 };
+
     enterApp();
   } catch (err) {
     showLoginError("Erro de conexao. Backend rodando?");

@@ -656,13 +656,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
     <button class="nav-item" data-page="orcamento" onclick="goTo('orcamento')"><span class="nav-icon">📋</span>Orçamentos<span class="nav-badge" id="badge-orc">0</span></button>
     <button class="nav-item" data-page="agenda" onclick="goTo('agenda')"><span class="nav-icon">📅</span>Agenda</button>
-    <button class="nav-item" data-page="financeiro" onclick="goTo('financeiro')"><span class="nav-icon">💰</span>Financeiro</button>
     <div class="nav-section">Operacional</div>
     <button class="nav-item" data-page="estoque" onclick="goTo('estoque')"><span class="nav-icon">📦</span>Estoque</button>
     <button class="nav-item" data-page="clientes" onclick="goTo('clientes')"><span class="nav-icon">👥</span>Clientes</button>
+    <button class="nav-item" data-page="financeiro" onclick="goTo('financeiro')"><span class="nav-icon">💰</span>Financeiro</button>
+    <div class="nav-section">Configuração</div>
     <button class="nav-item" data-page="catalogo" onclick="goTo('catalogo')"><span class="nav-icon">🏷️</span>Catálogo</button>
-    <div class="nav-section">Conta</div>
-    <button class="nav-item" data-page="config" onclick="goTo('config')"><span class="nav-icon">👤</span>Minha Conta</button>
+    <button class="nav-item" data-page="config" onclick="goTo('config')"><span class="nav-icon">⚙️</span>Minha Empresa</button>
   </div>
   <div class="sidebar-bottom">
     <button class="nav-item" onclick="doLogout()" style="color:var(--accent2)"><span class="nav-icon">🚪</span>Sair</button>
@@ -869,25 +869,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 <!-- SEÇÃO MINHA EMPRESA -->
 <div class="section" id="s-config">
   <div class="page-header">
-    <div><div class="page-title">Minha Conta</div><div class="page-sub">Perfil e assinatura</div></div>
+    <div><div class="page-title">Minha Empresa</div><div class="page-sub">Configurações e perfil</div></div>
   </div>
 
   <div style="display:grid;gap:20px;max-width:700px">
-
-    <!-- PLANO ATUAL -->
-    <div class="card" id="plano-card" style="padding:24px;border:2px solid var(--accent)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:14px;font-weight:700;color:var(--text)">⚡ Meu Plano</div>
-        <span id="plano-badge" class="badge badge-yellow">Trial</span>
-      </div>
-      <div id="plano-email" style="font-size:13px;color:var(--text3);margin-bottom:8px">📧 email@exemplo.com</div>
-      <div id="plano-dias" style="font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px">7 dias restantes</div>
-      <div id="plano-desc" style="font-size:12px;color:var(--text3);margin-bottom:16px">Período de teste gratuito</div>
-      <div style="background:var(--surface2);border-radius:8px;height:8px;margin-bottom:16px">
-        <div id="plano-barra" style="background:var(--accent);height:8px;border-radius:8px;width:100%;transition:width .5s"></div>
-      </div>
-      <button class="btn btn-primary" style="width:100%" onclick="verPlanos()">🚀 Ver planos</button>
-    </div>
 
     <!-- LOGO E NOME -->
     <div class="card" style="padding:24px">
@@ -985,75 +970,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="bn-item" data-bn="orcamento" onclick="goTo('orcamento')"><span class="bn-icon">📋</span>Orçam.<span class="bn-badge" id="bn-badge" style="display:none">0</span></button>
     <button class="bn-item" data-bn="agenda" onclick="goTo('agenda')"><span class="bn-icon">📅</span>Agenda</button>
     <button class="bn-item" data-bn="financeiro" onclick="goTo('financeiro')"><span class="bn-icon">💰</span>Financ.</button>
-    <button class="bn-item" data-bn="estoque" onclick="goTo('estoque')"><span class="bn-icon">📦</span>Estoque</button>
+    <button class="bn-item" data-bn="clientes" onclick="goTo('clientes')"><span class="bn-icon">👥</span>Clientes</button>
   </div>
 </nav>
 
 <div class="toast-stack" id="toast-stack"></div>
-
-<!-- TELA DE PLANOS (BLOQUEIO) -->
-<div id="tela-bloqueio" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:99999;align-items:center;justify-content:center;padding:20px">
-  <div style="max-width:500px;width:100%;text-align:center">
-    <div style="font-size:48px;margin-bottom:16px">🔒</div>
-    <div style="font-size:24px;font-weight:800;margin-bottom:8px">Seu período grátis acabou!</div>
-    <div style="color:var(--text3);margin-bottom:32px">Escolha um plano para continuar usando o FestaMais</div>
-    
-    <div style="display:grid;gap:16px;margin-bottom:24px">
-      <!-- Plano Mensal -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:left">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:700;font-size:16px">📅 Mensal</div>
-          <div style="font-size:22px;font-weight:800;color:var(--accent)">R$ 49<span style="font-size:13px;color:var(--text3)">/mês</span></div>
-        </div>
-        <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Acesso completo, cancele quando quiser</div>
-        <button class="btn btn-primary" style="width:100%" onclick="contratarPlano('mensal')">Contratar Mensal</button>
-      </div>
-      
-      <!-- Plano Anual -->
-      <div style="background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:20px;text-align:left;position:relative">
-        <div style="position:absolute;top:-10px;right:16px;background:var(--accent);color:#000;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px">20% OFF</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="font-weight:700;font-size:16px">🏆 Anual</div>
-          <div style="font-size:22px;font-weight:800;color:var(--accent)">R$ 470<span style="font-size:13px;color:var(--text3)">/ano</span></div>
-        </div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">equivale a R$ 39/mês</div>
-        <div style="font-size:13px;color:var(--accent3);margin-bottom:12px">💰 Economia de R$ 118 por ano!</div>
-        <button class="btn btn-primary" style="width:100%" onclick="contratarPlano('anual')">Contratar Anual</button>
-      </div>
-    </div>
-
-    <button class="btn btn-ghost" onclick="doLogout()">Sair da conta</button>
-  </div>
-</div>
-
-<!-- MODAL PLANOS (VER PLANOS) -->
-<div class="mo hide" id="m-planos">
-  <div class="modal" style="max-width:480px">
-    <div class="mh"><div class="mh-title">🚀 Escolha seu Plano</div><button class="mh-close" onclick="fechar('m-planos')">✕</button></div>
-    <div class="mb" style="padding:20px">
-      <div style="display:grid;gap:12px">
-        <div style="background:var(--surface2);border-radius:12px;padding:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700">📅 Mensal</div>
-            <div style="font-size:20px;font-weight:800;color:var(--accent)">R$ 49<span style="font-size:12px;color:var(--text3)">/mês</span></div>
-          </div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Acesso completo, cancele quando quiser</div>
-          <button class="btn btn-primary btn-sm" style="width:100%" onclick="contratarPlano('mensal')">Contratar via WhatsApp</button>
-        </div>
-        <div style="background:var(--surface2);border:2px solid var(--accent);border-radius:12px;padding:16px;position:relative">
-          <div style="position:absolute;top:-10px;right:12px;background:var(--accent);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px">MELHOR OPÇÃO</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-            <div style="font-weight:700">🏆 Anual</div>
-            <div style="font-size:20px;font-weight:800;color:var(--accent)">R$ 470<span style="font-size:12px;color:var(--text3)">/ano</span></div>
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:2px">equivale a R$ 39/mês · 20% de desconto</div>
-          <div style="font-size:12px;color:var(--accent3);margin-bottom:10px">Economia de R$ 118!</div>
-          <button class="btn btn-primary btn-sm" style="width:100%" onclick="contratarPlano('anual')">Contratar via WhatsApp</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL EXCLUSÃO -->
 <div class="mo hide" id="m-del">
@@ -1341,8 +1262,6 @@ function enterApp() {
   loadCatalogFromAPI();
   loadCompanyData();
   loadAllFromBackend();
-  // Verificar plano após carregar
-  setTimeout(function() { verificarPlano(); }, 500);
 }
 
 function doLogout() {
@@ -1729,78 +1648,6 @@ async function loadAllFromBackend() {
   await loadEventsFromBackend();
 }
 
-// ===== SISTEMA DE PLANOS =====
-var userPlan = { plan: 'trial', plan_expires_at: null, email: '' };
-
-function verificarPlano() {
-  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
-  if (!user.plan_expires_at) return;
-  
-  userPlan = user;
-  var expires = new Date(user.plan_expires_at);
-  var agora = new Date();
-  var diasRestantes = Math.ceil((expires - agora) / (1000 * 60 * 60 * 24));
-
-  // Atualizar card de plano na aba Minha Conta
-  var emailEl = document.getElementById("plano-email");
-  var diasEl = document.getElementById("plano-dias");
-  var descEl = document.getElementById("plano-desc");
-  var badgeEl = document.getElementById("plano-badge");
-  var barraEl = document.getElementById("plano-barra");
-
-  if (emailEl) emailEl.textContent = "📧 " + (user.email || "");
-
-  if (user.plan === 'trial') {
-    if (badgeEl) { badgeEl.textContent = "Trial"; badgeEl.className = "badge badge-yellow"; }
-    if (diasRestantes > 0) {
-      if (diasEl) diasEl.textContent = diasRestantes + " dia" + (diasRestantes > 1 ? "s" : "") + " restante" + (diasRestantes > 1 ? "s" : "");
-      if (descEl) descEl.textContent = "Período de teste gratuito";
-      if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 7) * 100) + "%";
-    } else {
-      // Expirou!
-      mostrarTelaBloqueio();
-    }
-  } else if (user.plan === 'mensal') {
-    if (badgeEl) { badgeEl.textContent = "Mensal"; badgeEl.className = "badge badge-green"; }
-    if (diasEl) diasEl.textContent = diasRestantes > 0 ? diasRestantes + " dias restantes" : "Vencido";
-    if (descEl) descEl.textContent = "Plano Mensal - R$ 49/mês";
-    if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 30) * 100) + "%";
-    if (diasRestantes <= 0) mostrarTelaBloqueio();
-  } else if (user.plan === 'anual') {
-    if (badgeEl) { badgeEl.textContent = "Anual"; badgeEl.className = "badge badge-green"; }
-    if (diasEl) diasEl.textContent = diasRestantes > 0 ? diasRestantes + " dias restantes" : "Vencido";
-    if (descEl) descEl.textContent = "Plano Anual - R$ 470/ano";
-    if (barraEl) barraEl.style.width = Math.min(100, (diasRestantes / 365) * 100) + "%";
-    if (diasRestantes <= 0) mostrarTelaBloqueio();
-  }
-}
-
-function mostrarTelaBloqueio() {
-  var tela = document.getElementById("tela-bloqueio");
-  if (tela) tela.style.display = "flex";
-}
-
-function verPlanos() {
-  abrir("m-planos");
-}
-
-function contratarPlano(tipo) {
-  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
-  var msg = tipo === 'anual' 
-    ? "Olá! Quero contratar o Plano Anual do FestaMais por R$ 470/ano. Email: " + (user.email || "")
-    : "Olá! Quero contratar o Plano Mensal do FestaMais por R$ 49/mês. Email: " + (user.email || "");
-  var url = "https://wa.me/5538991558181?text=" + encodeURIComponent(msg);
-  window.open(url, "_blank");
-}
-
-function verificarAcessoBloqueado() {
-  var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
-  if (!user.plan_expires_at) return false;
-  var expires = new Date(user.plan_expires_at);
-  var agora = new Date();
-  return agora > expires;
-}
-
 // Auto-login if token exists
 // Esconde TUDO enquanto verifica (evita flash)
 document.getElementById("login-screen").classList.add("hidden");
@@ -2085,7 +1932,6 @@ function topbarAction(){ var fn=document.getElementById('topbar-action')._fn; if
 
 // ===== ORÇAMENTOS =====
 function abrirOrc(){
-  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   orcItens=[];
   ['orc-nome','orc-tel','orc-local','orc-obs'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('orc-data').value='';
@@ -2625,7 +2471,6 @@ function renderEst(){
 
 // ===== CATÁLOGO =====
 function abrirItem(){
-  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   document.getElementById('item-eid').value='';
   document.getElementById('item-titulo').textContent='🏷️ Novo Item';
   ['item-nome','item-preco','item-qtd'].forEach(function(id){document.getElementById(id).value='';});
@@ -2724,7 +2569,6 @@ function renderCat(){
 
 // ===== CLIENTES =====
 function abrirCli(){
-  if (verificarAcessoBloqueado()) { mostrarTelaBloqueio(); return; }
   document.getElementById('cli-eid').value='';
   document.getElementById('cli-titulo').textContent='👤 Novo Cliente';
   ['cli-nome','cli-tel','cli-email','cli-end','cli-obs'].forEach(function(id){document.getElementById(id).value='';});
@@ -2983,4 +2827,5 @@ updateBadge();
 
 </body>
 </html>
-<!-- v5 -->
+<!-- v6 -->
+<!-- v6 -->

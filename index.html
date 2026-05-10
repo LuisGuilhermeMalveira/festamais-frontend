@@ -269,11 +269,15 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 /* ===================== SEARCH ===================== */
 .search-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.search-input{flex:1;max-width:320px;padding:10px 14px;font-size:13.5px}
+.search-input{flex:1;max-width:320px;padding:10px 14px;font-size:13.5px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);outline:none;transition:border .15s}
+.search-input:focus{border-color:var(--border2)}
 .orc-status-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .status-filter{padding:8px 15px;border-radius:22px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-size:12.5px;font-weight:600;font-family:var(--font);transition:all .15s;min-height:40px}
 .status-filter.active{background:var(--accent);color:#0c0d10;border-color:var(--accent)}
 .status-filter:hover:not(.active){border-color:var(--border2);color:var(--text)}
+
+/* Mobile section header - sem caixa, só layout */
+.mob-section-header{background:transparent;border:none;padding:0;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 /* ===================== EVENT CARD (agenda) ===================== */
 .ev-card{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);transition:background .1s}
@@ -305,13 +309,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 /* Estoque card timeline - prevent layout shift */
 .estoque-timeline-wrap{height:80px;overflow:hidden}
 .estoque-timeline{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;height:100%}
-.estoque-timeline-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px 2px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);min-width:0;overflow:hidden}
+.estoque-timeline-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px 2px;background:transparent;border:none;min-width:0;overflow:hidden}
 .estoque-timeline-cell-num{font-size:12px;font-weight:800;color:var(--accent3);word-break:break-word}
 
 /* Responsive timeline grid for very small screens */
 @media(max-width:360px) {
   .estoque-timeline{gap:3px}
-  .estoque-timeline-cell{padding:2px 1px}
+  .estoque-timeline-cell{padding:2px 1px;background:transparent !important;border:none !important}
   .estoque-timeline-cell-num{font-size:10px}
 }
 
@@ -321,14 +325,30 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 @media(max-width:768px) {
   #mob-clis,#mob-orcs,#mob-cat,#mob-fin{display:block}
-  /* Remove card styling from empty state on mobile */
-  #mob-clis > .empty,
-  #mob-orcs > .empty,
-  #mob-cat > .empty,
-  #mob-fin > .empty {
+  /* Hide entire container if it only has .empty inside */
+  #mob-orcs:has(> .empty:only-child){
+    display:contents
+  }
+  #mob-clis:has(> .empty:only-child){
+    display:contents
+  }
+  #mob-cat:has(> .empty:only-child){
+    display:contents
+  }
+  #mob-fin:has(> .empty:only-child){
+    display:contents
+  }
+  /* Hide filter buttons when container is empty */
+  .mob-section-header:has(+ #mob-orcs > .empty:only-child),
+  .mob-section-header:has(+ #mob-clis > .empty:only-child),
+  .mob-section-header:has(+ #mob-cat > .empty:only-child),
+  .mob-section-header:has(+ #mob-fin > .empty:only-child) {
+    display:none
+  }
+  /* Remove background from empty icons */
+  .empty-icon {
     background:transparent !important;
     border:none !important;
-    padding:20px 16px !important;
   }
 }
 .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
@@ -352,9 +372,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .toast.warn{border-color:#f59e0b88;color:#f59e0b}
 
 /* ===================== EMPTY STATE ===================== */
-.empty{text-align:center;padding:40px 20px;color:var(--text3)}
-.empty-icon{font-size:40px;margin-bottom:10px;opacity:.5}
-.empty-text{font-size:14px}
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:14px;opacity:.6;display:block;background:transparent;border:none}
+.empty-text{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.empty-sub{font-size:13px;color:var(--text3);margin-bottom:16px}
 
 /* ===================== BOTTOM NAV ===================== */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:95;padding:6px 4px calc(6px + var(--safe-bottom)) 4px}
@@ -581,7 +602,12 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   .cal-nav-title{font-size:14px}
 
   /* Mobile section header */
-  .mob-section-header{margin-bottom:10px;gap:10px}
+  .mob-section-header{margin-bottom:12px;gap:8px;background:transparent;border:none;padding:0}
+
+  /* Search input - solto, sem caixa */
+  .mob-section-header .search-input{
+    width:100%;max-width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13.5px
+  }
 
   /* Filter scroll */
   .mob-filter-scroll{margin-bottom:10px}
@@ -624,10 +650,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   /* Badges */
   .badge{padding:3px 9px;font-size:10px}
 
-  /* Empty states */
-  .empty{padding:30px 16px}
-  .empty-icon{font-size:36px;margin-bottom:8px}
-  .empty-text{font-size:13px}
+  /* Empty states - padronizado */
+  .empty{padding:40px 16px}
+  .empty-icon{font-size:44px;margin-bottom:12px;opacity:.55;background:transparent !important;border:none !important;box-shadow:none !important}
+  .empty-text{font-size:14px;font-weight:600;color:var(--text2)}
+  .empty-sub{font-size:12px;margin-top:4px}
 }
 
 @media(max-width:420px){
@@ -640,7 +667,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 /* ===================== LOGIN SCREEN ===================== */
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
 #login-screen.hidden{display:none}
-.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 32px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 32px;width:100%;max-width:420px;box-shadow:var(--shadow)}
 .login-logo{text-align:center;margin-bottom:28px}
 .login-logo-mark{font-size:32px;font-weight:800;color:var(--accent);letter-spacing:-1px;display:flex;align-items:center;justify-content:center;gap:10px}
 .login-logo-mark span{font-family:var(--font-serif);font-style:italic;color:var(--text)}
@@ -648,17 +675,39 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .login-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--surface2);border-radius:12px;padding:4px}
 .login-tab{flex:1;padding:10px;text-align:center;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;color:var(--text2);transition:all .15s;border:none;background:none;font-family:var(--font)}
 .login-tab.active{background:var(--accent);color:#0c0d10;font-weight:700}
-.login-form{display:flex;flex-direction:column;gap:14px}
-.login-input{background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:12px;padding:13px 16px;font-family:var(--font);font-size:14px;outline:none;transition:border .15s;width:100%}
-.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #f7c94820}
+.login-form{display:flex;flex-direction:column;gap:4px}
+
+/* Field groups */
+.lf-group{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.lf-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px}
+.lf-input-wrap{position:relative}
+.login-input{background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);border-radius:12px;padding:13px 40px 13px 16px;font-family:var(--font);font-size:14px;outline:none;transition:all .15s;width:100%}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #f7c94818}
 .login-input::placeholder{color:var(--text3)}
-.login-btn{background:var(--accent);color:#0c0d10;border:none;border-radius:12px;padding:14px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;width:100%}
-.login-btn:hover{background:#ffd84a;transform:translateY(-1px)}
-.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.login-error{background:#ff6b6b22;color:var(--accent2);padding:10px 14px;border-radius:10px;font-size:13px;text-align:center;display:none}
+.login-input.valid{border-color:#4ade9e;background:#4ade9e08}
+.login-input.invalid{border-color:#ff6b6b;background:#ff6b6b08}
+.lf-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:0;transition:opacity .2s}
+.lf-icon.show{opacity:1}
+.lf-hint{font-size:11px;color:var(--text3);min-height:16px;transition:color .15s}
+.lf-hint.err{color:var(--accent2)}
+.lf-hint.ok{color:var(--accent3)}
+
+/* Password strength */
+.pw-strength{display:flex;gap:4px;margin-top:6px}
+.pw-bar{height:3px;flex:1;border-radius:4px;background:var(--border);transition:background .3s}
+.pw-bar.weak{background:var(--accent2)}
+.pw-bar.medium{background:var(--accent)}
+.pw-bar.strong{background:var(--accent3)}
+.pw-label{font-size:10px;color:var(--text3);margin-top:4px}
+
+.login-btn{background:var(--accent);color:#0c0d10;border:none;border-radius:12px;padding:14px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-top:6px}
+.login-btn:hover:not(:disabled){background:#ffd84a;transform:translateY(-1px)}
+.login-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.login-error{background:#ff6b6b22;color:var(--accent2);padding:10px 14px;border-radius:10px;font-size:13px;text-align:center;display:none;margin-bottom:8px}
 .login-error.show{display:block}
-.login-success{background:#4ade9e22;color:var(--accent3);padding:10px 14px;border-radius:10px;font-size:13px;text-align:center;display:none}
+.login-success{background:#4ade9e22;color:var(--accent3);padding:10px 14px;border-radius:10px;font-size:13px;text-align:center;display:none;margin-bottom:8px}
 .login-success.show{display:block}
+.login-divider{text-align:center;font-size:11px;color:var(--text3);margin:4px 0 10px}
 </style>
 </head>
 <body>
@@ -668,7 +717,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   <div class="login-box">
     <div class="login-logo">
       <div class="login-logo-mark">🎉 <span>FestaMais</span></div>
-      <div class="login-logo-sub">Sistema de Locacao</div>
+      <div class="login-logo-sub">Sistema de Locação</div>
     </div>
     <div class="login-tabs">
       <button class="login-tab active" onclick="loginTab('login')">Entrar</button>
@@ -676,16 +725,68 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
     <div class="login-error" id="login-error"></div>
     <div class="login-success" id="login-success"></div>
+
+    <!-- FORM ENTRAR -->
     <div id="login-form" class="login-form">
-      <input class="login-input" id="login-email" type="email" placeholder="Email">
-      <input class="login-input" id="login-pass" type="password" placeholder="Senha">
-      <button class="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="lf-group">
+        <label class="lf-label">Email</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email" oninput="validarLoginEmail()">
+          <span class="lf-icon" id="li-email-icon"></span>
+        </div>
+        <span class="lf-hint" id="li-email-hint"></span>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Senha</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" oninput="validarLoginSenha()" onkeydown="if(event.key==='Enter')doLogin()">
+          <span class="lf-icon" id="li-pass-icon"></span>
+        </div>
+      </div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
     </div>
+
+    <!-- FORM CADASTRAR -->
     <div id="register-form" class="login-form" style="display:none">
-      <input class="login-input" id="reg-company" type="text" placeholder="Nome da Empresa">
-      <input class="login-input" id="reg-email" type="email" placeholder="Email">
-      <input class="login-input" id="reg-pass" type="password" placeholder="Senha (min 6 caracteres)">
-      <button class="login-btn" onclick="doRegister()">Cadastrar</button>
+      <div class="lf-group">
+        <label class="lf-label">Nome da Empresa</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="reg-company" type="text" placeholder="Ex: Festa & Cia" autocomplete="organization" oninput="validarCampo('reg-company','rc-icon','rc-hint',v=>v.trim().length>=2,'Mínimo 2 caracteres')">
+          <span class="lf-icon" id="rc-icon"></span>
+        </div>
+        <span class="lf-hint" id="rc-hint"></span>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Email</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="reg-email" type="email" placeholder="seu@email.com" autocomplete="email" oninput="validarRegEmail()">
+          <span class="lf-icon" id="re-icon"></span>
+        </div>
+        <span class="lf-hint" id="re-hint"></span>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Senha</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" oninput="validarRegSenha()">
+          <span class="lf-icon" id="rp-icon"></span>
+        </div>
+        <div class="pw-strength" id="pw-bars">
+          <div class="pw-bar" id="pw-b1"></div>
+          <div class="pw-bar" id="pw-b2"></div>
+          <div class="pw-bar" id="pw-b3"></div>
+        </div>
+        <span class="lf-hint" id="rp-hint"></span>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Confirmar Senha</label>
+        <div class="lf-input-wrap">
+          <input class="login-input" id="reg-pass2" type="password" placeholder="Repita a senha" autocomplete="new-password" oninput="validarConfirmSenha()">
+          <span class="lf-icon" id="rp2-icon"></span>
+        </div>
+        <span class="lf-hint" id="rp2-hint"></span>
+      </div>
+      <div class="login-divider">🔒 Seus dados estão protegidos</div>
+      <button class="login-btn" id="register-btn" onclick="doRegister()" disabled>Criar conta grátis</button>
     </div>
   </div>
 </div>
@@ -825,7 +926,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
 
   <!-- Mobile/Responsive filters - único conjunto de filtros -->
-  <div class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+  <div id="mob-orcs-header" class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
     <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
       <button class="status-filter active" data-filter="Todos" onclick="filtroOrc(this,'Todos')">Todos</button>
       <button class="status-filter" data-filter="Pendente" onclick="filtroOrc(this,'Pendente')">Pendente</button>
@@ -836,7 +937,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
 
   <!-- Desktop table -->
-  <div class="card">
+  <div class="card" id="mob-orcs-table">
     <div class="table-wrap">
       <table><thead><tr><th>#</th><th>Cliente</th><th>Evento</th><th>Data</th><th>Total</th><th>Sinal</th><th>Status</th><th>Ações</th></tr></thead>
       <tbody id="tb-orcs"></tbody></table>
@@ -901,7 +1002,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
   <!-- Mobile header -->
   <div class="mob-section-header">
-    <input class="search-input" type="search" placeholder="🔍 Buscar cliente..." oninput="buscaCli(this.value)" style="flex:1">
+    <input class="search-input" type="search" placeholder="🔍 Buscar cliente..." oninput="buscaCli(this.value)" style="flex:1;max-width:100%">
   </div>
 
   <!-- Desktop table -->
@@ -926,7 +1027,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
 
   <!-- Mobile/Responsive filters - único conjunto de filtros -->
-  <div class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+  <div id="mob-fin-header" class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
     <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
       <button class="status-filter active" data-finfilterm="Todos" onclick="filtroFin(this,'Todos')">Todos</button>
       <button class="status-filter" data-finfilterm="Pendente" onclick="filtroFin(this,'Pendente')">Pendentes</button>
@@ -941,7 +1042,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
 
   <!-- Desktop table -->
-  <div class="card">
+  <div class="card" id="mob-fin-table">
     <div class="table-wrap">
       <table><thead><tr><th>Cliente</th><th>Data evento</th><th>Total</th><th>Sinal pago</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
       <tbody id="tb-fin"></tbody></table>
@@ -961,7 +1062,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
   <!-- Mobile header -->
   <div class="mob-section-header">
-    <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaCat(this.value)" style="flex:1">
+    <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaCat(this.value)" style="flex:1;max-width:100%">
   </div>
 
   <!-- Desktop table -->
@@ -1032,7 +1133,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
     <!-- DADOS DE CONTATO -->
     <div class="card" style="padding:24px">
-      <div style="font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text)">📞 Dados de Contato</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text)">📞 Dados de Contato</div>
+      <div style="background:#f7c94812;border:1px solid #f7c94830;border-radius:10px;padding:12px 14px;font-size:12px;color:var(--accent);margin-bottom:16px;line-height:1.6">
+        💡 <strong>Importante:</strong> Estas informações aparecem automaticamente nos seus <strong>orçamentos</strong> e <strong>contratos</strong> enviados aos clientes. Mantenha-as sempre atualizadas!
+      </div>
 
       <!-- Email com edição inline -->
       <div style="margin-bottom:14px">
@@ -1148,7 +1252,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       </div>
     </div>
 
-    <button class="btn btn-ghost" onclick="doLogout()">Sair da conta</button>
+    <button class="btn btn-ghost" onclick="doLogout()" style="margin-top:8px;width:100%;max-width:200px">🚪 Sair da conta</button>
+    <div style="font-size:11px;color:var(--text3);margin-top:12px">Dúvidas? Fale pelo WhatsApp: (38) 99155-8181</div>
   </div>
 </div>
 
@@ -1385,9 +1490,101 @@ function loginTab(tab) {
 
 function showLoginError(msg) {
   var el = document.getElementById("login-error");
-  el.textContent = msg;
+  el.textContent = "⚠️ " + msg;
   el.classList.add("show");
   document.getElementById("login-success").classList.remove("show");
+}
+
+// ── VALIDAÇÕES FORMULÁRIO ──
+function emailValido(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+}
+
+function validarCampo(inputId, iconId, hintId, regra, msgErro) {
+  var val = document.getElementById(inputId).value;
+  var ok = regra(val);
+  var input = document.getElementById(inputId);
+  var icon = document.getElementById(iconId);
+  var hint = document.getElementById(hintId);
+  input.classList.toggle('valid', ok);
+  input.classList.toggle('invalid', val.length > 0 && !ok);
+  if(icon) { icon.textContent = ok ? '✅' : (val.length > 0 ? '❌' : ''); icon.classList.toggle('show', val.length > 0); }
+  if(hint) { hint.textContent = val.length > 0 && !ok ? msgErro : ''; hint.className = 'lf-hint' + (val.length > 0 && !ok ? ' err' : ok ? ' ok' : ''); }
+  return ok;
+}
+
+function validarLoginEmail() {
+  var val = document.getElementById('login-email').value;
+  var ok = emailValido(val);
+  var input = document.getElementById('login-email');
+  var icon = document.getElementById('li-email-icon');
+  var hint = document.getElementById('li-email-hint');
+  input.classList.toggle('valid', ok);
+  input.classList.toggle('invalid', val.length > 0 && !ok);
+  if(icon) { icon.textContent = ok ? '✅' : (val.length > 0 ? '❌' : ''); icon.classList.toggle('show', val.length > 0); }
+  if(hint) { hint.textContent = val.length > 0 && !ok ? 'Email inválido (ex: nome@dominio.com)' : ''; hint.className = 'lf-hint' + (val.length > 0 && !ok ? ' err' : ''); }
+}
+
+function validarLoginSenha() {
+  var val = document.getElementById('login-pass').value;
+  var icon = document.getElementById('li-pass-icon');
+  if(icon) { icon.textContent = val.length >= 6 ? '✅' : (val.length > 0 ? '❌' : ''); icon.classList.toggle('show', val.length > 0); }
+}
+
+function validarRegEmail() {
+  validarCampo('reg-email', 're-icon', 're-hint', emailValido, 'Email inválido (ex: nome@dominio.com)');
+  atualizarBtnCadastro();
+}
+
+function validarRegSenha() {
+  var val = document.getElementById('reg-pass').value;
+  var b1 = document.getElementById('pw-b1');
+  var b2 = document.getElementById('pw-b2');
+  var b3 = document.getElementById('pw-b3');
+  var hint = document.getElementById('rp-hint');
+  var icon = document.getElementById('rp-icon');
+  var forca = 0;
+  if(val.length >= 6) forca++;
+  if(val.length >= 8 && /[0-9]/.test(val)) forca++;
+  if(val.length >= 8 && /[A-Z]/.test(val) && /[^a-zA-Z0-9]/.test(val)) forca++;
+  var classes = ['weak','medium','strong'];
+  var msgs = ['Fraca — adicione números e letras maiúsculas','Média — adicione símbolos para reforçar','Forte 💪'];
+  if(b1&&b2&&b3) [b1,b2,b3].forEach(function(b,i){ b.className = 'pw-bar' + (forca > i && val.length ? ' '+classes[forca-1] : ''); });
+  if(val.length === 0) { if(hint){hint.textContent='';} if(icon){icon.textContent='';icon.classList.remove('show');} }
+  else if(val.length < 6) { if(hint){hint.textContent='Mínimo 6 caracteres';hint.className='lf-hint err';} if(icon){icon.textContent='❌';icon.classList.add('show');} }
+  else { if(hint){hint.textContent=msgs[forca-1];hint.className='lf-hint '+(forca>=2?'ok':'');} if(icon){icon.textContent=forca>=2?'✅':'⚠️';icon.classList.add('show');} }
+  document.getElementById('reg-pass').classList.toggle('valid', val.length >= 6);
+  document.getElementById('reg-pass').classList.toggle('invalid', val.length > 0 && val.length < 6);
+  validarConfirmSenha();
+  atualizarBtnCadastro();
+}
+
+function validarConfirmSenha() {
+  var pass = document.getElementById('reg-pass').value;
+  var pass2El = document.getElementById('reg-pass2');
+  if(!pass2El) return;
+  var pass2 = pass2El.value;
+  var icon = document.getElementById('rp2-icon');
+  var hint = document.getElementById('rp2-hint');
+  if(pass2.length === 0) { if(hint){hint.textContent='';} if(icon){icon.textContent='';icon.classList.remove('show');} pass2El.classList.remove('valid','invalid'); return; }
+  var ok = pass === pass2 && pass2.length >= 6;
+  pass2El.classList.toggle('valid', ok);
+  pass2El.classList.toggle('invalid', !ok);
+  if(icon) { icon.textContent = ok ? '✅' : '❌'; icon.classList.add('show'); }
+  if(hint) { hint.textContent = ok ? 'Senhas conferem! ✓' : 'As senhas não coincidem'; hint.className = 'lf-hint' + (ok ? ' ok' : ' err'); }
+  atualizarBtnCadastro();
+}
+
+function atualizarBtnCadastro() {
+  var btn = document.getElementById('register-btn');
+  if(!btn) return;
+  var company = (document.getElementById('reg-company')||{value:''}).value.trim().length >= 2;
+  var email = emailValido((document.getElementById('reg-email')||{value:''}).value);
+  var pass = (document.getElementById('reg-pass')||{value:''}).value.length >= 6;
+  var p1 = (document.getElementById('reg-pass')||{value:''}).value;
+  var p2 = (document.getElementById('reg-pass2')||{value:''}).value;
+  var match = p1 === p2 && p2.length >= 6;
+  btn.disabled = !(company && email && pass && match);
 }
 
 function showLoginSuccess(msg) {
@@ -1438,8 +1635,16 @@ async function doRegister() {
   var company = document.getElementById("reg-company").value.trim();
   var email = document.getElementById("reg-email").value.trim();
   var pass = document.getElementById("reg-pass").value;
-  if (!company || !email || !pass) { showLoginError("Preencha todos os campos"); return; }
-  if (pass.length < 6) { showLoginError("Senha precisa ter no minimo 6 caracteres"); return; }
+  var pass2 = document.getElementById("reg-pass2").value;
+
+  if (!company || !email || !pass || !pass2) { showLoginError("Preencha todos os campos"); return; }
+  if (!emailValido(email)) { showLoginError("Email inválido. Use o formato: nome@dominio.com"); return; }
+  if (pass.length < 6) { showLoginError("Senha precisa ter no mínimo 6 caracteres"); return; }
+  if (pass !== pass2) { showLoginError("As senhas não coincidem"); return; }
+
+  var btn = document.getElementById("register-btn");
+  btn.textContent = "Criando conta...";
+  btn.disabled = true;
 
   try {
     var res = await fetch(API_URL + "/auth/register", {
@@ -1448,9 +1653,9 @@ async function doRegister() {
       body: JSON.stringify({ email: email, password: pass, company_name: company })
     });
     var data = await res.json();
-    if (!res.ok) { showLoginError(data.error || "Erro ao cadastrar"); return; }
+    if (!res.ok) { showLoginError(data.error || "Erro ao cadastrar"); btn.textContent="Criar conta grátis"; btn.disabled=false; return; }
 
-    showLoginSuccess("Conta criada! Fazendo login...");
+    showLoginSuccess("✅ Conta criada! Entrando...");
     setTimeout(function() {
       authToken = data.token;
       localStorage.setItem("fm_token", data.token);
@@ -1458,7 +1663,9 @@ async function doRegister() {
       enterApp();
     }, 1000);
   } catch (err) {
-    showLoginError("Erro de conexao. Backend rodando?");
+    showLoginError("Erro de conexão. Tente novamente.");
+    btn.textContent = "Criar conta grátis";
+    btn.disabled = false;
   }
 }
 
@@ -1468,20 +1675,34 @@ function enterApp() {
   loadCatalogFromAPI();
   loadCompanyData();
   loadAllFromBackend();
-  // Verificar plano após carregar
-  setTimeout(function() { verificarPlano(); }, 500);
+  // Buscar dados frescos do servidor para garantir suspended/plan_expires_at atualizados
+  fetch(API_URL + "/company", {
+    headers: { "Authorization": "Bearer " + authToken }
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data && data.user) {
+      var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
+      // Atualiza campos críticos do servidor
+      if(data.user.plan_expires_at !== undefined) user.plan_expires_at = data.user.plan_expires_at;
+      if(data.user.plan !== undefined) user.plan = data.user.plan;
+      if(data.user.suspended !== undefined) user.suspended = data.user.suspended;
+      localStorage.setItem("fm_user", JSON.stringify(user));
+    }
+    verificarPlano();
+  }).catch(function(){
+    setTimeout(function() { verificarPlano(); }, 500);
+  });
 }
 
 function doLogout() {
   authToken = null;
-  // Limpa TUDO do localStorage
   localStorage.clear();
-  // Reseta estado local
   D = { catalogo:[], clientes:[], orcamentos:[], eventos:[], nextId:10 };
   userCompany = {};
+  // Esconde tela de bloqueio se estiver visível
+  var bloqueio = document.getElementById("tela-bloqueio");
+  if(bloqueio) bloqueio.style.display = "none";
   document.getElementById("login-screen").classList.remove("hidden");
   document.getElementById("app-main").style.display = "none";
-  // Limpa campos de login
   try {
     document.getElementById("login-email").value = "";
     document.getElementById("login-pass").value = "";
@@ -1993,10 +2214,18 @@ function contratarPlano(tipo) {
 
 function verificarAcessoBloqueado() {
   var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
-  if (!user.plan_expires_at) return false;
-  var expires = new Date(user.plan_expires_at);
-  var agora = new Date();
-  return agora > expires;
+  // Verifica suspensão pelo admin
+  if (user.suspended === true) return true;
+  // Sem data de expiração e plano trial = calcular por created_at
+  if (!user.plan_expires_at) {
+    if (user.plan === 'trial' && user.created_at) {
+      var expires = new Date(user.created_at);
+      expires.setDate(expires.getDate() + 7);
+      return new Date() > expires;
+    }
+    return false;
+  }
+  return new Date() > new Date(user.plan_expires_at);
 }
 
 // Auto-login if token exists
@@ -2470,9 +2699,17 @@ function renderOrcs(){
 
   // Mobile cards
   var mob=document.getElementById('mob-orcs');
+  var mobHeader=document.getElementById('mob-orcs-header');
+  var mobTable=document.getElementById('mob-orcs-table');
   if(!lista.length){
     mob.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Nenhum orçamento encontrado.</div><div class="empty-sub" style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="abrirOrc()">+ Novo orçamento</button></div></div>';
+    if(window.innerWidth<=768){
+      if(mobHeader) mobHeader.style.display='none';
+      if(mobTable) mobTable.style.display='none';
+    }
   } else {
+    if(mobHeader) mobHeader.style.display='';
+    if(mobTable) mobTable.style.display='';
     mob.innerHTML=lista.map(function(o){
       var bc=o.status==='Confirmado'?'badge-green':o.status==='Cancelado'?'badge-red':'badge-yellow';
       var sinalVal=parseFloat(o.sinal)||0;
@@ -3102,7 +3339,7 @@ function renderEst(){
       var corDia=dispDia<=0?'var(--accent2)':dispDia<=i.estoque*0.3?'var(--accent)':'var(--accent3)';
       var bgDia=dispDia<=0?'#ff6b6b20':dispDia<=i.estoque*0.3?'#f7c94820':'#4ade9e20';
       var dia=['D','S','T','Q','Q','S','S'][new Date(data+'T12:00:00').getDay()];
-      timeline+='<div class="estoque-timeline-cell" style="border-color:'+corDia+'44;background:'+bgDia+'"><div style="font-size:8px;color:var(--text3);font-weight:700">'+dia+'</div><div style="font-size:6px;color:var(--text2);margin:1px 0">'+data.slice(8,10)+'</div><div class="estoque-timeline-cell-num" style="color:'+corDia+'">'+Math.max(0,dispDia)+'</div></div>';
+      timeline+='<div class="estoque-timeline-cell"><div style="font-size:8px;color:var(--text3);font-weight:700">'+dia+'</div><div style="font-size:6px;color:var(--text2);margin:1px 0">'+data.slice(8,10)+'</div><div class="estoque-timeline-cell-num" style="color:'+corDia+'">'+Math.max(0,dispDia)+'</div></div>';
     }
     
     var alerta=disp<0?'🚫 CRÍTICO':disp<=i.estoque*0.3?'⚠️ ALERTA':'✓ OK';
@@ -3387,9 +3624,17 @@ function renderFin(){
 
   // Mobile
   var mob=document.getElementById('mob-fin');
+  var mobFinHeader=document.getElementById('mob-fin-header');
+  var mobFinTable=document.getElementById('mob-fin-table');
   if(!lista.length){
     mob.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum evento financeiro.</div><div class="empty-sub" style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="goTo(\'orcamento\');setTimeout(abrirOrc,100)">+ Criar orçamento</button></div></div>';
+    if(window.innerWidth<=768){
+      if(mobFinHeader) mobFinHeader.style.display='none';
+      if(mobFinTable) mobFinTable.style.display='none';
+    }
   } else {
+    if(mobFinHeader) mobFinHeader.style.display='';
+    if(mobFinTable) mobFinTable.style.display='';
     mob.innerHTML=lista.map(function(e){
       var sd=(e.valor||0)-(e.sinal||0);
       var pct=e.valor>0?Math.round((e.sinal||0)/e.valor*100):0;

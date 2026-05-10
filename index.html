@@ -1409,7 +1409,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       <button class="btn btn-outline" onclick="fechar('m-ver-orc')">Fechar</button>
       <button class="btn btn-outline btn-sm" id="btn-cancel-orc" onclick="cancelarOrc()" style="display:none">❌ Cancelar</button>
       <button class="btn btn-outline btn-sm" id="btn-conf-orc" onclick="confirmarOrc()">✅ Confirmar pedido</button>
-      <button class="btn btn-purple" onclick="gerarPDF()">📄 Gerar PDF</button>
+      <button class="btn btn-purple" onclick="gerarPDF()">📄 Gerar PDF de Orçamento</button>
+      <button class="btn btn-ghost" onclick="gerarContrato()" style="border-color:var(--border2)">📝 Gerar Contrato</button>
       <button class="btn btn-whats" onclick="enviarWhats()">📲 WhatsApp</button>
     </div>
   </div>
@@ -2881,304 +2882,448 @@ function cancelarOrc(){
 function gerarPDF(){
   var o=D.orcamentos.find(function(x){return x.id===orcAId;});
   if(!o){toast('Orçamento não encontrado.','err');return;}
+  try{
+    var {jsPDF}=window.jspdf;
+    var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var W=210,m=16,cW=W-m*2,y=0;
 
-  try {
-    var { jsPDF } = window.jspdf;
-    var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    // Paleta neutra
+    var P  =[15,15,20];
+    var CE =[60,60,70];
+    var CM =[130,130,140];
+    var CC =[245,245,248];
+    var CL =[220,220,226];
+    var BR =[255,255,255];
 
-    var W=210, m=18, cW=W-m*2;
-    var y=18;
+    var empresa  = userCompany.company_name||'FestaMais';
+    var telefone = userCompany.phone  ||'';
+    var emailEmp = userCompany.email  ||'';
+    var cidade   = userCompany.city   ||'';
+    var estado   = userCompany.state  ||'';
+    var endereco = userCompany.address||'';
+    var logoSrc  = userCompany.logo   ||'';
 
-    // ── Cores ──
-    var amarelo=[247,201,72];
-    var cinzaEscuro=[28,29,38];
-    var cinzaMedio=[40,43,55];
-    var cinzaTexto=[100,100,120];
-    var branco=[255,255,255];
-    var verde=[74,222,158];
-    var vermelho=[255,107,107];
+    // ── HEADER ──
+    doc.setFillColor(P[0],P[1],P[2]);
+    doc.rect(0,0,W,30,'F');
 
-    // ── Fundo total da página ──
-    doc.setFillColor(cinzaEscuro[0],cinzaEscuro[1],cinzaEscuro[2]);
-    doc.rect(0,0,W,297,'F');
+    if(logoSrc&&logoSrc.startsWith('data:image')){
+      try{
+        var ext=logoSrc.indexOf('image/png')>-1?'PNG':'JPEG';
+        doc.addImage(logoSrc,ext,m,5,20,20);
+        doc.setFontSize(16);doc.setFont('helvetica','bold');
+        doc.setTextColor(BR[0],BR[1],BR[2]);
+        doc.text(empresa,m+24,14);
+        doc.setFontSize(8);doc.setFont('helvetica','normal');
+        doc.setTextColor(160,160,170);
+        doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m+24,21);
+      }catch(e){
+        doc.setFontSize(18);doc.setFont('helvetica','bold');
+        doc.setTextColor(BR[0],BR[1],BR[2]);
+        doc.text(empresa,m,16);
+        doc.setFontSize(8);doc.setFont('helvetica','normal');
+        doc.setTextColor(160,160,170);
+        doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m,23);
+      }
+    }else{
+      doc.setFontSize(18);doc.setFont('helvetica','bold');
+      doc.setTextColor(BR[0],BR[1],BR[2]);
+      doc.text(empresa,m,16);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.setTextColor(160,160,170);
+      doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m,23);
+    }
 
-    // ── Header strip ──
-    doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-    doc.roundedRect(m,y,cW,28,4,4,'F');
+    y=38;
 
-    // Logo emoji + nome empresa
-    var empresa = userCompany.company_name || 'FestaMais';
-    doc.setTextColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.setFontSize(18);
-    doc.setFont('helvetica','bold');
-    doc.text('🎉 '+empresa,m+6,y+11);
-
-    // Sub-título
-    doc.setFontSize(8);
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.setFont('helvetica','normal');
-    doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m+6,y+18);
-
-    // Badge status (canto direito)
-    var sc=o.status==='Confirmado'?verde:o.status==='Cancelado'?vermelho:amarelo;
-    doc.setFillColor(sc[0],sc[1],sc[2]);
-    doc.roundedRect(W-m-36,y+7,34,10,3,3,'F');
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(o.status==='Confirmado'?12:o.status==='Cancelado'?255:12,
-                    o.status==='Confirmado'?13:o.status==='Cancelado'?255:13,
-                    o.status==='Confirmado'?18:o.status==='Cancelado'?107:18);
-    doc.text(o.status.toUpperCase(),W-m-19,y+13.5,{align:'center'});
-
-    y+=34;
-
-    // ── Linha orçamento # e data ──
-    doc.setFontSize(9);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    var dataCriacao = o.criadoEm ? new Date(o.criadoEm).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR');
-    doc.text('Orçamento #'+o.id+' · Emitido em '+dataCriacao, m, y);
-
-    y+=6;
-
-    // ── Empresa info (se tiver phone/address) ──
-    if(userCompany.phone || userCompany.city){
-      doc.setFontSize(8);
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      var infoEmp=[];
-      if(userCompany.phone) infoEmp.push('📞 '+userCompany.phone);
-      if(userCompany.city) infoEmp.push('📍 '+userCompany.city+(userCompany.state?'/'+userCompany.state:''));
-      doc.text(infoEmp.join('    '),m,y);
+    // ── Contato empresa ──
+    var cp=[];
+    if(telefone) cp.push(telefone);
+    if(emailEmp) cp.push(emailEmp);
+    if(cidade)   cp.push(cidade+(estado?' - '+estado:''));
+    if(endereco) cp.push(endereco);
+    if(cp.length){
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text(cp.slice(0,3).join('   ·   '),m,y);
       y+=5;
+      if(cp.length>3){doc.text(cp.slice(3).join('   ·   '),m,y);y+=5;}
     }
+    y+=4;
+    doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.3);
+    doc.line(m,y,W-m,y);y+=8;
 
-    y+=2;
+    // ── TÍTULO ──
+    doc.setFontSize(22);doc.setFont('helvetica','bold');
+    doc.setTextColor(P[0],P[1],P[2]);
+    doc.text('ORÇAMENTO',m,y+7);
+    var dataCriacao=o.criadoEm?new Date(o.criadoEm).toLocaleDateString('pt-BR'):new Date().toLocaleDateString('pt-BR');
+    doc.setFontSize(9);doc.setFont('helvetica','normal');
+    doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('#'+o.id+'   ·   Emitido em '+dataCriacao+'   ·   Válido por 7 dias',m,y+14);
+    y+=22;
 
-    // ── Divisor ──
-    doc.setDrawColor(55,56,74);
-    doc.setLineWidth(0.3);
-    doc.line(m,y,W-m,y);
+    // ── CARDS CLIENTE + EVENTO ──
+    var ch=27,cw2=(cW-5)/2;
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    doc.roundedRect(m,y,cw2,ch,3,3,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('CLIENTE',m+5,y+7);
+    doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(o.cliNome||'—',m+5,y+16);
+    if(o.cliTel){doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);doc.text(o.cliTel,m+5,y+23);}
+
+    var rx=m+cw2+5;
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    doc.roundedRect(rx,y,cw2,ch,3,3,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('DATA DO EVENTO',rx+5,y+7);
+    doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(fmtD(o.dataEv),rx+5,y+16);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text((o.tipo||'Evento')+(o.dias>1?' · '+o.dias+' dias':''),rx+5,y+23);
+    y+=ch+5;
+
+    if(o.local){
+      doc.setFillColor(CC[0],CC[1],CC[2]);doc.roundedRect(m,y,cW,11,3,3,'F');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text('LOCAL',m+5,y+4.5);
+      doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(P[0],P[1],P[2]);
+      doc.text(o.local,m+22,y+7);y+=16;
+    }
     y+=6;
 
-    // ── Grid info cliente / evento ──
-    var bH=24;
-    // Box cliente (esquerda)
-    doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-    doc.roundedRect(m,y,cW/2-3,bH,3,3,'F');
-    doc.setFontSize(7);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('CLIENTE',m+5,y+6);
-    doc.setFontSize(11);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(branco[0],branco[1],branco[2]);
-    doc.text(o.cliNome||'—',m+5,y+14);
-    if(o.cliTel){
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      doc.text(o.cliTel,m+5,y+20);
-    }
-
-    // Box data/tipo (direita)
-    var rx=m+cW/2+3;
-    var rw=cW/2-3;
-    doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-    doc.roundedRect(rx,y,rw,bH,3,3,'F');
-
-    // Data
-    doc.setFontSize(7);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('DATA DO EVENTO',rx+5,y+6);
-    doc.setFontSize(11);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.text(fmtD(o.dataEv),rx+5,y+14);
-
-    // Tipo
-    doc.setFontSize(7);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text(o.tipo||'EVENTO',rx+5,y+20);
-
-    y+=bH+5;
-
-    // Local (se houver)
-    if(o.local){
-      doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-      doc.roundedRect(m,y,cW,10,3,3,'F');
-      doc.setFontSize(7);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      doc.text('LOCAL',m+5,y+4.5);
-      doc.setFontSize(9);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(branco[0],branco[1],branco[2]);
-      doc.text(o.local,m+22,y+6.5);
-      y+=15;
-    }
-
-    // ── Tabela de itens ──
-    doc.setFontSize(8);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('ITENS CONTRATADOS',m,y+4);
-    y+=8;
-
-    // Header tabela
-    doc.setFillColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.roundedRect(m,y,cW,8,2,2,'F');
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(12,13,18);
+    // ── TABELA ──
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('ITENS SOLICITADOS',m,y);y+=5;
+    doc.setFillColor(P[0],P[1],P[2]);doc.roundedRect(m,y,cW,8,2,2,'F');
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(BR[0],BR[1],BR[2]);
     doc.text('ITEM',m+4,y+5.3);
     doc.text('QTD',m+cW*0.58,y+5.3,{align:'right'});
     doc.text('UNIT.',m+cW*0.73,y+5.3,{align:'right'});
     doc.text('SUBTOTAL',m+cW-2,y+5.3,{align:'right'});
     y+=8;
 
-    // Linhas
     o.itens.forEach(function(it,idx){
-      var catItem=D.catalogo.find(function(c){return c.id===it.id;});
-      var nome=it.name||catItem&&catItem.nome||it.nome||'Item';
+      var ci=D.catalogo.find(function(c){return c.id===it.id;});
+      var nome=it.name||(ci&&ci.nome)||it.nome||'Item';
       var qty=it.qty||1;
-      var preco=it.preco||(catItem&&catItem.preco)||0;
-      var unid=it.unid||(catItem&&catItem.unid)||'un';
+      var preco=it.preco||(ci&&ci.preco)||0;
+      var unid=it.unid||(ci&&ci.unid)||'un';
       var sub=preco*qty;
-
-      if(idx%2===0){
-        doc.setFillColor(33,34,44);
-        doc.rect(m,y,cW,7,'F');
-      }
-
-      doc.setFontSize(8.5);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(branco[0],branco[1],branco[2]);
-      // Truncar nome longo
-      var nomeMax=nome.length>38?nome.substring(0,37)+'…':nome;
-      doc.text(nomeMax,m+4,y+5);
-
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      doc.text(qty+'x '+unid,m+cW*0.58,y+5,{align:'right'});
-      doc.text('R$ '+preco.toFixed(2),m+cW*0.73,y+5,{align:'right'});
-
-      doc.setTextColor(amarelo[0],amarelo[1],amarelo[2]);
-      doc.setFont('helvetica','bold');
-      doc.text('R$ '+sub.toFixed(2),m+cW-2,y+5,{align:'right'});
-
-      y+=7;
+      if(idx%2===0){doc.setFillColor(249,249,252);doc.rect(m,y,cW,7.5,'F');}
+      doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.1);doc.line(m,y+7.5,m+cW,y+7.5);
+      doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(P[0],P[1],P[2]);
+      doc.text(nome.length>40?nome.substring(0,39)+'…':nome,m+4,y+5.2);
+      doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text(qty+'x '+unid,m+cW*0.58,y+5.2,{align:'right'});
+      doc.text('R$ '+preco.toFixed(2),m+cW*0.73,y+5.2,{align:'right'});
+      doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+      doc.text('R$ '+sub.toFixed(2),m+cW-2,y+5.2,{align:'right'});
+      y+=7.5;
     });
+    y+=6;
 
-    y+=4;
-
-    // ── Totais ──
-    doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-    doc.roundedRect(m,y,cW,o.desc>0?34:27,3,3,'F');
-
-    var ty=y+7;
-    // Subtotal
-    doc.setFontSize(9);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('Subtotal',m+5,ty);
-    doc.text('R$ '+(o.sub||parseFloat(o.total)).toFixed(2),W-m-5,ty,{align:'right'});
-
+    // ── TOTAIS ──
+    var tbh=o.desc>0?36:28;
+    doc.setFillColor(CC[0],CC[1],CC[2]);doc.roundedRect(m+cW/2,y,cW/2,tbh,3,3,'F');
+    var ty=y+8,txS=m+cW/2+5,txE=m+cW-3;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('Subtotal',txS,ty);
+    doc.text('R$ '+(o.sub||parseFloat(o.total)).toFixed(2),txE,ty,{align:'right'});
     ty+=6;
-    // Dias
-    doc.text('Dias de locação',m+5,ty);
-    doc.setTextColor(branco[0],branco[1],branco[2]);
-    doc.text((o.dias||1)+'',W-m-5,ty,{align:'right'});
-
-    // Desconto
+    doc.text('Dias de locação',txS,ty);
+    doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text((o.dias||1)+'',txE,ty,{align:'right'});
     if(o.desc>0){
-      ty+=6;
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      doc.text('Desconto',m+5,ty);
-      doc.setTextColor(verde[0],verde[1],verde[2]);
-      doc.text('- R$ '+o.desc.toFixed(2),W-m-5,ty,{align:'right'});
-      ty+=6;
-    } else {
-      ty+=6;
+      ty+=6;doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text('Desconto',txS,ty);
+      doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+      doc.text('- R$ '+o.desc.toFixed(2),txE,ty,{align:'right'});
     }
+    ty+=4;doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.4);doc.line(txS,ty,txE,ty);ty+=7;
+    doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.setTextColor(CM[0],CM[1],CM[2]);doc.text('TOTAL',txS,ty);
+    doc.setTextColor(P[0],P[1],P[2]);doc.text('R$ '+parseFloat(o.total).toFixed(2),txE,ty,{align:'right'});
+    y+=tbh+8;
 
-    // Divisor total
-    doc.setDrawColor(55,56,74);
-    doc.setLineWidth(0.2);
-    doc.line(m+4,ty,W-m-4,ty);
-    ty+=6;
+    // ── PAGAMENTO ──
+    var s50=Math.round(o.total*0.5*100)/100, sd=o.total-s50;
+    doc.setFillColor(CC[0],CC[1],CC[2]);doc.roundedRect(m,y,cW,26,3,3,'F');
+    doc.setDrawColor(CE[0],CE[1],CE[2]);doc.setLineWidth(0.8);doc.line(m,y,m,y+26);
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('CONDIÇÕES DE PAGAMENTO (sugerido)',m+6,y+6);
+    doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('Sinal (50%) para reserva:',m+6,y+14);
+    doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text('R$ '+s50.toFixed(2),W-m-4,y+14,{align:'right'});
+    doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('Saldo no dia do evento:',m+6,y+22);
+    doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text('R$ '+sd.toFixed(2),W-m-4,y+22,{align:'right'});
+    y+=32;
 
-    // TOTAL
-    doc.setFontSize(15);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('TOTAL',m+5,ty);
-    doc.setTextColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.text('R$ '+parseFloat(o.total).toFixed(2),W-m-5,ty,{align:'right'});
-
-    y+=o.desc>0?42:35;
-
-    // ── Condições de pagamento ──
-    var sinal50=Math.round(o.total*0.5*100)/100;
-    var saldo=o.total-sinal50;
-
-    doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-    doc.roundedRect(m,y,cW,22,3,3,'F');
-
-    doc.setFontSize(7);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('CONDIÇÕES DE PAGAMENTO (sugerido)',m+5,y+5);
-
-    doc.setFontSize(9);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(branco[0],branco[1],branco[2]);
-    doc.text('Sinal (50%) para reserva:',m+5,y+12);
-    doc.setTextColor(verde[0],verde[1],verde[2]);
-    doc.setFont('helvetica','bold');
-    doc.text('R$ '+sinal50.toFixed(2),W-m-5,y+12,{align:'right'});
-
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-    doc.text('Saldo no dia do evento:',m+5,y+19);
-    doc.setTextColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.setFont('helvetica','bold');
-    doc.text('R$ '+saldo.toFixed(2),W-m-5,y+19,{align:'right'});
-
-    y+=27;
-
-    // ── Observações ──
+    // ── OBS ──
     if(o.obs){
-      doc.setFillColor(cinzaMedio[0],cinzaMedio[1],cinzaMedio[2]);
-      doc.roundedRect(m,y,cW,14,3,3,'F');
-      doc.setFontSize(7);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(cinzaTexto[0],cinzaTexto[1],cinzaTexto[2]);
-      doc.text('OBSERVAÇÕES',m+5,y+5);
-      doc.setFontSize(8.5);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(branco[0],branco[1],branco[2]);
-      var obsLines=doc.splitTextToSize(o.obs,cW-10);
-      doc.text(obsLines[0]||'',m+5,y+11);
-      y+=19;
+      doc.setFillColor(CC[0],CC[1],CC[2]);doc.roundedRect(m,y,cW,18,3,3,'F');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text('OBSERVAÇÕES',m+5,y+6);
+      doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(P[0],P[1],P[2]);
+      doc.text((doc.splitTextToSize(o.obs,cW-12))[0]||'',m+5,y+13);
     }
 
-    // ── Rodapé ──
-    doc.setFillColor(amarelo[0],amarelo[1],amarelo[2]);
-    doc.rect(0,285,W,12,'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(12,13,18);
-    doc.text(empresa+' · Orçamento válido por 7 dias · Contato: '+(userCompany.phone||''), W/2, 292, {align:'center'});
+    // ── RODAPÉ ──
+    doc.setFillColor(P[0],P[1],P[2]);doc.rect(0,283,W,14,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text(empresa,m,292);
+    var rd=[telefone,emailEmp].filter(Boolean).join('  ·  ');
+    if(rd) doc.text(rd,W-m,292,{align:'right'});
 
-    // ── Salvar ──
-    var nomeArq='Orcamento_'+o.id+'_'+o.cliNome.replace(/\s+/g,'_')+'.pdf';
-    doc.save(nomeArq);
-    toast('✅ PDF gerado: '+nomeArq);
+    doc.save('Orcamento_'+o.id+'_'+(o.cliNome||'cliente').replace(/\s+/g,'_')+'.pdf');
+    toast('✅ PDF gerado com sucesso!');
 
-  } catch(err){
-    console.error('Erro ao gerar PDF:', err);
-    toast('Erro ao gerar PDF. Verifique o console.','err');
+  }catch(err){
+    console.error('Erro ao gerar PDF:',err);
+    toast('Erro ao gerar PDF.','err');
+  }
+}
+
+function gerarContrato(){
+  var o=D.orcamentos.find(function(x){return x.id===orcAId;});
+  if(!o){toast('Orçamento não encontrado.','err');return;}
+  try{
+    var {jsPDF}=window.jspdf;
+    var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var W=210,m=16,cW=W-m*2,y=0;
+
+    // Paleta neutra (igual ao orçamento)
+    var P  =[15,15,20];
+    var CE =[60,60,70];
+    var CM =[130,130,140];
+    var CC =[245,245,248];
+    var CL =[220,220,226];
+    var BR =[255,255,255];
+
+    var empresa  = userCompany.company_name||'FestaMais';
+    var telefone = userCompany.phone  ||'';
+    var emailEmp = userCompany.email  ||'';
+    var cidade   = userCompany.city   ||'';
+    var estado   = userCompany.state  ||'';
+    var endereco = userCompany.address||'';
+    var logoSrc  = userCompany.logo   ||'';
+    var dataCriacao = new Date().toLocaleDateString('pt-BR');
+    var sinal50 = Math.round(o.total*0.5*100)/100;
+    var saldo   = o.total-sinal50;
+
+    // ── HEADER ──
+    doc.setFillColor(P[0],P[1],P[2]);
+    doc.rect(0,0,W,30,'F');
+
+    if(logoSrc&&logoSrc.startsWith('data:image')){
+      try{
+        var ext=logoSrc.indexOf('image/png')>-1?'PNG':'JPEG';
+        doc.addImage(logoSrc,ext,m,5,20,20);
+        doc.setFontSize(16);doc.setFont('helvetica','bold');
+        doc.setTextColor(BR[0],BR[1],BR[2]);
+        doc.text(empresa,m+24,14);
+        doc.setFontSize(8);doc.setFont('helvetica','normal');
+        doc.setTextColor(160,160,170);
+        doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m+24,21);
+      }catch(e){
+        doc.setFontSize(18);doc.setFont('helvetica','bold');
+        doc.setTextColor(BR[0],BR[1],BR[2]);doc.text(empresa,m,16);
+        doc.setFontSize(8);doc.setFont('helvetica','normal');
+        doc.setTextColor(160,160,170);doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m,23);
+      }
+    }else{
+      doc.setFontSize(18);doc.setFont('helvetica','bold');
+      doc.setTextColor(BR[0],BR[1],BR[2]);doc.text(empresa,m,16);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.setTextColor(160,160,170);doc.text('SISTEMA DE LOCAÇÃO PARA FESTAS',m,23);
+    }
+
+    y=33;
+
+    // ── Contato empresa (inline, compacto) ──
+    var cp=[];
+    if(telefone) cp.push(telefone);
+    if(emailEmp) cp.push(emailEmp);
+    if(cidade)   cp.push(cidade+(estado?' - '+estado:''));
+    if(cp.length){
+      doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text(cp.join('   ·   '),m,y);y+=5;
+    }
+    y+=2;
+    doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.3);
+    doc.line(m,y,W-m,y);y+=6;
+
+    // ── TÍTULO compacto ──
+    doc.setFontSize(17);doc.setFont('helvetica','bold');
+    doc.setTextColor(P[0],P[1],P[2]);
+    doc.text('CONTRATO DE LOCAÇÃO',m,y+6);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');
+    doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('Contrato #'+o.id+'   ·   Emitido em '+dataCriacao,m,y+12);
+    y+=17;
+
+    // ── PARTES lado a lado ──
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('PARTES CONTRATANTES',m,y);y+=4;
+
+    var pw=(cW-5)/2;
+
+    // Box LOCADOR
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    doc.roundedRect(m,y,pw,18,3,3,'F');
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('LOCADOR (CONTRATADA)',m+4,y+5);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(empresa,m+4,y+11);
+    var locInfo2=[telefone,emailEmp].filter(Boolean).join(' · ');
+    if(locInfo2){doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);doc.text(locInfo2,m+4,y+16);}
+
+    // Box LOCATÁRIO
+    var px2=m+pw+5;
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    doc.roundedRect(px2,y,pw,18,3,3,'F');
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('LOCATÁRIO (CONTRATANTE)',px2+4,y+5);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(o.cliNome||'—',px2+4,y+11);
+    if(o.cliTel){doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);doc.text('Tel: '+o.cliTel,px2+4,y+16);}
+    y+=23;
+
+    // ── OBJETO DO CONTRATO ──
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('OBJETO DO CONTRATO',m,y);y+=4;
+
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    doc.roundedRect(m,y,cW,14,3,3,'F');
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('EVENTO',m+5,y+4);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text((o.tipo||'Evento')+' · '+fmtD(o.dataEv)+(o.dias>1?' · '+o.dias+' dias':''),m+5,y+9);
+    if(o.local){doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);doc.text('Local: '+o.local,m+5,y+13);}
+    y+=18;
+
+    // ── ITENS LOCADOS ──
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('ITENS LOCADOS',m,y);y+=5;
+
+    doc.setFillColor(P[0],P[1],P[2]);doc.roundedRect(m,y,cW,8,2,2,'F');
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(BR[0],BR[1],BR[2]);
+    doc.text('ITEM',m+4,y+5.3);
+    doc.text('QTD',m+cW*0.58,y+5.3,{align:'right'});
+    doc.text('UNIT.',m+cW*0.73,y+5.3,{align:'right'});
+    doc.text('SUBTOTAL',m+cW-2,y+5.3,{align:'right'});
+    y+=8;
+
+    o.itens.forEach(function(it,idx){
+      var ci=D.catalogo.find(function(c){return c.id===it.id;});
+      var nome=it.name||(ci&&ci.nome)||it.nome||'Item';
+      var qty=it.qty||1;
+      var preco=it.preco||(ci&&ci.preco)||0;
+      var unid=it.unid||(ci&&ci.unid)||'un';
+      var sub=preco*qty;
+      if(idx%2===0){doc.setFillColor(249,249,252);doc.rect(m,y,cW,7.5,'F');}
+      doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.1);doc.line(m,y+7.5,m+cW,y+7.5);
+      doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(P[0],P[1],P[2]);
+      doc.text(nome.length>40?nome.substring(0,39)+'…':nome,m+4,y+5.2);
+      doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text(qty+'x '+unid,m+cW*0.58,y+5.2,{align:'right'});
+      doc.text('R$ '+preco.toFixed(2),m+cW*0.73,y+5.2,{align:'right'});
+      doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+      doc.text('R$ '+sub.toFixed(2),m+cW-2,y+5.2,{align:'right'});
+      y+=7.5;
+    });
+    y+=6;
+
+    // ── VALORES ──
+    var tbh=o.desc>0?36:28;
+    doc.setFillColor(CC[0],CC[1],CC[2]);doc.roundedRect(m+cW/2,y,cW/2,tbh,3,3,'F');
+    var ty=y+8,txS=m+cW/2+5,txE=m+cW-3;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('Subtotal',txS,ty);
+    doc.text('R$ '+(o.sub||parseFloat(o.total)).toFixed(2),txE,ty,{align:'right'});
+    ty+=6;
+    doc.text('Dias de locação',txS,ty);
+    doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text((o.dias||1)+'',txE,ty,{align:'right'});
+    if(o.desc>0){
+      ty+=6;doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+      doc.text('Desconto',txS,ty);
+      doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+      doc.text('- R$ '+o.desc.toFixed(2),txE,ty,{align:'right'});
+    }
+    ty+=4;doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.4);doc.line(txS,ty,txE,ty);ty+=7;
+    doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.setTextColor(CM[0],CM[1],CM[2]);doc.text('TOTAL',txS,ty);
+    doc.setTextColor(P[0],P[1],P[2]);doc.text('R$ '+parseFloat(o.total).toFixed(2),txE,ty,{align:'right'});
+    y+=tbh+6;
+
+    // ── CLÁUSULAS ──
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('CLÁUSULAS E CONDIÇÕES',m,y);y+=4;
+
+    var clausulas=[
+      'I. PAGAMENTO: Sinal de 50% (R$ '+sinal50.toFixed(2)+') para reserva da data. Saldo de R$ '+saldo.toFixed(2)+' no dia do evento.',
+      'II. CANCELAMENTO: O sinal pago não será devolvido. Cancelamentos com +30 dias permitem remarcação sem custo.',
+      'III. CONSERVAÇÃO: O LOCATÁRIO responde por danos, perdas ou extravios dos itens durante o período de uso.',
+      'IV. DEVOLUÇÃO: Itens devolvidos com danos serão cobrados conforme tabela de valores vigente do LOCADOR.',
+      'V. RESPONSABILIDADE: O LOCADOR entrega os itens em perfeitas condições. Defeitos devem ser comunicados em até 1h.',
+      'VI. IMAGENS: O LOCATÁRIO autoriza uso de fotos do evento pelo LOCADOR para divulgação, salvo manifestação contrária.'
+    ];
+
+    doc.setFillColor(CC[0],CC[1],CC[2]);
+    var clausH=clausulas.length*8+4;
+    doc.roundedRect(m,y,cW,clausH,3,3,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(CE[0],CE[1],CE[2]);
+    var cy=y+6;
+    clausulas.forEach(function(c){
+      var lines=doc.splitTextToSize(c,cW-10);
+      doc.text(lines[0],m+4,cy);
+      cy+=8;
+    });
+    y+=clausH+6;
+
+    // ── ASSINATURAS ──
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(CE[0],CE[1],CE[2]);
+    doc.text('ASSINATURAS',m,y);y+=5;
+
+    var sw=(cW-10)/2;
+    doc.setDrawColor(CL[0],CL[1],CL[2]);doc.setLineWidth(0.4);
+    doc.line(m,y+16,m+sw,y+16);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(empresa,m,y+21);
+    doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('LOCADOR / CONTRATADA',m,y+25);
+
+    var sx2=m+sw+10;
+    doc.line(sx2,y+16,sx2+sw,y+16);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(P[0],P[1],P[2]);
+    doc.text(o.cliNome||'—',sx2,y+21);
+    doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text('LOCATÁRIO / CONTRATANTE',sx2,y+25);
+    y+=32;
+
+    doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text((cidade||'_____________')+(estado?', '+estado:'')+', '+dataCriacao,m,y);
+
+    // ── RODAPÉ ──
+    doc.setFillColor(P[0],P[1],P[2]);doc.rect(0,283,W,14,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(CM[0],CM[1],CM[2]);
+    doc.text(empresa,m,292);
+    var rd=[telefone,emailEmp].filter(Boolean).join('  ·  ');
+    if(rd) doc.text(rd,W-m,292,{align:'right'});
+
+    doc.save('Contrato_'+o.id+'_'+(o.cliNome||'cliente').replace(/\s+/g,'_')+'.pdf');
+    toast('✅ Contrato gerado com sucesso!');
+
+  }catch(err){
+    console.error('Erro ao gerar contrato:',err);
+    toast('Erro ao gerar contrato.','err');
   }
 }
 
@@ -3760,3 +3905,4 @@ updateBadge();
 <!-- admin-v1 -->
 <!-- redeploy -->
 <!-- v8 -->
+<!-- v9 -->

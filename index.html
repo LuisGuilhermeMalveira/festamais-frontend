@@ -212,7 +212,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .cal-day:hover{background:var(--surface2)}
 .cal-day.today{background:var(--accent);color:#0c0d10;font-weight:800}
 .cal-day.today .cal-dot{background:#0c0d10 !important}
-.cal-day.empty{cursor:default;pointer-events:none}
+.cal-day.empty{cursor:default;pointer-events:none;min-height:0 !important;height:0;padding:0;overflow:hidden}
 .cal-day.cal-sel{background:var(--surface2);outline:1.5px solid var(--accent)}
 .cal-day.has-ev{font-weight:700}
 .cal-day.conflict{background:#ff6b6b22;outline:1.5px solid var(--accent2)}

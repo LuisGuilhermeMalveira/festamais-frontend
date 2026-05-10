@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FestaMais — Painel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0d10;--surface:#13141a;--surface2:#1c1d26;--surface3:#252633;
+  --border:#2a2b3d;--border2:#353650;
+  --accent:#f7c948;--accent-dark:#d4a828;--accent2:#ff6b6b;--accent3:#4ade9e;--accent4:#818cf8;
+  --text:#eeedf5;--text2:#a0a0b8;--text3:#606078;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --shadow:0 4px 32px #00000066;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;font-size:14px}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+.login-logo{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:32px}
+.login-label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
+.login-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border .15s;margin-bottom:16px}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{width:100%;background:var(--accent);color:#0c0d10;border:none;border-radius:10px;padding:13px;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s;margin-top:4px}
+.login-btn:hover{opacity:.88}
+.login-err{background:#ff6b6b18;border:1px solid #ff6b6b44;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--accent2);margin-bottom:14px;display:none}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh}
+.layout{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border)}
+.sb-logo-name{font-size:18px;font-weight:800;color:var(--accent);}
+.sb-logo-tag{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.sb-badge{display:inline-block;background:var(--accent2);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.sb-nav{padding:12px 8px;flex:1}
+.sb-section{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 10px 4px;margin-top:6px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
+.sb-item:hover{background:var(--surface2);color:var(--text)}
+.sb-item.active{background:linear-gradient(135deg,#f7c94822,#f7c94811);color:var(--accent);font-weight:700;border:1px solid #f7c94833}
+.sb-icon{font-size:16px;min-width:20px;text-align:center}
+.sb-bottom{padding:12px 8px;border-top:1px solid var(--border)}
+.sb-admin-info{padding:10px;background:var(--surface2);border-radius:9px;font-size:12px;color:var(--text2);margin-bottom:8px}
+.sb-admin-email{font-weight:600;color:var(--text);font-size:11px;word-break:break-all}
+
+/* ── MAIN ── */
+.main{margin-left:220px;flex:1;padding:28px 32px}
+.section{display:none}
+.section.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:24px}
+.page-title{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.page-sub{font-size:13px;color:var(--text2);margin-top:3px}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.stat-card.red::before{background:var(--accent2)}
+.stat-card.green::before{background:var(--accent3)}
+.stat-card.purple::before{background:var(--accent4)}
+.stat-card.orange::before{background:#f59e0b}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:8px}
+.stat-value{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+.stat-icon{position:absolute;top:16px;right:16px;font-size:22px;opacity:.3}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+td{padding:12px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.td-name{color:var(--text);font-weight:600;font-size:13.5px}
+.td-email{color:var(--text3);font-size:12px}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-trial{background:#f7c94820;color:var(--accent);border:1px solid #f7c94840}
+.badge-mensal{background:#4ade9e20;color:var(--accent3);border:1px solid #4ade9e40}
+.badge-anual{background:#818cf820;color:var(--accent4);border:1px solid #818cf840}
+.badge-expirado{background:#ff6b6b20;color:var(--accent2);border:1px solid #ff6b6b40}
+.badge-admin{background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40}
+.badge-ativo{background:#4ade9e20;color:var(--accent3);border:1px solid #4ade9e40}
+.badge-suspenso{background:#ff6b6b20;color:var(--accent2);border:1px solid #ff6b6b40}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--accent);color:#0c0d10}
+.btn-primary:hover{opacity:.88}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-danger{background:#ff6b6b18;color:var(--accent2);border:1px solid #ff6b6b33}
+.btn-danger:hover{background:#ff6b6b30}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-success{background:#4ade9e18;color:var(--accent3);border:1px solid #4ade9e33}
+.btn-success:hover{background:#4ade9e30}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:#00000090;z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+.mo.hide{display:none}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;width:100%;max-width:480px;box-shadow:var(--shadow)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mt{font-size:17px;font-weight:800}
+.mc{font-size:22px;background:none;border:none;color:var(--text3);cursor:pointer;line-height:1;padding:4px}
+.mc:hover{color:var(--text)}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-family:var(--font);font-size:13.5px;outline:none;transition:border .15s}
+.form-input:focus{border-color:var(--accent)}
+select.form-input{cursor:pointer}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.search-input{flex:1;max-width:320px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border .15s}
+.search-input:focus{border-color:var(--border2)}
+
+/* ── TOAST ── */
+.toast-stack{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:13px;transform:translateX(120%);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:300px;box-shadow:var(--shadow)}
+.toast.show{transform:translateX(0);opacity:1}
+.toast.ok{border-color:#4ade9e88;color:var(--accent3)}
+.toast.err{border-color:#ff6b6b88;color:var(--accent2)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5;display:block}
+.empty-text{font-size:14px;font-weight:600;color:var(--text2)}
+
+/* ── LOADING ── */
+.loading{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+
+/* ── USER DETAIL ── */
+.user-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.user-detail-item{background:var(--surface2);border-radius:9px;padding:12px}
+.udl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.udv{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── ALERT ── */
+.alert{padding:12px 14px;border-radius:9px;font-size:13px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.alert-warn{background:#f59e0b15;border:1px solid #f59e0b33;color:#f59e0b}
+.alert-danger{background:#ff6b6b15;border:1px solid #ff6b6b33;color:var(--accent2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .sidebar{transform:translateX(-100%);transition:transform .28s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:16px}
+  .mob-topbar{display:flex!important}
+}
+.mob-topbar{display:none;position:sticky;top:0;z-index:90;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;align-items:center;gap:12px}
+.hamburger{background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;border-radius:8px;padding:8px 11px;font-size:16px}
+.overlay{display:none;position:fixed;inset:0;background:#00000075;z-index:99}
+.overlay.show{display:block}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast-stack" id="toasts"></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🎉 FestaMais</div>
+    <div class="login-sub">Painel Administrativo</div>
+    <div class="login-err" id="login-err"></div>
+    <label class="login-label">Email</label>
+    <input class="login-input" type="email" id="login-email" placeholder="admin@festamais.com.br" autocomplete="email">
+    <label class="login-label">Senha</label>
+    <input class="login-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" onclick="fazerLogin()">Entrar no Painel</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="overlay" id="overlay" onclick="fecharSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">🎉 FestaMais</div>
+      <div class="sb-logo-tag">Admin Panel <span class="sb-badge">ADMIN</span></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Principal</div>
+      <button class="sb-item active" onclick="goTo('dashboard')"><span class="sb-icon">📊</span> Dashboard</button>
+      <button class="sb-item" onclick="goTo('usuarios')"><span class="sb-icon">👥</span> Usuários</button>
+    </div>
+    <div class="sb-bottom">
+      <div class="sb-admin-info">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Logado como</div>
+        <div class="sb-admin-email" id="sb-email">—</div>
+      </div>
+      <button class="sb-item" onclick="sair()" style="color:var(--accent2)"><span class="sb-icon">🚪</span> Sair</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR MOBILE -->
+    <div class="mob-topbar">
+      <button class="hamburger" onclick="abrirSidebar()">☰</button>
+      <span style="font-weight:700;font-size:16px" id="mob-title">Dashboard</span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="s-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Visão geral do sistema</div>
+      </div>
+
+      <div class="stats-grid" id="stats-grid">
+        <div class="loading">Carregando...</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-title">⚠️ Expirando em 3 dias</div>
+          <div id="dash-expirando"><div class="loading">Carregando...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🚫 Planos expirados</div>
+          <div id="dash-expirados"><div class="loading">Carregando...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USUÁRIOS -->
+    <div class="section" id="s-usuarios">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="page-title">Usuários</div>
+          <div class="page-sub">Todos os clientes cadastrados</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="search-bar">
+          <input class="search-input" type="search" placeholder="🔍 Buscar por nome, email ou empresa..." oninput="buscaUsuarios(this.value)">
+          <div style="display:flex;gap:8px;margin-left:auto">
+            <button class="btn btn-ghost btn-sm" onclick="filtroPlano('todos')" id="f-todos" style="border-color:var(--accent);color:var(--accent)">Todos</button>
+            <button class="btn btn-ghost btn-sm" onclick="filtroPlano('trial')" id="f-trial">Trial</button>
+            <button class="btn btn-ghost btn-sm" onclick="filtroPlano('mensal')" id="f-mensal">Mensal</button>
+            <button class="btn btn-ghost btn-sm" onclick="filtroPlano('anual')" id="f-anual">Anual</button>
+            <button class="btn btn-ghost btn-sm" onclick="filtroPlano('expirado')" id="f-expirado">Expirado</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Empresa / Email</th>
+                <th>Plano</th>
+                <th>Expira em</th>
+                <th>Clientes</th>
+                <th>Orçamentos</th>
+                <th>Cadastro</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tb-users"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL EDITAR USUÁRIO -->
+<div class="mo hide" id="mo-user">
+  <div class="modal">
+    <div class="mh">
+      <div class="mt">Editar Usuário</div>
+      <button class="mc" onclick="fecharModal()">✕</button>
+    </div>
+    <div id="mo-user-info" style="margin-bottom:16px"></div>
+    <div class="form-group">
+      <label class="form-label">Plano</label>
+      <select class="form-input" id="mo-plano">
+        <option value="trial">Trial</option>
+        <option value="mensal">Mensal (R$49/mês)</option>
+        <option value="anual">Anual (R$470/ano)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Expira em</label>
+      <input class="form-input" type="date" id="mo-expira">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-input" id="mo-suspended">
+        <option value="false">Ativo</option>
+        <option value="true">Suspenso</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarUsuario()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR DELETE -->
+<div class="mo hide" id="mo-del">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">🗑️</div>
+    <div style="font-size:17px;font-weight:800;margin-bottom:8px;color:var(--accent2)">Deletar usuário?</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px" id="del-nome">—</div>
+    <div class="alert alert-danger" style="justify-content:center;margin-bottom:20px">Isso apaga TODOS os dados do cliente!</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-ghost" onclick="fecharDel()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarDelete()">Deletar tudo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ESTENDER TRIAL -->
+<div class="mo hide" id="mo-trial">
+  <div class="modal" style="max-width:380px">
+    <div class="mh">
+      <div class="mt">⏰ Estender Trial</div>
+      <button class="mc" onclick="fecharTrial()">✕</button>
+    </div>
+    <div id="mo-trial-info" style="margin-bottom:16px;font-size:13px;color:var(--text2)"></div>
+    <div class="form-group">
+      <label class="form-label">Quantos dias adicionar?</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" onclick="setDias(7)">+7 dias</button>
+        <button class="btn btn-ghost btn-sm" onclick="setDias(14)">+14 dias</button>
+        <button class="btn btn-ghost btn-sm" onclick="setDias(30)">+30 dias</button>
+      </div>
+      <input class="form-input" type="number" id="mo-dias" placeholder="Ex: 7" min="1" max="365">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="fecharTrial()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarTrial()">✅ Estender</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://festamais-backend-production.up.railway.app/api';
+let TOKEN = localStorage.getItem('admin_token') || '';
+let usuarios = [];
+let usuariosFiltrados = [];
+let userEditId = null;
+let userDelId = null;
+let userTrialId = null;
+let filtroAtual = 'todos';
+
+// ── INIT ──
+window.onload = function() {
+  if(TOKEN) verificarToken();
+  document.getElementById('login-pass').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') fazerLogin();
+  });
+};
+
+async function verificarToken() {
+  try {
+    const r = await fetch(API+'/admin/stats', {headers:{'Authorization':'Bearer '+TOKEN}});
+    if(r.ok) {
+      mostrarApp();
+      carregarDados();
+    } else {
+      TOKEN = '';
+      localStorage.removeItem('admin_token');
+    }
+  } catch(e) {
+    TOKEN = '';
+    localStorage.removeItem('admin_token');
+  }
+}
+
+// ── LOGIN ──
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  const btn = document.querySelector('.login-btn');
+
+  if(!email || !pass) { mostrarErr('Preencha email e senha'); return; }
+
+  btn.textContent = 'Entrando...';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(API+'/admin/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, password: pass})
+    });
+    const data = await r.json();
+    if(!r.ok) { mostrarErr(data.error || 'Credenciais inválidas'); btn.textContent='Entrar no Painel'; btn.disabled=false; return; }
+
+    TOKEN = data.token;
+    localStorage.setItem('admin_token', TOKEN);
+    document.getElementById('sb-email').textContent = data.admin.email;
+    mostrarApp();
+    carregarDados();
+  } catch(e) {
+    mostrarErr('Erro de conexão com o servidor');
+    btn.textContent='Entrar no Painel';
+    btn.disabled=false;
+  }
+}
+
+function mostrarErr(msg) {
+  const el = document.getElementById('login-err');
+  el.textContent = '⚠️ '+msg;
+  el.style.display = 'block';
+}
+
+function mostrarApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+function sair() {
+  TOKEN = '';
+  localStorage.removeItem('admin_token');
+  location.reload();
+}
+
+// ── NAV ──
+function goTo(s) {
+  document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('s-'+s).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(el=>{
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+s+"'")) el.classList.add('active');
+  });
+  const titles = {dashboard:'Dashboard', usuarios:'Usuários'};
+  document.getElementById('mob-title').textContent = titles[s]||s;
+  fecharSidebar();
+  if(s==='usuarios' && usuarios.length===0) carregarUsuarios();
+}
+
+function abrirSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function fecharSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ── CARREGAR DADOS ──
+async function carregarDados() {
+  await Promise.all([carregarStats(), carregarUsuarios()]);
+}
+
+async function carregarStats() {
+  try {
+    const r = await fetch(API+'/admin/stats', {headers:{'Authorization':'Bearer '+TOKEN}});
+    const d = await r.json();
+    renderStats(d);
+    renderExpirando();
+    renderExpirados();
+  } catch(e) {
+    document.getElementById('stats-grid').innerHTML = '<div style="color:var(--accent2)">Erro ao carregar stats</div>';
+  }
+}
+
+function renderStats(d) {
+  const mrr = parseFloat(d.receita_mensal)||0;
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Total Usuários</div>
+      <div class="stat-value">${d.total_users||0}</div>
+      <div class="stat-sub">cadastros ativos</div>
+      <div class="stat-icon">👥</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">MRR Estimado</div>
+      <div class="stat-value" style="font-size:22px">R$${mrr.toFixed(0)}</div>
+      <div class="stat-sub">mensal recorrente</div>
+      <div class="stat-icon">💰</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Trials Ativos</div>
+      <div class="stat-value">${d.trials_ativos||0}</div>
+      <div class="stat-sub">${d.expirando_em_3dias||0} expirando em 3 dias</div>
+      <div class="stat-icon">⏳</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Planos Expirados</div>
+      <div class="stat-value">${d.expirados||0}</div>
+      <div class="stat-sub">sem plano ativo</div>
+      <div class="stat-icon">🚫</div>
+    </div>
+  `;
+}
+
+async function carregarUsuarios() {
+  document.getElementById('tb-users').innerHTML = '<tr><td colspan="8" class="loading">Carregando...</td></tr>';
+  try {
+    const r = await fetch(API+'/admin/users', {headers:{'Authorization':'Bearer '+TOKEN}});
+    usuarios = await r.json();
+    usuariosFiltrados = [...usuarios];
+    renderUsuarios(usuariosFiltrados);
+    renderExpirando();
+    renderExpirados();
+  } catch(e) {
+    document.getElementById('tb-users').innerHTML = '<tr><td colspan="8" style="color:var(--accent2);padding:20px">Erro ao carregar usuários</td></tr>';
+  }
+}
+
+function renderExpirando() {
+  const agora = new Date();
+  const em3 = new Date(agora.getTime() + 3*24*60*60*1000);
+  const lista = usuarios.filter(u => {
+    if(!u.plan_expires_at) return false;
+    const exp = new Date(u.plan_expires_at);
+    return exp > agora && exp <= em3;
+  });
+  const el = document.getElementById('dash-expirando');
+  if(!lista.length) { el.innerHTML='<div class="empty"><span class="empty-icon">✅</span><div class="empty-text">Nenhum expirando</div></div>'; return; }
+  el.innerHTML = lista.map(u=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:13px">${u.company_name||u.email}</div>
+        <div style="font-size:11px;color:var(--text3)">${u.email}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--accent2)">${fmtData(u.plan_expires_at)}</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:4px" onclick="abrirTrial(${u.id})">Estender</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderExpirados() {
+  const agora = new Date();
+  const lista = usuarios.filter(u => {
+    if(!u.plan_expires_at) return true;
+    return new Date(u.plan_expires_at) < agora;
+  }).slice(0,5);
+  const el = document.getElementById('dash-expirados');
+  if(!lista.length) { el.innerHTML='<div class="empty"><span class="empty-icon">✅</span><div class="empty-text">Nenhum expirado</div></div>'; return; }
+  el.innerHTML = lista.map(u=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:13px">${u.company_name||u.email}</div>
+        <div style="font-size:11px;color:var(--text3)">${u.email}</div>
+      </div>
+      <button class="btn btn-success btn-sm" onclick="abrirModal(${u.id})">Ativar plano</button>
+    </div>
+  `).join('');
+}
+
+function statusPlano(u) {
+  const agora = new Date();
+  if(!u.plan_expires_at) return 'expirado';
+  const exp = new Date(u.plan_expires_at);
+  if(exp < agora) return 'expirado';
+  return 'ativo';
+}
+
+function badgePlano(u) {
+  const s = statusPlano(u);
+  if(s === 'expirado') return '<span class="badge badge-expirado">🚫 Expirado</span>';
+  if(u.plan === 'mensal') return '<span class="badge badge-mensal">💳 Mensal</span>';
+  if(u.plan === 'anual') return '<span class="badge badge-anual">⭐ Anual</span>';
+  return '<span class="badge badge-trial">⏳ Trial</span>';
+}
+
+function fmtData(d) {
+  if(!d) return '—';
+  return new Date(d).toLocaleDateString('pt-BR');
+}
+
+function diasRestantes(d) {
+  if(!d) return null;
+  const diff = new Date(d) - new Date();
+  return Math.ceil(diff / (1000*60*60*24));
+}
+
+function renderUsuarios(lista) {
+  const tb = document.getElementById('tb-users');
+  if(!lista.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><span class="empty-icon">👥</span><div class="empty-text">Nenhum usuário encontrado</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = lista.map(u => {
+    const dias = diasRestantes(u.plan_expires_at);
+    const diasStr = dias !== null ? (dias > 0 ? `${dias}d` : `<span style="color:var(--accent2)">${dias}d</span>`) : '—';
+    const suspended = u.suspended ? '<span class="badge badge-suspenso">Suspenso</span>' : '<span class="badge badge-ativo">Ativo</span>';
+    return `<tr>
+      <td>
+        <div class="td-name">${u.company_name||'—'}</div>
+        <div class="td-email">${u.email}</div>
+      </td>
+      <td>${badgePlano(u)}</td>
+      <td>${fmtData(u.plan_expires_at)} <span style="font-size:11px;color:var(--text3)">(${diasStr})</span></td>
+      <td>${u.total_clients||0}</td>
+      <td>${u.total_quotations||0}</td>
+      <td>${fmtData(u.created_at)}</td>
+      <td>${suspended}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="abrirTrial(${u.id})" title="Estender trial">⏰</button>
+          <button class="btn btn-ghost btn-sm" onclick="abrirModal(${u.id})" title="Editar">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="abrirDel(${u.id})" title="Deletar">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── BUSCA E FILTRO ──
+function buscaUsuarios(q) {
+  q = q.toLowerCase();
+  const base = filtrarPorPlano(usuarios, filtroAtual);
+  usuariosFiltrados = base.filter(u =>
+    (u.company_name||'').toLowerCase().includes(q) ||
+    (u.email||'').toLowerCase().includes(q) ||
+    (u.phone||'').toLowerCase().includes(q)
+  );
+  renderUsuarios(usuariosFiltrados);
+}
+
+function filtrarPorPlano(lista, f) {
+  const agora = new Date();
+  if(f==='todos') return lista;
+  if(f==='trial') return lista.filter(u=>u.plan==='trial'&&new Date(u.plan_expires_at)>agora);
+  if(f==='mensal') return lista.filter(u=>u.plan==='mensal');
+  if(f==='anual') return lista.filter(u=>u.plan==='anual');
+  if(f==='expirado') return lista.filter(u=>!u.plan_expires_at||new Date(u.plan_expires_at)<agora);
+  return lista;
+}
+
+function filtroPlano(f) {
+  filtroAtual = f;
+  ['todos','trial','mensal','anual','expirado'].forEach(id=>{
+    const el = document.getElementById('f-'+id);
+    if(el) { el.style.borderColor=''; el.style.color=''; }
+  });
+  const active = document.getElementById('f-'+f);
+  if(active) { active.style.borderColor='var(--accent)'; active.style.color='var(--accent)'; }
+  usuariosFiltrados = filtrarPorPlano(usuarios, f);
+  renderUsuarios(usuariosFiltrados);
+}
+
+// ── MODAL EDITAR ──
+function abrirModal(id) {
+  userEditId = id;
+  const u = usuarios.find(x=>x.id===id);
+  if(!u) return;
+  document.getElementById('mo-plano').value = u.plan||'trial';
+  document.getElementById('mo-suspended').value = u.suspended?'true':'false';
+  if(u.plan_expires_at) {
+    document.getElementById('mo-expira').value = u.plan_expires_at.split('T')[0];
+  }
+  document.getElementById('mo-user-info').innerHTML = `
+    <div style="background:var(--surface2);border-radius:9px;padding:12px">
+      <div style="font-weight:700">${u.company_name||'—'}</div>
+      <div style="font-size:12px;color:var(--text3)">${u.email}</div>
+    </div>
+  `;
+  document.getElementById('mo-user').classList.remove('hide');
+}
+
+function fecharModal() {
+  document.getElementById('mo-user').classList.add('hide');
+  userEditId = null;
+}
+
+async function salvarUsuario() {
+  if(!userEditId) return;
+  const plan = document.getElementById('mo-plano').value;
+  const expira = document.getElementById('mo-expira').value;
+  const suspended = document.getElementById('mo-suspended').value === 'true';
+
+  // Calcular nova data de expiração baseada no plano se não tiver data
+  let plan_expires_at = expira ? new Date(expira).toISOString() : null;
+  if(!expira) {
+    const d = new Date();
+    if(plan==='trial') d.setDate(d.getDate()+7);
+    else if(plan==='mensal') d.setMonth(d.getMonth()+1);
+    else if(plan==='anual') d.setFullYear(d.getFullYear()+1);
+    plan_expires_at = d.toISOString();
+  }
+
+  try {
+    const r = await fetch(API+'/admin/users/'+userEditId, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body: JSON.stringify({plan, plan_expires_at, suspended})
+    });
+    if(!r.ok) throw new Error();
+    toast('✅ Usuário atualizado!','ok');
+    fecharModal();
+    carregarUsuarios();
+  } catch(e) {
+    toast('❌ Erro ao salvar','err');
+  }
+}
+
+// ── MODAL DELETE ──
+function abrirDel(id) {
+  userDelId = id;
+  const u = usuarios.find(x=>x.id===id);
+  document.getElementById('del-nome').textContent = (u?.company_name||u?.email||'—');
+  document.getElementById('mo-del').classList.remove('hide');
+}
+
+function fecharDel() {
+  document.getElementById('mo-del').classList.add('hide');
+  userDelId = null;
+}
+
+async function confirmarDelete() {
+  if(!userDelId) return;
+  try {
+    const r = await fetch(API+'/admin/users/'+userDelId, {
+      method:'DELETE',
+      headers:{'Authorization':'Bearer '+TOKEN}
+    });
+    if(!r.ok) throw new Error();
+    toast('✅ Usuário deletado','ok');
+    fecharDel();
+    carregarUsuarios();
+  } catch(e) {
+    toast('❌ Erro ao deletar','err');
+  }
+}
+
+// ── MODAL TRIAL ──
+function abrirTrial(id) {
+  userTrialId = id;
+  const u = usuarios.find(x=>x.id===id);
+  document.getElementById('mo-trial-info').innerHTML = `
+    <strong>${u?.company_name||u?.email}</strong><br>
+    Expira: ${fmtData(u?.plan_expires_at)||'sem data'}
+  `;
+  document.getElementById('mo-dias').value = '';
+  document.getElementById('mo-trial').classList.remove('hide');
+}
+
+function fecharTrial() {
+  document.getElementById('mo-trial').classList.add('hide');
+  userTrialId = null;
+}
+
+function setDias(n) {
+  document.getElementById('mo-dias').value = n;
+}
+
+async function confirmarTrial() {
+  const dias = parseInt(document.getElementById('mo-dias').value);
+  if(!dias || dias < 1) { toast('⚠️ Informe os dias','err'); return; }
+  const u = usuarios.find(x=>x.id===userTrialId);
+  const base = u?.plan_expires_at && new Date(u.plan_expires_at) > new Date()
+    ? new Date(u.plan_expires_at)
+    : new Date();
+  base.setDate(base.getDate()+dias);
+
+  try {
+    const r = await fetch(API+'/admin/users/'+userTrialId, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body: JSON.stringify({plan:'trial', plan_expires_at: base.toISOString()})
+    });
+    if(!r.ok) throw new Error();
+    toast(`✅ Trial estendido em ${dias} dias!`,'ok');
+    fecharTrial();
+    carregarUsuarios();
+  } catch(e) {
+    toast('❌ Erro ao estender trial','err');
+  }
+}
+
+// ── TOAST ──
+function toast(msg, tipo='ok') {
+  const el = document.createElement('div');
+  el.className = 'toast '+tipo;
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.classList.add('show'),10);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),400)},3000);
+}
+</script>
+</body>
+</html>

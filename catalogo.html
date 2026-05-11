@@ -1108,14 +1108,16 @@
     try {
       const r = await fetch(`${API}/catalog/availability/${slug}?date=${date}`);
       if (!r.ok) { filterItems(); return; }
-      const avail = await r.json(); // { id: { stock_total, comprometido, disponivel }, ... }
+      const data = await r.json(); // { date, buffer_days, availability: { id: { stock_total, comprometido, disponivel }, ... } }
+      const avail = data.availability; // ← Extrair o objeto 'availability'
       allItems.forEach(item => {
         const a = avail[item.id];
-        item._avail = a ? a.disponivel : item.stock_quantity;
+        item._avail = a ? a.disponivel : item.stock_total; // ← Usar stock_total como fallback
       });
       filterItems();
       showToast('Disponibilidade atualizada! ✅', 'success');
-    } catch {
+    } catch (e) {
+      console.error('Erro ao carregar disponibilidade:', e);
       filterItems();
     }
   }

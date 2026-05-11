@@ -38,6 +38,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      padding-bottom: 80px;
     }
 
     /* ─── CONFETTI BG ─── */
@@ -68,54 +69,97 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      justify-content: flex-start;
+      gap: 14px;
+      overflow: hidden;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      min-width: 0;
     }
     .brand-logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
       object-fit: cover;
-      border: 3px solid var(--yellow);
-      box-shadow: 0 2px 12px rgba(255,209,102,.4);
+      border: none;
+      box-shadow: none;
+      flex-shrink: 0;
     }
     .brand-logo-placeholder {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
       background: linear-gradient(135deg, var(--coral), var(--purple));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      border: 3px solid var(--yellow);
+      font-size: 20px;
+      border: none;
+      flex-shrink: 0;
     }
     .brand-name {
       font-family: 'Fredoka', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .brand-city {
-      font-size: .78rem;
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ─── CART BTN (hidden — moved to bottom bar) ─── */
+    .cart-btn { display: none; }
+    .cart-badge { display: none; }
+
+    /* ─── BOTTOM CART BAR ─── */
+    .bottom-cart-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 150;
+      background: rgba(255,251,245,.97);
+      backdrop-filter: blur(14px);
+      border-top: 2px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 -4px 24px rgba(0,0,0,.08);
+    }
+    .bottom-cart-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .bottom-cart-label {
+      font-size: .72rem;
       color: var(--muted);
       font-weight: 600;
     }
-    .cart-btn {
-      position: relative;
+    .bottom-cart-total {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--coral);
+    }
+    .bottom-cart-btn {
       background: var(--coral);
       color: #fff;
       border: none;
       border-radius: 50px;
-      padding: 10px 20px;
-      font-family: 'Nunito', sans-serif;
-      font-size: .9rem;
+      padding: 12px 24px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -124,20 +168,19 @@
       transition: transform .15s, box-shadow .15s;
       box-shadow: 0 4px 16px rgba(255,94,91,.35);
     }
-    .cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,94,91,.4); }
-    .cart-badge {
+    .bottom-cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,94,91,.4); }
+    .bottom-cart-count {
       background: var(--yellow);
       color: var(--text);
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: .72rem;
+      width: 22px;
+      height: 22px;
+      font-size: .75rem;
       font-weight: 800;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
-    .cart-badge.visible { display: flex; }
 
     /* ─── HERO / INTRO ─── */
     .hero { display: none; }
@@ -737,12 +780,20 @@
         <div class="brand-city" id="brand-city"></div>
       </div>
     </div>
-    <button class="cart-btn" onclick="openCart()">
-      🛒 Carrinho
-      <span class="cart-badge" id="cart-badge">0</span>
-    </button>
   </div>
 </header>
+
+<!-- BOTTOM CART BAR -->
+<div class="bottom-cart-bar">
+  <div class="bottom-cart-info">
+    <span class="bottom-cart-label">Total estimado</span>
+    <span class="bottom-cart-total" id="bottom-cart-total">R$ 0,00</span>
+  </div>
+  <button class="bottom-cart-btn" onclick="openCart()">
+    🛒 Carrinho
+    <span class="bottom-cart-count" id="cart-badge">0</span>
+  </button>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -1133,15 +1184,15 @@
     const total = Object.values(cart).reduce((s, {item, qty}) => s + Number(item.price_per_day) * qty, 0);
     const count = Object.values(cart).reduce((s, {qty}) => s + qty, 0);
 
-    // badge
+    // bottom bar
+    document.getElementById('bottom-cart-total').textContent = `R$ ${total.toFixed(2).replace('.',',')}`;
     const badge = document.getElementById('cart-badge');
     badge.textContent = count;
-    count > 0 ? badge.classList.add('visible') : badge.classList.remove('visible');
+    badge.style.display = count > 0 ? 'flex' : 'none';
 
-    // total
+    // drawer total
     document.getElementById('cart-total').textContent = `R$ ${total.toFixed(2).replace('.',',')}`;
 
-    // drawer body
     renderCartBody();
   }
 

@@ -7,281 +7,516 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f8f8fc;--surface:#fff;--surface2:#f2f2f8;
-  --border:#e8e8f0;--border2:#d8d8e8;
-  --accent:#f7c948;--accent-dark:#d4a828;
-  --text:#14141e;--text2:#60607a;--text3:#a0a0b8;
+  --bg:#f4f4f8;--surface:#fff;--surface2:#f0f0f6;--surface3:#e8e8f0;
+  --border:#e2e2ec;--border2:#d0d0de;
+  --accent:#f7c948;--accent-dark:#c9a020;
+  --green:#22c55e;--green-dark:#16a34a;
+  --text:#111118;--text2:#52526e;--text3:#9898b4;
   --font:'Plus Jakarta Sans',sans-serif;
-  --shadow:0 4px 24px #00000012;
-  --shadow-sm:0 2px 8px #0000000e;
+  --shadow:0 4px 24px #0000000f;--shadow-md:0 8px 40px #00000014;
   --radius:14px;
+  --cart-w:320px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+button{cursor:pointer;font-family:var(--font)}
 
-/* ── HEADER ── */
-.header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
-.header-inner{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.header-logo{display:flex;align-items:center;gap:12px}
-.header-logo-img{width:44px;height:44px;border-radius:10px;object-fit:cover}
-.header-logo-icon{width:44px;height:44px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px}
-.header-company{font-size:18px;font-weight:800;letter-spacing:-.4px;color:var(--text)}
-.header-city{font-size:12px;color:var(--text3);margin-top:1px}
-.header-whats{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s}
-.header-whats:hover{opacity:.88}
-.header-whats svg{width:18px;height:18px;fill:currentColor}
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px #0000000a}
+.header-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-img{width:42px;height:42px;border-radius:10px;object-fit:cover}
+.logo-icon{width:42px;height:42px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px}
+.company-name{font-size:17px;font-weight:800;letter-spacing:-.4px}
+.company-city{font-size:11px;color:var(--text3);margin-top:1px}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn-whats{display:inline-flex;align-items:center;gap:7px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:700;transition:opacity .15s;text-decoration:none}
+.btn-whats:hover{opacity:.88}
+.btn-cart{position:relative;display:inline-flex;align-items:center;gap:7px;background:var(--text);color:#fff;border:none;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:700}
+.cart-badge{position:absolute;top:-7px;right:-7px;background:var(--accent);color:#111;border-radius:20px;font-size:10px;font-weight:800;padding:2px 6px;min-width:20px;text-align:center;display:none}
+.cart-badge.show{display:block}
 
-/* ── HERO ── */
-.hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);color:#fff;padding:40px 20px 36px;text-align:center}
-.hero-inner{max-width:600px;margin:0 auto}
-.hero-tag{display:inline-block;background:#f7c94820;color:var(--accent);border:1px solid #f7c94840;border-radius:20px;font-size:11px;font-weight:700;padding:4px 12px;margin-bottom:14px;letter-spacing:.8px;text-transform:uppercase}
-.hero-title{font-size:30px;font-weight:800;letter-spacing:-.8px;margin-bottom:10px;line-height:1.15}
-.hero-sub{font-size:14px;color:#a0a0c8;line-height:1.6}
+/* DATE BANNER */
+.date-banner{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:22px 20px}
+.date-inner{max-width:1200px;margin:0 auto}
+.date-title{color:#fff;font-size:19px;font-weight:800;margin-bottom:4px}
+.date-sub{color:#8888aa;font-size:13px;margin-bottom:14px}
+.date-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.date-group{display:flex;flex-direction:column;gap:5px}
+.date-label{font-size:11px;font-weight:700;color:#8888aa;text-transform:uppercase;letter-spacing:.6px}
+.date-input{background:#ffffff18;border:1.5px solid #ffffff22;color:#fff;border-radius:9px;padding:10px 14px;font-family:var(--font);font-size:13.5px;outline:none;transition:border .15s}
+.date-input:focus{border-color:var(--accent)}
+.date-input::placeholder{color:#ffffff44}
+.date-input option{background:#1a1a2e;color:#fff}
+.date-confirmed{margin-top:10px;font-size:12px;color:var(--accent);display:none;font-weight:600}
+.date-confirmed.show{display:block}
 
-/* ── FILTROS ── */
-.filters{max-width:1100px;margin:0 auto;padding:20px 20px 0}
-.filters-scroll{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-.filter-btn{padding:8px 16px;border-radius:22px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);transition:all .15s;white-space:nowrap}
-.filter-btn.active{background:var(--accent);color:#0c0d10;border-color:var(--accent)}
-.filter-btn:hover:not(.active){border-color:var(--border2);background:var(--surface2)}
-.search-wrap{max-width:1100px;margin:12px auto 0;padding:0 20px}
-.search-input{width:100%;background:var(--surface);border:1.5px solid var(--border2);border-radius:12px;padding:11px 16px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border .15s}
-.search-input:focus{border-color:var(--accent)}
-.search-input::placeholder{color:var(--text3)}
+/* FILTERS */
+.filters-wrap{max-width:1200px;margin:18px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.filters-left{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.filter-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12.5px;font-weight:600;font-family:var(--font);transition:all .15s;white-space:nowrap}
+.filter-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+.search-input{background:var(--surface);border:1.5px solid var(--border2);border-radius:9px;padding:8px 14px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;width:200px;transition:border .15s}
+.search-input:focus{border-color:var(--text2)}
 
-/* ── GRID ── */
-.grid{max-width:1100px;margin:20px auto 40px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+/* LAYOUT */
+.layout{max-width:1200px;margin:18px auto 60px;padding:0 20px;display:flex;gap:18px;align-items:flex-start}
+.catalog-area{flex:1;min-width:0}
+.items-count{font-size:12.5px;color:var(--text3);margin-bottom:12px;font-weight:500}
 
-/* ── CARD ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .2s;cursor:default;box-shadow:var(--shadow-sm)}
-.card:hover{transform:translateY(-3px);box-shadow:0 8px 32px #00000018;border-color:var(--accent)}
-.card-img{width:100%;height:180px;object-fit:cover;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--text3)}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+
+/* CARD */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:all .18s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card.indisponivel{opacity:.5;pointer-events:none}
+.card-img{width:100%;height:150px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--text3);overflow:hidden;position:relative;flex-shrink:0}
 .card-img img{width:100%;height:100%;object-fit:cover}
-.card-body{padding:14px}
-.card-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3}
-.card-cat{font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.card-footer{display:flex;align-items:center;justify-content:space-between}
-.card-price{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.5px}
-.card-price-sub{font-size:11px;color:var(--text3);font-weight:400}
-.card-unit{font-size:11px;color:var(--text2);background:var(--surface2);padding:3px 9px;border-radius:20px;font-weight:600}
+.disp-badge{position:absolute;top:7px;right:7px;border-radius:6px;font-size:10px;font-weight:700;padding:3px 7px}
+.badge-ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.badge-low{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.badge-out{background:#fff1f2;color:#e11d48;border:1px solid #fecdd3}
+.card-body{padding:11px;flex:1;display:flex;flex-direction:column}
+.card-name{font-size:13px;font-weight:700;margin-bottom:2px;line-height:1.3}
+.card-cat{font-size:10.5px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.card-price{font-size:16px;font-weight:800;letter-spacing:-.4px;margin-bottom:9px}
+.card-price span{font-size:11px;color:var(--text3);font-weight:400}
+.card-add{margin-top:auto}
+.qty-wrap{display:flex;align-items:center;background:var(--surface2);border-radius:8px;overflow:hidden}
+.qty-btn{background:none;border:none;width:34px;height:34px;font-size:17px;color:var(--text2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qty-btn:hover{background:var(--surface3)}
+.qty-val{flex:1;text-align:center;font-size:13.5px;font-weight:700}
+.btn-add{width:100%;background:var(--text);color:#fff;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:700;transition:background .15s}
+.btn-add:hover{background:#2a2a3e}
 
-/* ── CTA WHATS ── */
-.cta-whats{width:100%;margin-top:12px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:10px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s;text-decoration:none}
-.cta-whats:hover{opacity:.88}
+/* CART SIDEBAR */
+.cart-sidebar{width:var(--cart-w);flex-shrink:0;position:sticky;top:76px}
+.cart-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.cart-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-title{font-size:14px;font-weight:800}
+.cart-clear{font-size:12px;color:var(--text3);background:none;border:none;padding:0}
+.cart-clear:hover{color:#e11d48}
+.cart-empty{padding:28px 16px;text-align:center}
+.cart-empty-icon{font-size:32px;margin-bottom:8px;opacity:.4;display:block}
+.cart-empty-text{font-size:13px;color:var(--text3)}
+.cart-items{padding:8px 12px;max-height:320px;overflow-y:auto}
+.cart-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.citem-img{width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;overflow:hidden}
+.citem-img img{width:100%;height:100%;object-fit:cover}
+.citem-info{flex:1;min-width:0}
+.citem-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.citem-price{font-size:11px;color:var(--text3);margin-top:1px}
+.citem-qty{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.cqty-btn{background:var(--surface2);border:none;border-radius:6px;width:24px;height:24px;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.cqty-btn:hover{background:var(--surface3)}
+.cqty-val{font-size:13px;font-weight:700;min-width:18px;text-align:center}
+.citem-del{background:none;border:none;color:var(--text3);font-size:14px;padding:2px;margin-left:2px}
+.citem-del:hover{color:#e11d48}
+.cart-footer{padding:12px 16px;border-top:1px solid var(--border)}
+.cart-date-alert{background:var(--surface2);border-radius:8px;padding:9px 11px;font-size:11.5px;color:var(--text2);margin-bottom:10px;line-height:1.5}
+.cart-date-alert.warn{background:#fffbeb;color:#d97706}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.cart-total-lbl{font-size:12.5px;color:var(--text2)}
+.cart-total-val{font-size:19px;font-weight:800;letter-spacing:-.5px}
+.btn-solicitar{width:100%;background:var(--green);color:#fff;border:none;border-radius:9px;padding:12px;font-family:var(--font);font-size:13.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
+.btn-solicitar:hover{background:var(--green-dark)}
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:60px 20px;color:var(--text3)}
-.empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
-.empty-text{font-size:15px;font-weight:600;color:var(--text2)}
+/* MOBILE BAR */
+.mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1.5px solid var(--border);padding:10px 16px;z-index:200;box-shadow:0 -4px 20px #00000010}
+.mobile-bar-inner{display:flex;align-items:center;gap:12px;max-width:500px;margin:0 auto}
+.mobile-bar-info{flex:1}
+.mobile-bar-count{font-size:13px;font-weight:700}
+.mobile-bar-total{font-size:12px;color:var(--text3)}
+.btn-ver-cart{background:var(--green);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-family:var(--font);font-size:13px;font-weight:700;white-space:nowrap}
 
-/* ── LOADING ── */
-.loading{text-align:center;padding:60px;color:var(--text3);font-size:14px}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+/* CART MODAL MOBILE */
+.cart-modal{display:none;position:fixed;inset:0;z-index:300;background:#00000070;backdrop-filter:blur(4px)}
+.cart-modal.open{display:flex;align-items:flex-end}
+.cart-modal-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.cart-modal-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-modal-close{background:var(--surface2);border:none;border-radius:8px;width:30px;height:30px;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.cart-modal-content{flex:1;overflow-y:auto}
+.cart-modal-footer{padding:12px 16px;border-top:1px solid var(--border)}
+
+/* EMPTY GRID */
+.empty{text-align:center;padding:50px 20px;grid-column:1/-1}
+.empty-icon{font-size:44px;margin-bottom:10px;opacity:.35;display:block}
+.empty-text{font-size:14px;font-weight:600;color:var(--text2)}
+
+/* LOADING / ERRO */
+#loading{text-align:center;padding:80px;color:var(--text3)}
+.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.erro-wrap{text-align:center;padding:80px 20px}
 
-/* ── FOOTER ── */
-.footer{text-align:center;padding:20px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);background:var(--surface)}
-.footer a{color:var(--accent-dark);text-decoration:none;font-weight:600}
+/* TOAST */
+.toast-stack{position:fixed;bottom:80px;right:16px;z-index:500;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text);color:#fff;border-radius:10px;padding:10px 15px;font-size:13px;font-weight:600;transform:translateX(120%);opacity:0;transition:all .28s;max-width:260px;box-shadow:var(--shadow-md)}
+.toast.show{transform:translateX(0);opacity:1}
+.toast.err{background:#e11d48}
 
-/* ── ERRO ── */
-.erro{text-align:center;padding:80px 20px}
-.erro-icon{font-size:56px;margin-bottom:16px}
-.erro-title{font-size:22px;font-weight:800;margin-bottom:8px;color:var(--text)}
-.erro-sub{font-size:14px;color:var(--text2)}
+/* FOOTER */
+.footer{text-align:center;padding:18px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);background:var(--surface)}
+.footer a{color:var(--accent-dark);font-weight:600}
 
-/* ── MOBILE ── */
-@media(max-width:600px){
-  .grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 12px}
-  .card-img{height:140px}
-  .hero-title{font-size:22px}
-  .header-inner{padding:12px 14px}
-  .header-company{font-size:15px}
-  .filters{padding:14px 12px 0}
-  .search-wrap{padding:0 12px}
+/* RESPONSIVE */
+@media(max-width:860px){
+  .cart-sidebar{display:none}
+  .mobile-bar{display:block}
+  .layout{padding-bottom:80px}
+}
+@media(max-width:560px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:9px}
+  .card-img{height:130px}
+  .header-inner{padding:10px 14px}
+  .company-name{font-size:15px}
+  .date-form{flex-direction:column}
+  .date-input{width:100%}
+  .filters-wrap{padding:0 14px}
+  .search-input{width:100%}
+  .layout{padding:0 14px 80px;margin-top:14px}
+  .toast-stack{right:12px;bottom:90px}
 }
 </style>
 </head>
 <body>
+<div class="toast-stack" id="toasts"></div>
 
-<div id="loading" class="loading">
-  <div class="spinner"></div>
-  Carregando catálogo...
+<!-- LOADING -->
+<div id="loading"><div class="spinner"></div>Carregando catálogo...</div>
+
+<!-- ERRO -->
+<div id="erro" class="erro-wrap" style="display:none">
+  <div style="font-size:52px;margin-bottom:14px">😕</div>
+  <div style="font-size:21px;font-weight:800;margin-bottom:8px">Catálogo não encontrado</div>
+  <div style="font-size:13px;color:var(--text2)">Verifique o link ou entre em contato com a empresa.</div>
 </div>
 
-<div id="conteudo" style="display:none">
+<!-- APP -->
+<div id="app" style="display:none;flex-direction:column;min-height:100vh">
 
   <!-- HEADER -->
   <div class="header">
     <div class="header-inner">
-      <div class="header-logo">
+      <div class="logo-wrap">
         <div id="logo-wrap"></div>
         <div>
-          <div class="header-company" id="h-empresa">—</div>
-          <div class="header-city" id="h-cidade">—</div>
+          <div class="company-name" id="h-empresa">—</div>
+          <div class="company-city" id="h-cidade"></div>
         </div>
       </div>
-      <a id="h-whats" class="header-whats" href="#" target="_blank">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Fale conosco
-      </a>
+      <div class="header-actions">
+        <a id="h-whats" class="btn-whats" href="#" target="_blank" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Contato
+        </a>
+        <button class="btn-cart" onclick="abrirCartMobile()">
+          🛒 Carrinho <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-tag">🎉 Catálogo Online</div>
-      <div class="hero-title" id="hero-title">Nossos itens para locação</div>
-      <div class="hero-sub" id="hero-sub">Escolha os itens para o seu evento e entre em contato para montar seu orçamento.</div>
+  <!-- DATE BANNER -->
+  <div class="date-banner">
+    <div class="date-inner">
+      <div class="date-title">Quando é sua festa? 🎉</div>
+      <div class="date-sub">Informe a data para verificar disponibilidade</div>
+      <div class="date-form">
+        <div class="date-group">
+          <label class="date-label">Data do evento</label>
+          <input class="date-input" type="date" id="data-evento" onchange="onDataChange()">
+        </div>
+        <div class="date-group">
+          <label class="date-label">Tipo de evento</label>
+          <select class="date-input" id="tipo-evento">
+            <option value="">Selecione...</option>
+            <option>Aniversário</option><option>Casamento</option><option>Chá de bebê</option>
+            <option>Formatura</option><option>Corporativo</option><option>Outro</option>
+          </select>
+        </div>
+        <div class="date-group">
+          <label class="date-label">Seu nome</label>
+          <input class="date-input" type="text" id="nome-cliente" placeholder="Como te chamamos?">
+        </div>
+      </div>
+      <div class="date-confirmed" id="date-confirmed">✅ Data selecionada: <span id="date-label"></span></div>
     </div>
   </div>
 
-  <!-- FILTROS -->
-  <div class="filters">
-    <div class="filters-scroll" id="filtros"></div>
-  </div>
-  <div class="search-wrap">
-    <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="filtrar()">
+  <!-- FILTERS -->
+  <div class="filters-wrap">
+    <div class="filters-left" id="filtros"></div>
+    <input class="search-input" type="search" placeholder="🔍 Buscar..." oninput="filtrar()">
   </div>
 
-  <!-- GRID -->
-  <div class="grid" id="grid"></div>
+  <!-- LAYOUT -->
+  <div class="layout">
+    <div class="catalog-area">
+      <div class="items-count" id="items-count"></div>
+      <div class="grid" id="grid"></div>
+    </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    Desenvolvido por <a href="https://festamais-frontend.vercel.app" target="_blank">FestaMais</a> — Sistema de Locação para Festas
+    <!-- SIDEBAR DESKTOP -->
+    <div class="cart-sidebar">
+      <div class="cart-box">
+        <div class="cart-header">
+          <div class="cart-title">🛒 Carrinho</div>
+          <button class="cart-clear" onclick="limparCarrinho()">Limpar</button>
+        </div>
+        <div id="cart-desktop-content"></div>
+        <div class="cart-footer" id="cart-desktop-footer" style="display:none">
+          <div class="cart-date-alert" id="cart-desktop-date"></div>
+          <div class="cart-total-row">
+            <span class="cart-total-lbl">Total estimado</span>
+            <span class="cart-total-val" id="cart-desktop-total">R$ 0,00</span>
+          </div>
+          <button class="btn-solicitar" onclick="enviarWhatsApp()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar pelo WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <div class="footer">Desenvolvido por <a href="https://festamais-frontend.vercel.app" target="_blank">FestaMais</a></div>
 </div>
 
-<!-- ERRO -->
-<div id="erro" style="display:none" class="erro">
-  <div class="erro-icon">😕</div>
-  <div class="erro-title">Catálogo não encontrado</div>
-  <div class="erro-sub">Verifique o link ou entre em contato com a empresa.</div>
+<!-- MOBILE BAR -->
+<div class="mobile-bar" id="mobile-bar" style="display:none">
+  <div class="mobile-bar-inner">
+    <div class="mobile-bar-info">
+      <div class="mobile-bar-count" id="mobile-bar-count">0 itens</div>
+      <div class="mobile-bar-total" id="mobile-bar-total">R$ 0,00</div>
+    </div>
+    <button class="btn-ver-cart" onclick="abrirCartMobile()">Ver carrinho 🛒</button>
+  </div>
+</div>
+
+<!-- CART MODAL MOBILE -->
+<div class="cart-modal" id="cart-modal" onclick="fecharCartMobile(event)">
+  <div class="cart-modal-box">
+    <div class="cart-modal-header">
+      <div style="font-size:15px;font-weight:800">🛒 Carrinho</div>
+      <button class="cart-modal-close" onclick="fecharCartMobile()">✕</button>
+    </div>
+    <div class="cart-modal-content" id="cart-mobile-content"></div>
+    <div class="cart-modal-footer" id="cart-mobile-footer" style="display:none">
+      <div class="cart-date-alert" id="cart-mobile-date"></div>
+      <div class="cart-total-row">
+        <span class="cart-total-lbl">Total estimado</span>
+        <span class="cart-total-val" id="cart-mobile-total">R$ 0,00</span>
+      </div>
+      <button class="btn-solicitar" onclick="enviarWhatsApp()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar pelo WhatsApp
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
-const API = 'https://festamais-backend-production.up.railway.app/api';
-var todosItens = [];
-var categoriaAtiva = 'Todos';
-var telefoneEmpresa = '';
+const API='https://festamais-backend-production.up.railway.app/api';
+var todosItens=[],categoriaAtiva='Todos',carrinho={},empresa={},dataSelecionada='';
+var params=new URLSearchParams(window.location.search);
+var slug=params.get('empresa')||'';
 
-// Pega slug da URL
-var params = new URLSearchParams(window.location.search);
-var slug = params.get('empresa') || '';
+document.getElementById('data-evento').min=new Date().toISOString().split('T')[0];
 
-if(!slug) {
-  mostrarErro();
-} else {
-  carregarCatalogo();
+if(!slug) mostrarErro(); else carregarCatalogo();
+
+async function carregarCatalogo(){
+  try{
+    var r=await fetch(API+'/catalog/public/'+encodeURIComponent(slug));
+    if(!r.ok){mostrarErro();return;}
+    var data=await r.json();
+    empresa=data.company;
+    todosItens=data.items||[];
+    document.getElementById('h-empresa').textContent=empresa.name||'FestaMais';
+    document.getElementById('h-cidade').textContent=empresa.city?(empresa.city+(empresa.state?', '+empresa.state:'')):'';
+    document.title='Catálogo — '+(empresa.name||'FestaMais');
+    var lw=document.getElementById('logo-wrap');
+    if(empresa.logo) lw.innerHTML='<img class="logo-img" src="'+empresa.logo+'" alt="">';
+    else lw.innerHTML='<div class="logo-icon">🎉</div>';
+    var tel=(empresa.phone||'').replace(/\D/g,'');
+    if(tel){var wa=document.getElementById('h-whats');wa.href='https://wa.me/55'+tel+'?text='+encodeURIComponent('Olá! Vi o catálogo da '+empresa.name+' e gostaria de saber mais. 🎉');wa.style.display='inline-flex';}
+    renderFiltros();renderGrid();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='flex';
+  }catch(e){mostrarErro();}
 }
 
-async function carregarCatalogo() {
-  try {
-    var r = await fetch(API + '/catalog/public/' + encodeURIComponent(slug));
-    if(!r.ok) { mostrarErro(); return; }
-    var data = await r.json();
-
-    // Empresa
-    var empresa = data.company;
-    telefoneEmpresa = (empresa.phone || '').replace(/\D/g,'');
-    document.getElementById('h-empresa').textContent = empresa.name || 'FestaMais';
-    document.getElementById('h-cidade').textContent = empresa.city ? empresa.city + (empresa.state ? ', ' + empresa.state : '') : '';
-    document.getElementById('hero-title').textContent = 'Catálogo de ' + (empresa.name || 'FestaMais');
-    document.getElementById('hero-sub').textContent = 'Escolha os itens para o seu evento e clique em "Fale conosco" para montar seu orçamento.';
-    document.title = 'Catálogo — ' + (empresa.name || 'FestaMais');
-
-    // Logo
-    var logoWrap = document.getElementById('logo-wrap');
-    if(empresa.logo) {
-      logoWrap.innerHTML = '<img class="header-logo-img" src="'+empresa.logo+'" alt="Logo">';
-    } else {
-      logoWrap.innerHTML = '<div class="header-logo-icon">🎉</div>';
-    }
-
-    // WhatsApp
-    var waLink = document.getElementById('h-whats');
-    if(telefoneEmpresa) {
-      var msg = encodeURIComponent('Olá! Vi o seu catálogo online e gostaria de fazer um orçamento. 🎉\n' + window.location.href);
-      waLink.href = 'https://wa.me/55' + telefoneEmpresa + '?text=' + msg;
-    } else {
-      waLink.style.display = 'none';
-    }
-
-    todosItens = data.items || [];
-    renderFiltros();
-    renderGrid();
-
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('conteudo').style.display = 'block';
-
-  } catch(e) {
-    mostrarErro();
+function onDataChange(){
+  dataSelecionada=document.getElementById('data-evento').value;
+  if(dataSelecionada){
+    var d=new Date(dataSelecionada+'T12:00:00');
+    document.getElementById('date-label').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('date-confirmed').classList.add('show');
+  }else{
+    document.getElementById('date-confirmed').classList.remove('show');
   }
+  atualizarCarrinho();
 }
 
-function renderFiltros() {
-  var cats = ['Todos'];
-  todosItens.forEach(function(i){ if(i.category && cats.indexOf(i.category) === -1) cats.push(i.category); });
-  var filtrosEl = document.getElementById('filtros');
-  filtrosEl.innerHTML = cats.map(function(c){
+function renderFiltros(){
+  var cats=['Todos'];
+  todosItens.forEach(function(i){if(i.category&&cats.indexOf(i.category)===-1)cats.push(i.category);});
+  document.getElementById('filtros').innerHTML=cats.map(function(c){
     return '<button class="filter-btn'+(c===categoriaAtiva?' active':'')+'" onclick="setCategoria(\''+c+'\')">'+c+'</button>';
   }).join('');
 }
-
-function setCategoria(cat) {
-  categoriaAtiva = cat;
-  renderFiltros();
-  filtrar();
-}
-
-function filtrar() {
-  var busca = document.querySelector('.search-input').value.toLowerCase();
-  var lista = todosItens.filter(function(i){
-    var matchCat = categoriaAtiva === 'Todos' || i.category === categoriaAtiva;
-    var matchBusca = !busca || (i.name||'').toLowerCase().includes(busca) || (i.category||'').toLowerCase().includes(busca);
-    return matchCat && matchBusca;
+function setCategoria(c){categoriaAtiva=c;renderFiltros();filtrar();}
+function filtrar(){
+  var b=(document.querySelector('.search-input')||{value:''}).value.toLowerCase();
+  var lista=todosItens.filter(function(i){
+    return (categoriaAtiva==='Todos'||i.category===categoriaAtiva)&&(!b||(i.name||'').toLowerCase().includes(b)||(i.category||'').toLowerCase().includes(b));
   });
   renderGrid(lista);
 }
+function getLista(){
+  var b=(document.querySelector('.search-input')||{value:''}).value.toLowerCase();
+  return todosItens.filter(function(i){
+    return (categoriaAtiva==='Todos'||i.category===categoriaAtiva)&&(!b||(i.name||'').toLowerCase().includes(b)||(i.category||'').toLowerCase().includes(b));
+  });
+}
 
-function renderGrid(lista) {
-  lista = lista || todosItens;
-  var grid = document.getElementById('grid');
-  if(!lista.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">Nenhum item encontrado</div></div>';
-    return;
-  }
-
-  var msg = encodeURIComponent('Olá! Vi o seu catálogo online e gostaria de fazer um orçamento. 🎉\n' + window.location.href);
-  var waBase = telefoneEmpresa ? 'https://wa.me/55'+telefoneEmpresa+'?text='+msg : '#';
-
-  grid.innerHTML = lista.map(function(item){
-    var fotoHtml = item.photo
-      ? '<img src="'+item.photo+'" alt="'+item.name+'">'
-      : '<div class="card-img" style="display:flex;align-items:center;justify-content:center;height:180px;font-size:48px;background:var(--surface2)">📦</div>';
-
-    var preco = parseFloat(item.price_per_day)||0;
-
-    return '<div class="card">'
-      +'<div class="card-img">'+(item.photo ? '<img src="'+item.photo+'" alt="'+item.name+'">' : '')+'</div>'
+function renderGrid(lista){
+  lista=lista||todosItens;
+  document.getElementById('items-count').textContent=lista.length+(lista.length===1?' item encontrado':' itens encontrados');
+  var g=document.getElementById('grid');
+  if(!lista.length){g.innerHTML='<div class="empty"><span class="empty-icon">📦</span><div class="empty-text">Nenhum item encontrado</div></div>';return;}
+  g.innerHTML=lista.map(function(item){
+    var preco=parseFloat(item.price_per_day)||0;
+    var est=parseInt(item.stock_total)||0;
+    var inCart=carrinho[item.id]?carrinho[item.id].qty:0;
+    var dl=est===0?'Indisponível':est<=5?(est+' disponíveis'):'Disponível';
+    var dc=est===0?'badge-out':est<=5?'badge-low':'badge-ok';
+    return '<div class="card'+(est===0?' indisponivel':'')+'">'
+      +'<div class="card-img">'
+        +(item.photo?'<img src="'+item.photo+'" alt="'+item.name+'">':(item.name?'<span>📦</span>':''))
+        +'<div class="disp-badge '+dc+'">'+dl+'</div>'
+      +'</div>'
       +'<div class="card-body">'
         +'<div class="card-name">'+item.name+'</div>'
         +'<div class="card-cat">'+item.category+'</div>'
-        +'<div class="card-footer">'
-          +'<div class="card-price">R$ '+preco.toFixed(2)+'<span class="card-price-sub">/'+item.unit+'</span></div>'
-          +'<span class="card-unit">'+item.unit+'</span>'
+        +'<div class="card-price">R$ '+preco.toFixed(2).replace('.',',')+' <span>/'+item.unit+'</span></div>'
+        +'<div class="card-add">'
+          +(inCart>0
+            ?'<div class="qty-wrap"><button class="qty-btn" onclick="alterarQty('+item.id+',-1)">−</button><span class="qty-val">'+inCart+'</span><button class="qty-btn" onclick="alterarQty('+item.id+',1)">+</button></div>'
+            :'<button class="btn-add" onclick="adicionarItem('+item.id+')">+ Adicionar</button>'
+          )
         +'</div>'
-        +(telefoneEmpresa ? '<a class="cta-whats" href="'+waBase+'" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Quero este item</a>' : '')
       +'</div>'
     +'</div>';
   }).join('');
 }
 
-function mostrarErro() {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('erro').style.display = 'block';
+function adicionarItem(id){
+  var item=todosItens.find(function(i){return i.id===id;});
+  if(!item)return;
+  if(!carrinho[id])carrinho[id]={item:item,qty:1};
+  else carrinho[id].qty++;
+  atualizarCarrinho();
+  renderGrid(getLista());
+  toast('✅ '+item.name+' adicionado!');
+}
+function alterarQty(id,delta){
+  if(!carrinho[id])return;
+  carrinho[id].qty+=delta;
+  if(carrinho[id].qty<=0)delete carrinho[id];
+  atualizarCarrinho();
+  renderGrid(getLista());
+}
+function limparCarrinho(){carrinho={};atualizarCarrinho();renderGrid(getLista());}
+
+function atualizarCarrinho(){
+  var itens=Object.values(carrinho);
+  var total=itens.reduce(function(s,c){return s+parseFloat(c.item.price_per_day)*c.qty;},0);
+  var count=itens.reduce(function(s,c){return s+c.qty;},0);
+  var badge=document.getElementById('cart-badge');
+  badge.textContent=count;badge.classList.toggle('show',count>0);
+  var mbar=document.getElementById('mobile-bar');
+  mbar.style.display=count>0?'block':'none';
+  document.getElementById('mobile-bar-count').textContent=count+(count===1?' item':' itens');
+  document.getElementById('mobile-bar-total').textContent='R$ '+total.toFixed(2).replace('.',',');
+  renderCartContent('desktop');
+  renderCartContent('mobile');
+}
+
+function renderCartContent(w){
+  var itens=Object.values(carrinho);
+  var total=itens.reduce(function(s,c){return s+parseFloat(c.item.price_per_day)*c.qty;},0);
+  var contentEl=document.getElementById('cart-'+w+'-content');
+  var footerEl=document.getElementById('cart-'+w+'-footer');
+  var totalEl=document.getElementById('cart-'+w+'-total');
+  var dateEl=document.getElementById('cart-'+w+'-date');
+  if(!contentEl)return;
+  if(!itens.length){
+    contentEl.innerHTML='<div class="cart-empty"><span class="cart-empty-icon">🛒</span><div class="cart-empty-text">Carrinho vazio</div></div>';
+    if(footerEl)footerEl.style.display='none';return;
+  }
+  contentEl.innerHTML='<div class="cart-items">'+itens.map(function(c){
+    var p=parseFloat(c.item.price_per_day)||0;
+    return '<div class="cart-item">'
+      +'<div class="citem-img">'+(c.item.photo?'<img src="'+c.item.photo+'">':'📦')+'</div>'
+      +'<div class="citem-info"><div class="citem-name">'+c.item.name+'</div><div class="citem-price">R$ '+p.toFixed(2).replace('.',',')+'/'+c.item.unit+'</div></div>'
+      +'<div class="citem-qty"><button class="cqty-btn" onclick="alterarQty('+c.item.id+',-1)">−</button><span class="cqty-val">'+c.qty+'</span><button class="cqty-btn" onclick="alterarQty('+c.item.id+',1)">+</button></div>'
+      +'<button class="citem-del" onclick="alterarQty('+c.item.id+',-999)">✕</button>'
+    +'</div>';
+  }).join('')+'</div>';
+  if(footerEl){
+    footerEl.style.display='block';
+    if(totalEl)totalEl.textContent='R$ '+total.toFixed(2).replace('.',',');
+    if(dateEl){
+      if(dataSelecionada){
+        var d=new Date(dataSelecionada+'T12:00:00');
+        dateEl.className='cart-date-alert';
+        dateEl.innerHTML='📅 Data: <strong>'+d.toLocaleDateString('pt-BR')+'</strong>';
+      }else{
+        dateEl.className='cart-date-alert warn';
+        dateEl.innerHTML='⚠️ Informe a data do evento acima';
+      }
+    }
+  }
+}
+
+function enviarWhatsApp(){
+  var itens=Object.values(carrinho);
+  if(!itens.length){toast('Adicione itens ao carrinho.','err');return;}
+  if(!dataSelecionada){toast('Informe a data do evento!','err');fecharCartMobile();setTimeout(function(){document.getElementById('data-evento').focus();},300);return;}
+  var nome=document.getElementById('nome-cliente').value.trim();
+  var tipo=document.getElementById('tipo-evento').value;
+  var d=new Date(dataSelecionada+'T12:00:00');
+  var dataFmt=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var total=itens.reduce(function(s,c){return s+parseFloat(c.item.price_per_day)*c.qty;},0);
+  var msg='🎉 *Solicitação de Orçamento — '+empresa.name+'*\n\n';
+  if(nome) msg+='👤 *Cliente:* '+nome+'\n';
+  if(tipo) msg+='🎊 *Evento:* '+tipo+'\n';
+  msg+='📅 *Data:* '+dataFmt+'\n\n*Itens desejados:*\n';
+  itens.forEach(function(c){
+    var p=parseFloat(c.item.price_per_day)||0;
+    msg+='• '+c.item.name+' — '+c.qty+'x (R$ '+p.toFixed(2).replace('.',',')+'/'+c.item.unit+')\n';
+  });
+  msg+='\n💰 *Total estimado: R$ '+total.toFixed(2).replace('.',',')+'/dia*\n\nAguardo confirmação. 😊';
+  var tel=(empresa.phone||'').replace(/\D/g,'');
+  if(!tel){toast('Empresa sem telefone cadastrado.','err');return;}
+  window.open('https://wa.me/55'+tel+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function abrirCartMobile(){renderCartContent('mobile');document.getElementById('cart-modal').classList.add('open');document.body.style.overflow='hidden';}
+function fecharCartMobile(e){if(e&&e.target!==document.getElementById('cart-modal'))return;document.getElementById('cart-modal').classList.remove('open');document.body.style.overflow='';}
+function mostrarErro(){document.getElementById('loading').style.display='none';document.getElementById('erro').style.display='block';}
+function toast(msg,tipo){
+  var el=document.createElement('div');
+  el.className='toast'+(tipo==='err'?' err':'');
+  el.textContent=msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(function(){el.classList.add('show');},10);
+  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},400);},3000);
 }
 </script>
 </body>

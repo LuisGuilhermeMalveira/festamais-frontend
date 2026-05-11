@@ -870,16 +870,35 @@ function setupPage(){
 }
 
 // ── DATE ──
-function onDateChange(){
+var availabilityData = {};
+
+async function onDateChange(){
   selectedDate=document.getElementById('inp-date').value;
   if(selectedDate){
     var d=new Date(selectedDate+'T12:00:00');
     document.getElementById('date-ok-text').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
     document.getElementById('date-ok').classList.add('show');
+    // Busca disponibilidade real
+    await fetchAvailability(selectedDate);
   }else{
     document.getElementById('date-ok').classList.remove('show');
+    availabilityData={};
+    renderItems();
   }
   updateCart();
+}
+
+async function fetchAvailability(date){
+  try{
+    var r=await fetch(API+'/catalog/availability/'+encodeURIComponent(slug)+'?date='+date);
+    if(r.ok){
+      var data=await r.json();
+      availabilityData=data.availability||{};
+    }
+  }catch(e){
+    availabilityData={};
+  }
+  renderItems();
 }
 
 // ── FILTERS ──
@@ -925,15 +944,49 @@ function renderItems(){
   }
   g.innerHTML=lista.map(item=>{
     var preco=parseFloat(item.price_per_day)||0;
-    var est=parseInt(item.stock_total)||0;
+    var estoqueTotal=parseInt(item.stock_total)||0;
+
+    // Usa disponibilidade real se tiver data selecionada
+    var dispReal = selectedDate && availabilityData[item.id] !== undefined
+      ? availabilityData[item.id].disponivel
+      : estoqueTotal;
+    var comprometido = selectedDate && availabilityData[item.id]
+      ? availabilityData[item.id].comprometido
+      : 0;
+
     var inCart=cart[item.id]?cart[item.id].qty:0;
-    var availBadge=est===0?'<span class="avail-badge avail-out">Indisponível</span>':
-      est<=5?'<span class="avail-badge avail-low">'+est+' disponíveis</span>':
-      '<span class="avail-badge avail-ok">Disponível</span>';
-    var actions=inCart>0
-      ?'<div class="qty-controls"><button class="qty-btn" onclick="changeQty('+item.id+',-1)">−</button><span class="qty-num">'+inCart+'</span><button class="qty-btn" onclick="changeQty('+item.id+',1)">+</button></div>'
-      :'<button class="btn-add-to-cart" onclick="addItem('+item.id+')">+ Adicionar ao carrinho</button>';
-    return `<div class="item-card${est===0?' sold-out':''}" id="icard-${item.id}">
+    var soldOut = dispReal <= 0;
+
+    // Badge de disponibilidade
+    var availBadge;
+    if(!selectedDate){
+      // Sem data: mostra estoque geral
+      availBadge = estoqueTotal===0
+        ? '<span class="avail-badge avail-out">Indisponível</span>'
+        : estoqueTotal<=5
+          ? '<span class="avail-badge avail-low">'+estoqueTotal+' em estoque</span>'
+          : '<span class="avail-badge avail-ok">Disponível</span>';
+    } else {
+      // Com data: mostra disponível real
+      availBadge = dispReal===0
+        ? '<span class="avail-badge avail-out">Indisponível nesta data</span>'
+        : dispReal<=3
+          ? '<span class="avail-badge avail-low">'+dispReal+' disponíveis</span>'
+          : '<span class="avail-badge avail-ok">'+dispReal+' disponíveis</span>';
+    }
+
+    // Limita quantidade no carrinho ao disponível real
+    var maxQty = dispReal;
+    var actions;
+    if(soldOut && selectedDate){
+      actions='<button class="btn-add-to-cart" style="background:var(--surface2);color:var(--text3);cursor:not-allowed" disabled>🚫 Indisponível nesta data</button>';
+    } else if(inCart>0){
+      actions='<div class="qty-controls"><button class="qty-btn" onclick="changeQty('+item.id+',-1)">−</button><span class="qty-num">'+inCart+'</span><button class="qty-btn" onclick="changeQty('+item.id+',1,'+(maxQty)+')">+</button></div>';
+    } else {
+      actions='<button class="btn-add-to-cart" onclick="addItem('+item.id+')">+ Adicionar ao carrinho</button>';
+    }
+
+    return `<div class="item-card${(soldOut&&selectedDate)?' sold-out':''}" id="icard-${item.id}">
       <div class="card-photo">
         ${item.photo?`<img src="${item.photo}" alt="${item.name}" loading="lazy">`:'<div class="card-photo-placeholder">📦</div>'}
         ${availBadge}
@@ -954,15 +1007,30 @@ function renderItems(){
 // ── CART ──
 function addItem(id){
   var item=allItems.find(i=>i.id===id);if(!item)return;
+
+  // Verifica disponibilidade real
+  var dispReal = selectedDate && availabilityData[id] !== undefined
+    ? availabilityData[id].disponivel
+    : parseInt(item.stock_total)||0;
+
+  var jaNoCart = cart[id] ? cart[id].qty : 0;
+  if(jaNoCart >= dispReal){
+    toast('⚠️ Máximo disponível: '+dispReal+' unidades','err');
+    return;
+  }
+
   if(!cart[id])cart[id]={item,qty:1};else cart[id].qty++;
   updateCart();renderItems();
   toast('✅ '+item.name+' adicionado!','ok');
-  var btn=document.querySelector('#icard-'+id+' .btn-add-to-cart');
-  if(btn){btn.classList.add('adding');setTimeout(()=>btn.classList.remove('adding'),400);}
 }
-function changeQty(id,delta){
+function changeQty(id,delta,maxQty){
   if(!cart[id])return;
-  cart[id].qty+=delta;
+  var novoQty=cart[id].qty+delta;
+  if(maxQty!==undefined && novoQty>maxQty){
+    toast('⚠️ Máximo disponível: '+maxQty+' unidades','err');
+    return;
+  }
+  cart[id].qty=novoQty;
   if(cart[id].qty<=0)delete cart[id];
   updateCart();renderItems();
 }

@@ -1057,7 +1057,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 <div class="section" id="s-catalogo">
   <div class="page-header">
     <div><div class="page-title">Catálogo</div><div class="page-sub">Itens e preços</div></div>
-    <button class="btn btn-primary" onclick="abrirItem()">+ <span class="btn-text-long">Adicionar item</span></button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="copiarLinkCatalogo()" title="Copiar link do catálogo público">🔗 Link público</button>
+      <button class="btn btn-primary" onclick="abrirItem()">+ <span class="btn-text-long">Adicionar item</span></button>
+    </div>
   </div>
 
   <!-- Mobile header -->
@@ -3610,6 +3613,18 @@ function delItem(id){
   });
 }
 function buscaCat(v){ catBusca=v.toLowerCase(); renderCat(); }
+
+function copiarLinkCatalogo(){
+  var empresa = userCompany.company_name || '';
+  if(!empresa){ toast('Configure o nome da empresa em Minha Conta.','err'); return; }
+  var slug = empresa.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var link = 'https://festamais-frontend.vercel.app/catalogo.html?empresa='+slug;
+  navigator.clipboard.writeText(link).then(function(){
+    toast('✅ Link copiado! Compartilhe com seus clientes.');
+  }).catch(function(){
+    prompt('Copie o link do seu catálogo:', link);
+  });
+}
 function renderCat(){
   var lista=D.catalogo.filter(function(i){
     return !catBusca||i.nome.toLowerCase().indexOf(catBusca)>=0||i.cat.toLowerCase().indexOf(catBusca)>=0;

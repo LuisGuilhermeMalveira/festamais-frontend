@@ -1204,6 +1204,39 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         </div>
       </div>
     </div>
+
+    <!-- CONFIGURAÇÃO DE BUFFER DAYS -->
+    <div class="card" style="padding:24px;background:linear-gradient(135deg, #4f46e520 0%, #8b5cf620 100%);border:1.5px solid #7c3aed60">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text)">⏳ Dias de Segurança entre Aluguéis</div>
+      <div style="background:#7c3aed12;border:1px solid #7c3aed30;border-radius:10px;padding:12px 14px;font-size:12px;color:#c084fc;margin-bottom:16px;line-height:1.6">
+        💡 <strong>Simples:</strong> Se você definir 1 dia, quando um cliente alugar algo para o dia 20, o item fica bloqueado no dia 19, 20 e 21. Assim tem tempo pra retirar, usar e devolver.
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;display:block;margin-bottom:12px">Quantos dias de intervalo?</label>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <!-- Slider -->
+          <input type="range" id="buffer-slider" min="0" max="2" value="0" 
+            style="flex:1;min-width:200px;height:6px;border-radius:3px;background:#5b21b630;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer"
+            oninput="atualizarBufferDisplay(this.value)"
+          >
+          <!-- Display value -->
+          <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;min-width:120px">
+            <span id="buffer-value-display" style="font-size:18px;font-weight:800;color:#7c3aed;min-width:40px;text-align:center">0</span>
+            <span style="font-size:12px;color:var(--text3);font-weight:600">dia(s)</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">Mínimo 0 dias • Máximo 2 dias</div>
+      </div>
+
+      <!-- Exemplo visual -->
+      <div style="background:var(--surface2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:11px;color:var(--text3);line-height:1.6">
+        <strong style="color:var(--text)">Exemplo prático:</strong> Com <span id="buffer-example-days">0</span> dia(s), se alugam algo pro dia <strong>20</strong>, fica bloqueado só no dia <strong id="buffer-example-start">20</strong> até <strong id="buffer-example-end">20</strong>.
+      </div>
+
+      <button class="btn btn-primary" onclick="salvarBufferDays()" style="width:100%">💾 Salvar</button>
+    </div>
+
     <div class="card" style="padding:24px">
       <div style="font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text)">🔒 Trocar Senha</div>
       
@@ -4035,6 +4068,56 @@ function renderDash(){
 function fmtD(d){if(!d)return'—';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function pad(n){return String(n).padStart(2,'0');}
 
+// ===== BUFFER DAYS =====
+function atualizarBufferDisplay(val) {
+  document.getElementById('buffer-value-display').textContent = val;
+  document.getElementById('buffer-example-days').textContent = val;
+  const base = 20;
+  const buf = parseInt(val);
+  document.getElementById('buffer-example-start').textContent = (base - buf);
+  document.getElementById('buffer-example-end').textContent = (base + buf);
+  document.getElementById('buffer-slider').value = val;
+}
+
+function salvarBufferDays() {
+  const bufferDays = parseInt(document.getElementById('buffer-slider').value);
+  const token = localStorage.getItem('token');
+  
+  fetch(API + '/company/config/buffer', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ buffer_days: bufferDays })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      alert('Erro: ' + d.error);
+    } else {
+      alert('✅ Buffer salvo com sucesso! ' + bufferDays + ' dia(s)');
+    }
+  })
+  .catch(e => alert('Erro ao salvar: ' + e.message));
+}
+
+function carregarBufferDays() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  
+  fetch(API + '/company/config/buffer', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.buffer_days !== undefined) {
+      atualizarBufferDisplay(d.buffer_days);
+    }
+  })
+  .catch(e => console.log('Erro ao carregar buffer:', e));
+}
+
 // ===== INIT =====
 recalcularAlugados();
 initCal();
@@ -4043,6 +4126,7 @@ renderOrcs();
 renderCat();
 renderEst();
 updateBadge();
+carregarBufferDays();
 </script>
 
 </body>

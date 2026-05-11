@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pg-title">Catálogo de Locação — FestaMais</title>
-<meta name="description" id="pg-desc" content="Alugue itens para sua festa com facilidade. Veja nosso catálogo completo, preços e disponibilidade.">
+<meta name="description" id="pg-desc" content="Alugue itens para seu evento com facilidade. Veja nosso catálogo completo, preços e disponibilidade.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" id="pg-canonical" href="">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" id="og-title" content="Catálogo de Locação">
-<meta property="og:description" id="og-desc" content="Monte sua festa com facilidade. Veja itens disponíveis, preços e solicite seu orçamento.">
+<meta property="og:description" id="og-desc" content="Monte seu evento com facilidade. Veja itens disponíveis, preços e solicite seu orçamento.">
 <meta property="og:image" id="og-image" content="">
 <meta property="og:url" id="og-url" content="">
 <meta property="og:locale" content="pt_BR">
@@ -19,7 +19,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" id="tw-title" content="Catálogo de Locação">
-<meta name="twitter:description" id="tw-desc" content="Monte sua festa com facilidade.">
+<meta name="twitter:description" id="tw-desc" content="Monte seu evento com facilidade.">
 
 <!-- Schema.org JSON-LD -->
 <script type="application/ld+json" id="schema-org"></script>
@@ -111,78 +111,38 @@ a{text-decoration:none;color:inherit}
 /* ═══════════════════════════════════
    HERO
 ═══════════════════════════════════ */
-.hero{
-  background:linear-gradient(160deg,#0f0f1e 0%,#1a1a35 50%,#111128 100%);
-  padding:28px 24px 32px;
-  position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 70% 50%,#f7c94808 0%,transparent 70%);
-  pointer-events:none;
-}
-.hero-inner{max-width:1240px;margin:0 auto;position:relative}
-.hero-title{
-  font-size:clamp(20px,3vw,28px);
-  font-weight:800;color:#fff;
-  letter-spacing:-.5px;line-height:1.2;
-  margin-bottom:6px;
-}
+.hero{background:linear-gradient(160deg,#0f0f1e 0%,#1a1a35 100%);padding:12px 24px}
+.hero-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-title{font-size:clamp(14px,1.8vw,18px);font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.2}
 .hero-title span{color:var(--accent)}
-.hero-sub{
-  font-size:14px;color:#8080a8;
-  max-width:480px;line-height:1.6;
-}
+.hero-sub{font-size:11.5px;color:#8080a8;margin-top:2px}
 
 /* ═══════════════════════════════════
-   COMO FUNCIONA
+   COMO FUNCIONA — inline compacto
 ═══════════════════════════════════ */
-.how-section{background:var(--surface);border-bottom:1px solid var(--border);padding:32px 24px}
+.how-section{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 24px}
 .how-inner{max-width:1240px;margin:0 auto}
-.how-title{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:20px;text-align:center}
-.how-steps{display:flex;gap:0;justify-content:center;align-items:stretch;flex-wrap:wrap}
-.how-step{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 20px;flex:1;min-width:200px;max-width:280px;
-  position:relative;
-}
-.how-step:not(:last-child)::after{
-  content:'→';position:absolute;right:-4px;top:50%;transform:translateY(-50%);
-  font-size:18px;color:var(--border2);z-index:1;
-}
-.how-step-icon{
-  width:44px;height:44px;border-radius:12px;
-  background:linear-gradient(135deg,#f7c94820,#f7c94810);
-  border:1.5px solid #f7c94830;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
-}
-.how-step-text .ttl{font-size:13.5px;font-weight:700;margin-bottom:2px}
-.how-step-text .sub{font-size:12px;color:var(--text3);line-height:1.4}
+.how-steps{display:flex;gap:0;align-items:center;justify-content:center;flex-wrap:nowrap}
+.how-step{display:flex;align-items:center;gap:7px;padding:5px 14px;flex:1;min-width:0;position:relative}
+.how-step:not(:last-child)::after{content:'→';position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--border2)}
+.how-step-icon{font-size:14px;flex-shrink:0}
+.how-step-text .ttl{font-size:11px;font-weight:700;color:var(--text)}
+.how-step-text .sub{display:none}
 
 /* ═══════════════════════════════════
    DATE FORM
 ═══════════════════════════════════ */
-.date-section{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:24px}
+.date-section{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:12px 24px}
 .date-inner{max-width:1240px;margin:0 auto}
-.date-heading{color:#fff;font-size:16px;font-weight:800;margin-bottom:4px}
-.date-sub{color:#7070a0;font-size:13px;margin-bottom:16px}
-.date-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.date-group{display:flex;flex-direction:column;gap:5px}
-.date-label{font-size:10.5px;font-weight:700;color:#6060a0;text-transform:uppercase;letter-spacing:.7px}
-.date-input{
-  background:#ffffff14;border:1.5px solid #ffffff18;
-  color:#fff;border-radius:10px;padding:10px 14px;
-  font-family:var(--font);font-size:13.5px;outline:none;
-  transition:border .15s;min-width:140px;
-}
+.date-heading{color:#fff;font-size:13px;font-weight:700;margin-bottom:8px}
+.date-form{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.date-group{display:flex;flex-direction:column;gap:4px}
+.date-label{font-size:10px;font-weight:700;color:#6060a0;text-transform:uppercase;letter-spacing:.6px}
+.date-input{background:#ffffff14;border:1.5px solid #ffffff18;color:#fff;border-radius:8px;padding:8px 11px;font-family:var(--font);font-size:12.5px;outline:none;transition:border .15s;min-width:120px}
 .date-input:focus{border-color:var(--accent)}
 .date-input::placeholder{color:#ffffff33}
 .date-input option{background:#1a1a2e;color:#fff}
-.date-ok{
-  margin-top:10px;font-size:12px;color:var(--accent);
-  font-weight:600;display:none;align-items:center;gap:6px;
-}
+.date-ok{margin-top:7px;font-size:11px;color:var(--accent);font-weight:600;display:none;align-items:center;gap:5px}
 .date-ok.show{display:flex}
 
 /* ═══════════════════════════════════
@@ -575,37 +535,24 @@ a{text-decoration:none;color:inherit}
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
-      <h1 class="hero-title" id="hero-title">Locação de itens para <span>sua festa</span></h1>
-      <p class="hero-sub">Monte sua festa com facilidade. Escolha os itens, informe a data e receba seu orçamento pelo WhatsApp.</p>
+      <div>
+        <h1 class="hero-title" id="hero-title">Locação de itens para <span>seu evento</span></h1>
+        <div class="hero-sub">Informe a data, escolha os itens e solicite pelo WhatsApp.</div>
+      </div>
+      <a class="btn-contact" id="h-whats-hero" href="#" target="_blank" style="display:none;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Contato
+      </a>
     </div>
   </section>
 
   <!-- COMO FUNCIONA -->
   <div class="how-section">
     <div class="how-inner">
-      <div class="how-title">Como funciona</div>
       <div class="how-steps">
-        <div class="how-step">
-          <div class="how-step-icon">📅</div>
-          <div class="how-step-text">
-            <div class="ttl">Informe a data</div>
-            <div class="sub">Coloque quando é sua festa</div>
-          </div>
-        </div>
-        <div class="how-step">
-          <div class="how-step-icon">🛒</div>
-          <div class="how-step-text">
-            <div class="ttl">Monte seu carrinho</div>
-            <div class="sub">Escolha os itens desejados</div>
-          </div>
-        </div>
-        <div class="how-step">
-          <div class="how-step-icon">💬</div>
-          <div class="how-step-text">
-            <div class="ttl">Envie pelo WhatsApp</div>
-            <div class="sub">Receba confirmação e orçamento</div>
-          </div>
-        </div>
+        <div class="how-step"><span class="how-step-icon">📅</span><div class="how-step-text"><div class="ttl">Informe a data</div><div class="sub">Veja disponibilidade</div></div></div>
+        <div class="how-step"><span class="how-step-icon">🛒</span><div class="how-step-text"><div class="ttl">Monte o carrinho</div><div class="sub">Escolha os itens</div></div></div>
+        <div class="how-step"><span class="how-step-icon">💬</span><div class="how-step-text"><div class="ttl">Envie pelo WhatsApp</div><div class="sub">Receba o orçamento</div></div></div>
       </div>
     </div>
   </div>
@@ -613,7 +560,7 @@ a{text-decoration:none;color:inherit}
   <!-- DATE FORM -->
   <div class="date-section">
     <div class="date-inner">
-      <div class="date-heading">Quando é sua festa? 🎉</div>
+      <div class="date-heading">Quando é seu evento? 🎉</div>
       <div class="date-sub">Informe a data para verificar disponibilidade dos itens</div>
       <div class="date-form">
         <div class="date-group">
@@ -686,7 +633,7 @@ a{text-decoration:none;color:inherit}
   <footer class="site-footer">
     <div class="footer-company" id="footer-name">—</div>
     <div class="footer-address" id="footer-addr"></div>
-    <div class="footer-powered">Sistema desenvolvido por <a href="https://festamais-frontend.vercel.app" target="_blank">FestaMais</a> — Gestão de Locação para Festas</div>
+    <div class="footer-powered">Sistema desenvolvido por <a href="https://festamais-frontend.vercel.app" target="_blank">FestaMais</a> — Gestão de Locação para Eventos</div>
   </footer>
 </div>
 
@@ -793,7 +740,7 @@ function setupPage(){
   var pgTitle=name+(loc?' — Locação em '+loc:'— Catálogo Online');
   document.getElementById('pg-title').textContent=pgTitle;
   var cats=[...new Set(allItems.map(i=>i.category).filter(Boolean))].slice(0,3).join(', ');
-  var desc='Alugue '+(cats||'itens para festas')+' em '+loc+'. Catálogo online com preços e disponibilidade. Solicite seu orçamento pelo WhatsApp!';
+  var desc='Alugue '+(cats||'itens para eventos')+' em '+loc+'. Catálogo online com preços e disponibilidade. Solicite seu orçamento pelo WhatsApp!';
   document.getElementById('pg-desc').setAttribute('content',desc);
   document.getElementById('og-title').setAttribute('content',pgTitle);
   document.getElementById('og-desc').setAttribute('content',desc);
@@ -833,6 +780,7 @@ function setupPage(){
     var waMsg=encodeURIComponent('Olá! Vi o catálogo da '+name+' e gostaria de saber mais. 🎉');
     var waLink='https://wa.me/55'+tel+'?text='+waMsg;
     document.getElementById('h-whats').href=waLink;document.getElementById('h-whats').style.display='inline-flex';
+    var hw=document.getElementById('h-whats-hero');if(hw){hw.href=waLink;hw.style.display='inline-flex';}
     document.getElementById('wa-float').href=waLink;
   }else{document.getElementById('wa-float').style.display='none';}
 

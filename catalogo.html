@@ -113,37 +113,26 @@ a{text-decoration:none;color:inherit}
 ═══════════════════════════════════ */
 .hero{
   background:linear-gradient(160deg,#0f0f1e 0%,#1a1a35 50%,#111128 100%);
-  padding:48px 24px 52px;
+  padding:28px 24px 32px;
   position:relative;overflow:hidden;
 }
 .hero::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 70% 50%,#f7c94812 0%,transparent 70%);
+  background:radial-gradient(ellipse 80% 60% at 70% 50%,#f7c94808 0%,transparent 70%);
   pointer-events:none;
 }
 .hero-inner{max-width:1240px;margin:0 auto;position:relative}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:#ffffff12;border:1px solid #ffffff20;
-  border-radius:20px;padding:5px 12px;
-  font-size:11.5px;font-weight:700;color:#f7c948;
-  margin-bottom:16px;text-transform:uppercase;letter-spacing:.8px;
-}
 .hero-title{
-  font-size:clamp(26px,5vw,44px);
-  font-weight:900;color:#fff;
-  letter-spacing:-1px;line-height:1.1;
-  margin-bottom:12px;max-width:640px;
+  font-size:clamp(20px,3vw,28px);
+  font-weight:800;color:#fff;
+  letter-spacing:-.5px;line-height:1.2;
+  margin-bottom:6px;
 }
 .hero-title span{color:var(--accent)}
 .hero-sub{
-  font-size:15px;color:#9090b8;
-  max-width:520px;margin-bottom:28px;line-height:1.6;
+  font-size:14px;color:#8080a8;
+  max-width:480px;line-height:1.6;
 }
-.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
-.hero-stat{text-align:center}
-.hero-stat-val{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px}
-.hero-stat-lbl{font-size:11px;color:#6060a0;margin-top:2px;font-weight:500}
 
 /* ═══════════════════════════════════
    COMO FUNCIONA
@@ -586,10 +575,8 @@ a{text-decoration:none;color:inherit}
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
-      <div class="hero-badge">🎉 Catálogo Online</div>
       <h1 class="hero-title" id="hero-title">Locação de itens para <span>sua festa</span></h1>
-      <p class="hero-sub" id="hero-sub">Escolha os itens, informe a data do evento e envie sua solicitação pelo WhatsApp. Simples assim!</p>
-      <div class="hero-stats" id="hero-stats"></div>
+      <p class="hero-sub">Monte sua festa com facilidade. Escolha os itens, informe a data e receba seu orçamento pelo WhatsApp.</p>
     </div>
   </section>
 
@@ -849,15 +836,8 @@ function setupPage(){
     document.getElementById('wa-float').href=waLink;
   }else{document.getElementById('wa-float').style.display='none';}
 
-  // Hero
+  // Hero title com cidade
   document.getElementById('hero-title').innerHTML='Locação de itens em <span>'+(city||'sua cidade')+'</span>';
-  document.getElementById('hero-sub').textContent='Monte sua festa com facilidade. Escolha os itens, informe a data e receba seu orçamento pelo WhatsApp.';
-  var stats=[
-    {val:allItems.length,lbl:'Itens disponíveis'},
-    {val:'7 dias',lbl:'Prazo de resposta'},
-    {val:'100%',lbl:'Online'},
-  ];
-  document.getElementById('hero-stats').innerHTML=stats.map(s=>'<div class="hero-stat"><div class="hero-stat-val">'+s.val+'</div><div class="hero-stat-lbl">'+s.lbl+'</div></div>').join('');
 
   // Footer
   document.getElementById('footer-name').textContent=name;

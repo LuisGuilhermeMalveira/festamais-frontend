@@ -4083,7 +4083,7 @@ function salvarBufferDays() {
   const bufferDays = parseInt(document.getElementById('buffer-slider').value);
   const token = localStorage.getItem('token');
   
-  fetch(API + '/company/config/buffer', {
+  fetch(API_URL + '/company/buffer', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -4106,7 +4106,7 @@ function carregarBufferDays() {
   const token = localStorage.getItem('token');
   if (!token) return;
   
-  fetch(API + '/company/config/buffer', {
+  fetch(API_URL + '/company/buffer', {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(r => r.json())

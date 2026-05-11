@@ -32,6 +32,8 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { overflow-x: hidden; }
+
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
@@ -62,7 +64,7 @@
       background: rgba(255,251,245,.92);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid var(--border);
-      padding: 12px 24px;
+      padding: 10px 16px;
     }
     .header-inner {
       max-width: 1100px;
@@ -226,51 +228,52 @@
     }
     .date-card {
       background: linear-gradient(135deg, var(--coral) 0%, var(--purple) 100%);
-      border-radius: 20px;
-      padding: 24px 28px;
+      border-radius: 16px;
+      padding: 16px;
       color: #fff;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 12px;
       box-shadow: 0 8px 32px rgba(155,93,229,.3);
     }
-    .date-card-info { flex: 1; min-width: 200px; }
+    .date-card-info { flex: 1; }
     .date-card-title {
       font-family: 'Fredoka', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     .date-card-sub { font-size: .85rem; opacity: .85; }
     .date-input-wrap {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       align-items: center;
       flex-wrap: wrap;
+      width: 100%;
     }
     .date-input {
       border: none;
-      border-radius: 12px;
-      padding: 12px 18px;
+      border-radius: 10px;
+      padding: 10px 12px;
       font-family: 'Nunito', sans-serif;
-      font-size: .95rem;
+      font-size: .9rem;
       font-weight: 700;
       color: var(--text);
       background: rgba(255,255,255,.95);
       outline: none;
       cursor: pointer;
       box-shadow: 0 2px 12px rgba(0,0,0,.15);
+      flex: 1;
+      min-width: 0;
     }
     .date-confirm-btn {
       background: var(--yellow);
       color: var(--text);
       border: none;
-      border-radius: 12px;
-      padding: 12px 22px;
+      border-radius: 10px;
+      padding: 10px 16px;
       font-family: 'Fredoka', sans-serif;
-      font-size: 1rem;
+      font-size: .95rem;
       font-weight: 700;
       cursor: pointer;
       transition: transform .15s, box-shadow .15s;
@@ -278,19 +281,21 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
     .date-confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
     .date-skip-btn {
       background: rgba(255,255,255,.2);
       color: #fff;
       border: 2px solid rgba(255,255,255,.5);
-      border-radius: 12px;
-      padding: 10px 18px;
+      border-radius: 10px;
+      padding: 8px 14px;
       font-family: 'Nunito', sans-serif;
-      font-size: .85rem;
+      font-size: .82rem;
       font-weight: 700;
       cursor: pointer;
       transition: background .15s;
+      white-space: nowrap;
     }
     .date-skip-btn:hover { background: rgba(255,255,255,.3); }
     .date-selected-banner {
@@ -756,15 +761,17 @@
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 640px) {
+      .how-section { padding: 0 12px; }
       .how-step { padding: 8px 6px; }
-      .step-title { font-size: .75rem; }
-      .date-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
-      .date-card-title { font-size: 1rem; }
+      .step-title { font-size: .72rem; }
+      .date-section { padding: 0 12px; }
       .date-card-sub { display: none; }
-      .items-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-      .item-img { height: 140px; }
-      .catalog-toolbar { flex-direction: column; align-items: flex-start; }
-      .search-wrap { max-width: 100%; }
+      .catalog-section { padding: 0 12px; }
+      .items-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .item-img { height: 130px; }
+      .catalog-toolbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .search-wrap { max-width: 100%; width: 100%; }
+      .bottom-cart-bar { padding: 10px 16px; }
     }
   </style>
 </head>

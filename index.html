@@ -2498,14 +2498,14 @@ function somarDias(dataStr, n){
 // excludeEventoId: para não contar o próprio evento ao reeditar
 function getItensComprometidosNaJanela(dataEv, excludeEventoId){
   var comprometido={};
-  var bufferDays = userCompany ? (userCompany.buffer_days || 0) : 0;
   
-  // Método 1: Verificar eventos que caem nos dias da janela (dataEv ± bufferDays)
+  // Método 1: Verificar eventos que caem nos dias da janela
   D.eventos.forEach(function(e){
     if(excludeEventoId && e.id===excludeEventoId) return;
     if(!e.itens || !e.itens.length) return;
     
-    // Verificar se evento cai dentro da janela
+    // Usar o bufferDays SALVO com o evento
+    var bufferDays = e.bufferDays || 0;
     var eventDate = new Date(e.dataEv + 'T00:00:00');
     var checkDate = new Date(dataEv + 'T00:00:00');
     var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
@@ -3684,12 +3684,12 @@ function renderEst(){
     for(var d=0;d<7;d++){
       var data=somarDias(hj,d);
       var comp=0;
-      var bufferDays = userCompany ? (userCompany.buffer_days || 0) : 0;
       D.eventos.forEach(function(e){
         if(e.itens){
           var it=e.itens.find(function(x){return x.id===i.id;});
           if(it){
-            // Verificar se data cai dentro da janela de buffer_days do evento
+            // Usar o bufferDays SALVO com o evento, não o valor atual da empresa
+            var bufferDays = e.bufferDays || 0;
             var eventDate = new Date(e.dataEv + 'T00:00:00');
             var checkDate = new Date(data + 'T00:00:00');
             var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));

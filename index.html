@@ -2405,6 +2405,13 @@ function ld(){
   try{ var s=localStorage.getItem('fm4'); if(s) D=JSON.parse(s); }catch(e){
     try{ var s2=localStorage.getItem('fm3'); if(s2){ D=JSON.parse(s2); sv(); } }catch(e2){}
   }
+  
+  // INICIALIZAR blockedDates em cada item do catálogo
+  if(D.catalogo && D.catalogo.length > 0) {
+    D.catalogo.forEach(function(item) {
+      if(!item.blockedDates) item.blockedDates = {};
+    });
+  }
 }
 ld();
 

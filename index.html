@@ -4136,7 +4136,7 @@ async function saveBufferDays() {
   const input = document.getElementById('bufferInput');
   const val = parseInt(input.value) || 0;
   const btn = document.getElementById('saveBufferBtn');
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('fm_token');
 
   if (!token) {
     alert('❌ Token não encontrado. Faça login novamente.');
@@ -4180,7 +4180,7 @@ async function saveBufferDays() {
 }
 
 async function carregarBufferDays() {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('fm_token');
   if (!token) return;
   
   try {

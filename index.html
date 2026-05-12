@@ -4145,10 +4145,58 @@ async function saveBufferDays() {
       throw new Error(data.error || 'Erro ao salvar');
     }
 
-    console.log('✅ Dias de segurança atualizados!');
+    // Mostrar notificação visual
+    showBufferNotification('✅ Dias de segurança atualizados!');
   } catch (err) {
     console.error('Buffer save error:', err);
+    showBufferNotification('❌ Erro ao salvar');
   }
+}
+
+function showBufferNotification(msg) {
+  // Criar elemento de notificação
+  const notif = document.createElement('div');
+  notif.textContent = msg;
+  notif.style.cssText = `
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    animation: slideUp 0.3s ease-out;
+  `;
+  
+  document.body.appendChild(notif);
+  
+  // Remove após 2 segundos
+  setTimeout(() => {
+    notif.style.animation = 'slideDown 0.3s ease-out';
+    setTimeout(() => notif.remove(), 300);
+  }, 2000);
+}
+
+// CSS para animações
+if (!document.getElementById('buffer-notify-style')) {
+  const style = document.createElement('style');
+  style.id = 'buffer-notify-style';
+  style.textContent = `
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    @keyframes slideDown {
+      from { transform: translateX(-50%) translateY(0); opacity: 1; }
+      to { transform: translateX(-50%) translateY(100px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 async function carregarBufferDays() {

@@ -4122,16 +4122,12 @@ function updateBufferUI() {
 async function saveBufferDays() {
   const input = document.getElementById('bufferInput');
   const val = parseInt(input.value) || 0;
-  const btn = document.getElementById('saveBufferBtn');
   const token = localStorage.getItem('fm_token');
 
   if (!token) {
     console.error('Token não encontrado');
     return;
   }
-
-  btn.textContent = '💾 Salvando...';
-  btn.style.opacity = '0.7';
 
   try {
     const response = await fetch(API_URL + '/company/buffer', {
@@ -4149,20 +4145,9 @@ async function saveBufferDays() {
       throw new Error(data.error || 'Erro ao salvar');
     }
 
-    btn.textContent = '✅ Salvo!';
-    btn.style.background = '#4caf50';
-    btn.style.opacity = '1';
-    
-    setTimeout(() => {
-      btn.style.display = 'none';
-    }, 2000);
-
     console.log('✅ Dias de segurança atualizados!');
   } catch (err) {
     console.error('Buffer save error:', err);
-    btn.textContent = '❌ Erro ao salvar';
-    btn.style.background = '#f44336';
-    console.error('❌ Erro: ' + err.message);
   }
 }
 

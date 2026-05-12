@@ -1758,6 +1758,7 @@ function enterApp() {
   loadCatalogFromAPI();
   loadCompanyData();
   loadAllFromBackend();
+  carregarBufferDays();
   // Buscar dados frescos do servidor para garantir suspended/plan_expires_at atualizados
   fetch(API_URL + "/company", {
     headers: { "Authorization": "Bearer " + authToken }
@@ -4210,7 +4211,6 @@ renderOrcs();
 renderCat();
 renderEst();
 updateBadge();
-carregarBufferDays();
 </script>
 
 </body>

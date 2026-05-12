@@ -2490,20 +2490,28 @@ function somarDias(dataStr, n){
 // APENAS eventos confirmados (que realmente sacaram do estoque)
 // excludeEventoId: para não contar o próprio evento ao reeditar
 function getItensComprometidosNaJanela(dataEv, excludeEventoId){
+  var comprometido={};
+  
+  // Método 1: Verificar eventos que caem próximos à data
   var d0=somarDias(dataEv,-1);
   var d1=dataEv;
   var d2=somarDias(dataEv,1);
-  var comprometido={};
   D.eventos.forEach(function(e){
     if(excludeEventoId && e.id===excludeEventoId) return;
-    // SÓ conta eventos que têm itens (vieram de orçamento confirmado)
-    // Eventos criados manualmente sem itens não comprometem estoque
     if(e.itens && e.itens.length && (e.dataEv===d0||e.dataEv===d1||e.dataEv===d2)){
       e.itens.forEach(function(it){
         comprometido[it.id]=(comprometido[it.id]||0)+it.qty;
       });
     }
   });
+  
+  // Método 2: Verificar dias bloqueados com buffer_days
+  D.catalogo.forEach(function(cat){
+    if(cat.blockedDates && cat.blockedDates[dataEv]){
+      comprometido[cat.id]=(comprometido[cat.id]||0)+(cat.blockedDates[dataEv]||0);
+    }
+  });
+  
   return comprometido;
 }
 
@@ -2553,6 +2561,36 @@ function descontarEstoque(itens){
   itens.forEach(function(oi){
     var cat=D.catalogo.find(function(c){ return c.id===oi.id; });
     if(cat) cat.alugado=Math.max(0,(cat.alugado||0)+oi.qty);
+  });
+}
+
+function descontarEstoqueComBuffer(itens, dataEv, bufferDays){
+  // Bloqueia os itens para o período de data ± bufferDays
+  itens.forEach(function(oi){
+    var cat=D.catalogo.find(function(c){ return c.id===oi.id; });
+    if(!cat) return;
+    
+    // Inicializa bloqueio de datas se não existir
+    if(!cat.blockedDates) cat.blockedDates = {};
+    
+    // Calcula datas bloqueadas
+    var ev = new Date(dataEv + 'T00:00:00');
+    var startDate = new Date(ev.getTime());
+    startDate.setDate(startDate.getDate() - bufferDays);
+    var endDate = new Date(ev.getTime());
+    endDate.setDate(endDate.getDate() + bufferDays);
+    
+    // Bloqueia cada dia no período (while loop correto)
+    var currentDate = new Date(startDate.getTime());
+    while(currentDate <= endDate){
+      var dateStr = currentDate.toISOString().split('T')[0];
+      if(!cat.blockedDates[dateStr]) cat.blockedDates[dateStr] = 0;
+      cat.blockedDates[dateStr] += oi.qty;
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    // Também desconta do total alugado (compatibilidade)
+    cat.alugado = Math.max(0, (cat.alugado || 0) + oi.qty);
   });
 }
 
@@ -2995,13 +3033,14 @@ function confirmarOrc(){
     sinal:0,
     obs:o.obs||'',
     pago:false,
-    itens:JSON.parse(JSON.stringify(o.itens))
+    itens:JSON.parse(JSON.stringify(o.itens)),
+    bufferDays: userCompany.buffer_days || 0
   };
   D.eventos.push(novoEv);
-  descontarEstoque(o.itens);
+  descontarEstoqueComBuffer(o.itens, o.dataEv, userCompany.buffer_days || 0);
 
   sv();fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
-  toast('Confirmado! Estoque atualizado. ✅');
+  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
 }
 
 function cancelarOrc(){
@@ -3012,9 +3051,36 @@ function cancelarOrc(){
     var ev=D.eventos.find(function(e){return e.dataEv===o.dataEv&&e.cliNome===o.cliNome&&e.itens;});
     if(ev && ev.itens){
       devolverEstoque(ev.itens);
+      desbloquearDias(ev.itens, ev.dataEv, ev.bufferDays || 0);
       D.eventos=D.eventos.filter(function(e){return e.id!==ev.id;});
     }
-    sv();fechar('m-ver-orc');renderOrcs();renderEst();renderFin();renderDash();toast('Orçamento cancelado. Estoque e financeiro sincronizados.');
+    sv();fechar('m-ver-orc');renderOrcs();renderEst();renderFin();renderDash();toast('Orçamento cancelado. Estoque e dias desbloqueados. ✅');
+  });
+}
+
+function desbloquearDias(itens, dataEv, bufferDays){
+  // Remove os dias bloqueados para o período de data ± bufferDays
+  itens.forEach(function(oi){
+    var cat=D.catalogo.find(function(c){ return c.id===oi.id; });
+    if(!cat || !cat.blockedDates) return;
+    
+    // Calcula datas que foram bloqueadas
+    var ev = new Date(dataEv + 'T00:00:00');
+    var startDate = new Date(ev.getTime());
+    startDate.setDate(startDate.getDate() - bufferDays);
+    var endDate = new Date(ev.getTime());
+    endDate.setDate(endDate.getDate() + bufferDays);
+    
+    // Desbloqueia cada dia no período (while loop correto)
+    var currentDate = new Date(startDate.getTime());
+    while(currentDate <= endDate){
+      var dateStr = currentDate.toISOString().split('T')[0];
+      if(cat.blockedDates[dateStr]){
+        cat.blockedDates[dateStr] = Math.max(0, (cat.blockedDates[dateStr] || 0) - oi.qty);
+        if(cat.blockedDates[dateStr] === 0) delete cat.blockedDates[dateStr];
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
   });
 }
 

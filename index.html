@@ -2502,6 +2502,24 @@ function fecharSidebar(){
 
 // ===== EXCLUSÃO =====
 function confirmar(txt,cb){ document.getElementById('del-txt').innerHTML=txt; delCb=cb; abrir('m-del'); }
+function confirmarComAtencao(txt,cb){ 
+  var icon = document.querySelector('#m-del .del-icon');
+  var origIcon = icon.innerHTML;
+  icon.innerHTML = '⚠️';
+  icon.style.background = '#f59e0b20';
+  icon.style.color = 'var(--accent)';
+  document.getElementById('del-txt').innerHTML=txt; 
+  delCb=cb; 
+  abrir('m-del');
+  // Restaurar ícone quando fechar
+  var origFechar = window.fecharDel;
+  window.fecharDel = function(){
+    icon.innerHTML = origIcon;
+    icon.style.background = '';
+    icon.style.color = '';
+    origFechar();
+  };
+}
 function fecharDel(){ delCb=null; fechar('m-del'); }
 function executarDel(){ 
   if(typeof delCb==='function') { 
@@ -4275,7 +4293,7 @@ function saveBufferDaysWithConfirmation() {
   msg += '('+novoValor+' dia(s) antes e depois da data do evento)<br><br>';
   msg += '<small style="color:var(--text3)">Esta mudança se aplica APENAS a novos aluguéis.<br>Aluguéis já confirmados mantêm seus bloqueios originais.</small>';
   
-  confirmar(msg, function(){
+  confirmarComAtencao(msg, function(){
     saveBufferDays(); // Salva após confirmação
   });
 }

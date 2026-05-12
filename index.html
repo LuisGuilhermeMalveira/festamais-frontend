@@ -2504,19 +2504,35 @@ function fecharSidebar(){
 function confirmar(txt,cb){ document.getElementById('del-txt').innerHTML=txt; delCb=cb; abrir('m-del'); }
 function confirmarComAtencao(txt,cb){ 
   var icon = document.querySelector('#m-del .del-icon');
+  var title = document.querySelector('#m-del .del-title');
+  var btn = document.querySelector('#m-del .btn-danger');
+  
   var origIcon = icon.innerHTML;
+  var origTitle = title.innerHTML;
+  var origBtn = btn.innerHTML;
+  
   icon.innerHTML = '⚠️';
   icon.style.background = '#f59e0b20';
   icon.style.color = 'var(--accent)';
+  title.innerHTML = 'Confirmar alteração';
+  btn.innerHTML = '✓ Alterar';
+  btn.style.background = 'var(--accent)';
+  btn.style.borderColor = 'var(--accent)';
+  
   document.getElementById('del-txt').innerHTML=txt; 
   delCb=cb; 
   abrir('m-del');
-  // Restaurar ícone quando fechar
+  
+  // Restaurar quando fechar
   var origFechar = window.fecharDel;
   window.fecharDel = function(){
     icon.innerHTML = origIcon;
     icon.style.background = '';
     icon.style.color = '';
+    title.innerHTML = origTitle;
+    btn.innerHTML = origBtn;
+    btn.style.background = '';
+    btn.style.borderColor = '';
     origFechar();
   };
 }

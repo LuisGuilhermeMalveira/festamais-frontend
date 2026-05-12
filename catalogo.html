@@ -837,8 +837,8 @@
 <section class="date-section">
   <div class="date-card">
     <div class="date-card-info">
-      <div class="date-card-title">📅 Qual é a data do evento?</div>
-      <div class="date-card-sub">Assim mostramos só o que está disponível para você</div>
+      <div class="date-card-title">📅 Qual é a data do seu evento? <span style="color:#FF5E5B">*</span></div>
+      <div class="date-card-sub">⚠️ Você precisa escolher a data para ver o estoque disponível e fazer o orçamento</div>
     </div>
     <div class="date-input-wrap">
       <div id="date-selected-banner" class="date-selected-banner">
@@ -846,8 +846,7 @@
         <span class="date-change-link" onclick="resetDate()">Mudar data</span>
       </div>
       <input type="date" class="date-input" id="date-input" />
-      <button class="date-confirm-btn" onclick="confirmDate()">✔ Confirmar</button>
-      <button class="date-skip-btn" onclick="skipDate()">Ver tudo</button>
+      <button class="date-confirm-btn" onclick="confirmDate()">✔ Confirmar Data e Ver Estoque</button>
     </div>
   </div>
 </section>
@@ -1068,26 +1067,62 @@
     renderItems(filtered);
   }
 
-  // ─── DATE ────────────────────────────────────
+  // ─── DATE (OBRIGATÓRIA) ────────────────────────────────────
+  let availabilityCache = {}; // { dateStr: { itemId: { disponivel, total } } }
+
   function confirmDate() {
     const val = document.getElementById('date-input').value;
     if (!val) { showToast('Selecione uma data primeiro!', 'error'); return; }
     selDate = val;
-    showSelectedDate(val);
     loadAvailability(val);
   }
 
-  function skipDate() {
-    selDate = '';
-    document.getElementById('date-selected-banner').classList.remove('show');
-    document.getElementById('date-input').style.display = '';
-    document.querySelectorAll('.date-confirm-btn,.date-skip-btn').forEach(b => b.style.display = '');
-    renderItems(allItems);
-    showToast('Mostrando todos os itens', 'success');
+  async function loadAvailability(dateStr) {
+    try {
+      const r = await fetch(`${API}/catalog/availability/${slug}?date=${dateStr}`);
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      availabilityCache[dateStr] = {};
+      
+      // Mapear disponibilidade por item
+      if (d.availability) {
+        Object.entries(d.availability).forEach(([itemId, avail]) => {
+          availabilityCache[dateStr][itemId] = {
+            total: avail.stock_total || 0,
+            disponivel: avail.disponivel || 0
+          };
+        });
+      }
+      
+      // Esconder seletor de data e mostrar itens com estoque
+      document.getElementById('date-input').style.display = 'none';
+      document.querySelectorAll('.date-confirm-btn,.date-skip-btn').forEach(b => b.style.display = 'none');
+      document.getElementById('date-selected-banner').classList.add('show');
+      showSelectedDate(dateStr);
+      renderItems(allItems);
+      showToast(`✅ Data selecionada! Mostrando estoque para ${dateStr}`, 'success');
+    } catch (err) {
+      showToast('Erro ao carregar disponibilidade', 'error');
+    }
+  }
+
+  function showSelectedDate(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    const txt = d.toLocaleDateString('pt-BR', {weekday:'short', day:'2-digit', month:'short', year:'numeric'});
+    document.getElementById('date-selected-banner').innerHTML = 
+      `📅 <strong>${txt}</strong> — <a href="#" onclick="resetDate(); return false;" style="color:#FF5E5B;text-decoration:underline">Mudar</a>`;
   }
 
   function resetDate() {
     selDate = '';
+    availabilityCache = {};
+    document.getElementById('date-selected-banner').classList.remove('show');
+    document.getElementById('date-input').style.display = '';
+    document.getElementById('date-input').value = '';
+    document.querySelectorAll('.date-confirm-btn,.date-skip-btn').forEach(b => b.style.display = '');
+    renderItems(allItems);
+    showToast('Selecione uma data para continuar', 'info');
+  }
     document.getElementById('date-selected-banner').classList.remove('show');
     document.getElementById('date-input').style.display = '';
     document.querySelectorAll('.date-confirm-btn,.date-skip-btn').forEach(b => b.style.display = '');
@@ -1139,6 +1174,7 @@
       const qty     = inCart ? inCart.qty : 0;
       const avail   = item._avail !== undefined ? item._avail : (item.stock_quantity || 99);
       const unavail = selDate && avail <= 0;
+      const canAdd  = selDate && avail > 0 && qty < avail; // Pode adicionar se: tem data + tem estoque + não atingiu máximo
       const imgHtml = item.photo
         ? `<img src="${item.photo}" alt="${item.name}" loading="lazy" />`
         : `<span style="font-size:2.5rem">🎪</span>`;
@@ -1150,6 +1186,7 @@
           <div class="item-name">${item.name}</div>
           <div class="item-desc">${item.description || ''}</div>
           ${selDate && avail > 0 ? `<div class="avail-badge">✅ ${avail} disponíveis</div>` : ''}
+          ${selDate && avail <= 0 ? `<div class="avail-badge" style="background:#FFE5E5;color:#C73C3C">❌ Indisponível</div>` : ''}
           <div class="item-footer">
             <div class="item-price">
               R$ ${Number(item.price_per_day).toFixed(2).replace('.',',')}
@@ -1158,11 +1195,11 @@
             ${qty > 0 ? `
               <div class="qty-ctrl">
                 <button onclick="changeQty('${item.id}',-1)">−</button>
-                <span class="qty-num">${qty}</span>
-                <button onclick="changeQty('${item.id}',1)" ${selDate && qty>=avail?'disabled':''}>+</button>
+                <span class="qty-num">${qty}/${avail}</span>
+                <button onclick="changeQty('${item.id}',1)" ${!canAdd ? 'disabled' : ''}>+</button>
               </div>
             ` : `
-              <button class="add-btn" onclick="addToCart('${item.id}')">+</button>
+              <button class="add-btn" onclick="addToCart('${item.id}')" ${!canAdd ? 'disabled' : ''}>+</button>
             `}
           </div>
         </div>
@@ -1172,19 +1209,56 @@
 
   // ─── CART ────────────────────────────────────
   function addToCart(id) {
+    // Verificar se data foi selecionada
+    if (!selDate) {
+      showToast('📅 Selecione a data do evento primeiro!', 'error');
+      document.getElementById('date-input').focus();
+      return;
+    }
+    
     const item = allItems.find(i => i.id == id);
     if (!item) return;
-    cart[id] = { item, qty: (cart[id]?.qty || 0) + 1 };
+    
+    // ✅ VALIDAR ESTOQUE DISPONÍVEL NAQUELE DIA
+    const avail = item._avail || 0; // Quantidade disponível naquele dia
+    const currentQty = cart[id]?.qty || 0; // Quantidade já no carrinho
+    
+    // Se já tem o máximo, avisar e não deixar adicionar
+    if (currentQty >= avail) {
+      showToast(`⚠️ Máximo de ${avail} para ${item.name} nesta data!`, 'warning');
+      return;
+    }
+    
+    // Se tenta adicionar mais que tem disponível, avisar
+    if (currentQty + 1 > avail) {
+      showToast(`⚠️ Restam apenas ${avail - currentQty} do(a) ${item.name}!`, 'warning');
+      return;
+    }
+    
+    cart[id] = { item, qty: currentQty + 1 };
     updateCart();
-    showToast(`${item.name} adicionado! 🎉`, 'success');
+    showToast(`${item.name} adicionado! (${currentQty + 1}/${avail})`, 'success');
     filterItems();
   }
 
   function changeQty(id, delta) {
     if (!cart[id]) return;
+    
+    const item = allItems.find(i => i.id == id);
+    const avail = item?._avail || 0; // Máximo disponível
     const newQty = cart[id].qty + delta;
-    if (newQty <= 0) { delete cart[id]; }
-    else { cart[id].qty = newQty; }
+    
+    // ✅ VALIDAR: não deixar ultrapassar o máximo
+    if (delta > 0 && newQty > avail) {
+      showToast(`⚠️ Máximo de ${avail} para esta data!`, 'warning');
+      return;
+    }
+    
+    if (newQty <= 0) { 
+      delete cart[id]; 
+    } else { 
+      cart[id].qty = newQty; 
+    }
     updateCart();
     filterItems();
   }
@@ -1237,8 +1311,19 @@
 
   // ─── MODAL ───────────────────────────────────
   function openModal() {
-    if (!Object.keys(cart).length) { showToast('Adicione itens primeiro!', 'error'); return; }
-    if (selDate) document.getElementById('modal-date').value = selDate;
+    // Validar itens
+    if (!Object.keys(cart).length) { 
+      showToast('Adicione itens primeiro!', 'error'); 
+      return; 
+    }
+    
+    // VALIDAR DATA - OBRIGATÓRIA!
+    if (!selDate) { 
+      showToast('⚠️ Selecione a data do evento ANTES de fazer o orçamento!', 'error'); 
+      return; 
+    }
+
+    document.getElementById('modal-date').value = selDate;
 
     const list = document.getElementById('modal-items-list');
     const total = Object.values(cart).reduce((s,{item,qty}) => s + Number(item.price_per_day)*qty, 0);

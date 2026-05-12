@@ -4089,6 +4089,7 @@ function pad(n){return String(n).padStart(2,'0');}
 // ──────────────────────────────────────
 
 let bufferTimeout;
+let bufferLoaded = false; // Flag para evitar chamadas duplicate
 
 function decreaseBufferDays() {
   const input = document.getElementById('bufferInput');
@@ -4185,6 +4186,10 @@ async function saveBufferDays() {
 }
 
 async function carregarBufferDays() {
+  // Evita carregar múltiplas vezes
+  if (bufferLoaded) return;
+  bufferLoaded = true;
+
   const token = localStorage.getItem('fm_token');
   if (!token) return;
   
@@ -4194,7 +4199,7 @@ async function carregarBufferDays() {
     });
     const data = await response.json();
     
-    if (response.ok) {
+    if (response.ok && document.getElementById('bufferInput')) {
       document.getElementById('bufferInput').value = data.buffer_days || 0;
       updateBufferUI();
     }

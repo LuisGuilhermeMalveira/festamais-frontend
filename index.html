@@ -2374,12 +2374,16 @@ document.getElementById("login-screen").classList.add("hidden");
 document.getElementById("app-main").style.display = "none";
 document.body.style.background = "var(--bg)";
 
+// Garantir que authToken está atualizado do localStorage
+authToken = localStorage.getItem("fm_token") || null;
+
 if (authToken) {
   fetch(API_URL + "/health").then(function(r) {
     if (r.ok) {
       enterApp();
     } else {
       localStorage.clear();
+      authToken = null;
       document.getElementById("login-screen").classList.remove("hidden");
     }
   }).catch(function() {

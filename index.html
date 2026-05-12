@@ -3684,14 +3684,16 @@ function renderEst(){
     for(var d=0;d<7;d++){
       var data=somarDias(hj,d);
       var comp=0;
+      var bufferDays = userCompany ? (userCompany.buffer_days || 0) : 0;
       D.eventos.forEach(function(e){
         if(e.itens){
           var it=e.itens.find(function(x){return x.id===i.id;});
           if(it){
-            var d0=somarDias(e.dataEv,-1);
-            var d1=e.dataEv;
-            var d2=somarDias(e.dataEv,1);
-            if(data===d0||data===d1||data===d2) comp+=it.qty;
+            // Verificar se data cai dentro da janela de buffer_days do evento
+            var eventDate = new Date(e.dataEv + 'T00:00:00');
+            var checkDate = new Date(data + 'T00:00:00');
+            var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
+            if(Math.abs(diffDays) <= bufferDays) comp+=it.qty;
           }
         }
       });

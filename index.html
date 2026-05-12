@@ -3103,7 +3103,7 @@ function confirmarOrc(){
 
   sv();
   
-  // ENVIAR para o backend IMEDIATAMENTE
+  // ENVIAR para o backend IMEDIATAMENTE (async, sem esperar)
   (async function(){
     try {
       await apiPost('/quotations/confirm', {
@@ -3117,15 +3117,14 @@ function confirmarOrc(){
       });
       o._synced = true;
       sv();
-      // RECARREGAR tudo do backend após confirmação
-      await loadAllFromBackend();
     } catch (err) {
       console.log('Erro ao confirmar no backend:', err);
-      toast('Aviso: Confirmado localmente, mas pode haver problema na sincronização com servidor.', 'warn');
+      toast('Aviso: Confirmado localmente. Sincronização com servidor pode estar atrasada.', 'warn');
     }
-    fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
-    toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
   })();
+  
+  fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
+  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
 }
 
 function cancelarOrc(){

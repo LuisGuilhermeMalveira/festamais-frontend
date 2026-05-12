@@ -4145,7 +4145,7 @@ async function saveBufferDays() {
   const token = localStorage.getItem('fm_token');
 
   if (!token) {
-    alert('❌ Token não encontrado. Faça login novamente.');
+    console.error('Token não encontrado');
     return;
   }
 
@@ -4176,12 +4176,12 @@ async function saveBufferDays() {
       btn.style.display = 'none';
     }, 2000);
 
-    alert('✅ Dias de segurança atualizados!');
+    console.log('✅ Dias de segurança atualizados!');
   } catch (err) {
     console.error('Buffer save error:', err);
     btn.textContent = '❌ Erro ao salvar';
     btn.style.background = '#f44336';
-    alert('❌ Erro: ' + err.message);
+    console.error('❌ Erro: ' + err.message);
   }
 }
 

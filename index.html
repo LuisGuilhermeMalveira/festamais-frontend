@@ -2087,7 +2087,8 @@ async function syncClientsToBackend() {
 async function loadOrcsFromBackend() {
   try {
     var orcs = await apiGet("/quotations");
-    // MESCLAR dados do backend com dados locais (não substituir completamente)
+    // DADOS LOCAIS SÃO PREDOMINANTES
+    // Só adicionar orçamentos NOVOS do backend, não sobrescrever existentes
     (orcs || []).forEach(function(orc) {
       var items = [];
       try {
@@ -2097,22 +2098,10 @@ async function loadOrcsFromBackend() {
       var dataEv = orc.event_date || '';
       if (dataEv.indexOf('T') > -1) dataEv = dataEv.split('T')[0];
       
-      // Procurar orçamento existente nos dados locais
+      // Se orçamento já existe localmente, MANTER como está (usuário é predominante)
       var existing = D.orcamentos.find(function(x) { return x.id === orc.id; });
-      if (existing) {
-        // MESCLAR: atualizar alguns campos do backend mas preservar status local confirmado
-        existing.cliNome = orc.client_name || existing.cliNome;
-        existing.dataEv = dataEv || existing.dataEv;
-        existing.total = parseFloat(orc.total) || existing.total;
-        existing.sub = parseFloat(orc.total) || existing.sub;
-        if (items.length > 0) existing.itens = items;
-        existing._synced = true;
-        // NÃO sobrescrever status se já estiver 'Confirmado' localmente
-        if (orc.status && existing.status !== 'Confirmado') {
-          existing.status = orc.status;
-        }
-      } else {
-        // Novo orçamento do backend
+      if (!existing) {
+        // SÓ adicionar se for NOVO (não existe localmente)
         D.orcamentos.push({
           id: orc.id,
           cliNome: orc.client_name || '',
@@ -3112,8 +3101,31 @@ function confirmarOrc(){
   D.eventos.push(novoEv);
   descontarEstoqueComBuffer(o.itens, o.dataEv, userCompany.buffer_days || 0);
 
-  sv();fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
-  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
+  sv();
+  
+  // ENVIAR para o backend IMEDIATAMENTE
+  (async function(){
+    try {
+      await apiPost('/quotations/confirm', {
+        quotation_id: o.id,
+        status: 'Confirmado',
+        client_name: o.cliNome,
+        event_date: o.dataEv,
+        items: o.itens,
+        total: o.total,
+        buffer_days: userCompany.buffer_days || 0
+      });
+      o._synced = true;
+      sv();
+      // RECARREGAR tudo do backend após confirmação
+      await loadAllFromBackend();
+    } catch (err) {
+      console.log('Erro ao confirmar no backend:', err);
+      toast('Aviso: Confirmado localmente, mas pode haver problema na sincronização com servidor.', 'warn');
+    }
+    fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
+    toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
+  })();
 }
 
 function cancelarOrc(){

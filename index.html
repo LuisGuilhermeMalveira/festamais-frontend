@@ -3101,12 +3101,14 @@ function confirmarOrc(){
   D.eventos.push(novoEv);
   descontarEstoqueComBuffer(o.itens, o.dataEv, userCompany.buffer_days || 0);
 
-  sv();
+  sv(); // Salva LOCALMENTE (feedback imediato)
+  fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
+  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
   
-  // ENVIAR para o backend IMEDIATAMENTE (async, sem esperar)
+  // ENVIAR para o backend E MANTER SINCRONIZADO
   (async function(){
     try {
-      await apiPost('/quotations/confirm', {
+      const response = await apiPost('/quotations/confirm', {
         quotation_id: o.id,
         status: 'Confirmado',
         client_name: o.cliNome,
@@ -3115,16 +3117,21 @@ function confirmarOrc(){
         total: o.total,
         buffer_days: userCompany.buffer_days || 0
       });
-      o._synced = true;
-      sv();
+      
+      // RECEBER resposta do backend e ATUALIZAR localStorage
+      if(response && response.success){
+        o.status = response.quotation.status || 'Confirmado'; // Garante sincronização
+        o._synced = true;
+        sv(); // Salva a resposta do backend em localStorage
+        
+        // Outras páginas/abas agora veem os dados atualizados ✅
+        console.log('✅ Orçamento sincronizado com backend:', o.id);
+      }
     } catch (err) {
-      console.log('Erro ao confirmar no backend:', err);
-      toast('Aviso: Confirmado localmente. Sincronização com servidor pode estar atrasada.', 'warn');
+      console.log('Aviso ao confirmar no backend:', err);
+      toast('✅ Confirmado localmente. Sincronização com servidor em background...', 'warn');
     }
   })();
-  
-  fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
-  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
 }
 
 function cancelarOrc(){

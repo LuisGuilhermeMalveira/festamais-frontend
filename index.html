@@ -1216,23 +1216,16 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         💡 <strong>Simples:</strong> Se você definir 1 dia, quando um cliente alugar algo para o dia 20, o item fica bloqueado no dia 19, 20 e 21. Assim tem tempo pra retirar, usar e devolver.
       </div>
 
-      <!-- Input com +/- -->
-      <div style="display:flex;align-items:center;gap:15px;margin-bottom:24px">
-        <button id="decreaseBuffer" onclick="decreaseBufferDays()" 
-                style="width:50px;height:50px;font-size:24px;border:2px solid var(--border2);background:var(--surface2);border-radius:8px;cursor:pointer;transition:all 0.2s;font-weight:bold;color:var(--text)">
-          −
-        </button>
-
-        <div style="flex:1;text-align:center">
-          <input id="bufferInput" type="number" min="0" max="2" value="0" 
-                 onchange="saveBufferDaysWithConfirmation()" onkeyup="updateBufferUI()"
-                 style="font-size:48px;text-align:center;width:100px;border:3px solid #d4af37;padding:15px;border-radius:12px;font-weight:bold;background:linear-gradient(135deg, #fff9e6 0%, #fffaeb 100%);color:#1a1a1a;box-shadow:0 0 15px rgba(212,175,55,0.3)">
-          <p style="margin:12px 0 0 0;color:var(--text3);font-size:14px;font-weight:600">dia(s)</p>
+      <!-- Input + Botão Salvar -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;background:var(--surface2);border:2px solid var(--border2);border-radius:10px;padding:12px;height:56px">
+          <input id="bufferInput" type="number" min="0" max="7" value="0" 
+                 style="font-size:24px;text-align:center;flex:1;border:none;background:transparent;color:var(--text);font-weight:bold">
+          <span style="color:var(--text3);font-size:14px;font-weight:600">dia(s)</span>
         </div>
-
-        <button id="increaseBuffer" onclick="increaseBufferDays()" 
-                style="width:50px;height:50px;font-size:24px;border:2px solid var(--border2);background:var(--surface2);border-radius:8px;cursor:pointer;transition:all 0.2s;font-weight:bold;color:var(--text)">
-          +
+        <button onclick="salvarBufferDaysNow()" 
+                style="width:56px;height:56px;font-size:24px;border:2px solid var(--accent3);background:var(--accent3);border-radius:10px;cursor:pointer;transition:all 0.2s;font-weight:bold;color:white;display:flex;align-items:center;justify-content:center">
+          ✓
         </button>
       </div>
 
@@ -4294,60 +4287,47 @@ function pad(n){return String(n).padStart(2,'0');}
 
 let bufferLoaded = false; // Flag para evitar chamadas duplicate
 
-function saveBufferDaysWithConfirmation() {
+async function salvarBufferDaysNow() {
   const input = document.getElementById('bufferInput');
-  const novoValor = parseInt(input.value) || 0;
-  const valorAtual = userCompany.buffer_days || 0;
-  
-  if (novoValor === valorAtual) {
-    return; // Sem mudança
-  }
-  
-  var dias = novoValor === 1 ? 'dia' : 'dias';
-  var msg = '⚠️ <strong>Alterar Dias de Segurança</strong><br><br>';
-  msg += 'Isso vai afetar futuros bloqueios de estoque!<br><br>';
-  msg += '<strong>Novo valor:</strong> ' + novoValor + ' ' + dias + '<br>';
-  msg += '('+novoValor+' dia(s) antes e depois da data do evento)<br><br>';
-  msg += '<small style="color:var(--text3)">Esta mudança se aplica APENAS a novos aluguéis.<br>Aluguéis já confirmados mantêm seus bloqueios originais.</small>';
-  
-  confirmarComAtencao(msg, function(){
-    saveBufferDays(); // Salva após confirmação
-  });
-}
+  const val = parseInt(input.value) || 0;
+  const token = localStorage.getItem('fm_token');
 
-function decreaseBufferDays() {
-  const input = document.getElementById('bufferInput');
-  let val = parseInt(input.value) || 0;
-  if (val > 0) {
-    input.value = val - 1;
-    updateBufferUI();
-    saveBufferDaysWithConfirmation();
+  if (!token) {
+    toast('❌ Erro: Token não encontrado');
+    return;
   }
-}
 
-function increaseBufferDays() {
-  const input = document.getElementById('bufferInput');
-  let val = parseInt(input.value) || 0;
-  if (val < 2) {
-    input.value = val + 1;
-    updateBufferUI();
-    saveBufferDaysWithConfirmation();
+  try {
+    const response = await fetch(API_URL + '/company/buffer', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ buffer_days: val })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erro ao salvar');
+    }
+
+    // Atualizar localStorage
+    userCompany.buffer_days = val;
+    sv();
+
+    // Toast de sucesso
+    var dias = val === 1 ? 'dia' : 'dias';
+    toast('✅ Dias de segurança: ' + val + ' ' + dias);
+  } catch (err) {
+    console.error('Buffer save error:', err);
+    toast('❌ Erro ao salvar: ' + err.message);
   }
 }
 
-function updateBufferUI() {
-  const input = document.getElementById('bufferInput');
-  let val = parseInt(input.value) || 0;
-  
-  if (val < 0) val = 0;
-  if (val > 2) val = 2;
-  input.value = val;
+// Funções antigas removidas - usar salvarBufferDaysNow() em vez disso
 
-  const colors = ['#4caf50', '#fbc02d', '#ff9800'];
-  const bgColors = ['#e8f5e9', '#fff9c4', '#ffe0b2'];
-  input.style.borderColor = colors[val];
-  input.style.backgroundColor = bgColors[val];
-}
 
 async function saveBufferDays() {
   const input = document.getElementById('bufferInput');

@@ -2049,6 +2049,7 @@ async function syncOrcsToBackend() {
       var orc = D.orcamentos[i];
       if (!orc._synced) {
         await apiPost("/quotations", {
+          id: orc.id,  // ← ENVIAR o ID do frontend (não mudar)
           client_name: orc.cliNome,
           event_date: orc.dataEv,
           items: orc.itens,

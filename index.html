@@ -2155,42 +2155,28 @@ async function syncAllToBackend() {
 }
 
 async function loadEventsFromBackend() {
+  // Usa D.orcamentos ja carregado — evita segunda chamada a /api/quotations
   try {
-    var evs = await apiGet("/quotations");
-    if (evs && evs.length) {
-      evs.forEach(function(ev) {
-        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return String(e.id) === String(ev.id); })) {
-          var items = [];
-          try {
-            if (typeof ev.items === 'string') {
-              items = JSON.parse(ev.items);
-            } else {
-              items = ev.items || [];
-            }
-          } catch (e) {
-            items = [];
-          }
-          var dataEv = ev.event_date || '';
-          if (dataEv.indexOf('T') > -1) {
-            dataEv = dataEv.split('T')[0];
-          }
-          D.eventos.push({
-            id: ev.id,
-            cliNome: ev.client_name || '',
-            tipo: "Evento",
-            dataEv: dataEv,
-            hora: "18:00",
-            valor: parseFloat(ev.total) || 0,
-            sinal: 0,
-            pago: false,
-            itens: items,
-            obs: "",
-            _synced: true
-          });
-        }
-      });
-      sv();
-    }
+    D.orcamentos.forEach(function(orc) {
+      if (orc.status === "Confirmado" && !D.eventos.find(function(e) { return String(e.id) === String(orc.id); })) {
+        D.eventos.push({
+          id: orc.id,
+          cliNome: orc.cliNome || '',
+          tipo: "Evento",
+          dataEv: orc.dataEv || '',
+          hora: "18:00",
+          valor: parseFloat(orc.total) || 0,
+          sinal: orc.sinal || 0,
+          pago: false,
+          itens: orc.itens || [],
+          bufferDays: parseInt(orc.bufferDays) || 0,
+          obs: "",
+          _synced: true
+        });
+      }
+    });
+    sv();
+    renderEst();
   } catch (err) {
     console.log("Erro ao carregar eventos:", err);
   }

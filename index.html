@@ -886,6 +886,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <div class="qa-card" onclick="goTo('clientes');setTimeout(abrirCli,100)"><div class="qa-icon">👤</div><div class="qa-label">Novo Cliente</div></div>
     <div class="qa-card" onclick="goTo('estoque')"><div class="qa-icon">📦</div><div class="qa-label">Ver Estoque</div></div>
     <div class="qa-card" onclick="goTo('catalogo');setTimeout(abrirItem,100)"><div class="qa-icon">🏷️</div><div class="qa-label">Novo Item</div></div>
+    <div class="qa-card" onclick="copiarLinkCatalogo()"><div class="qa-icon">🔗</div><div class="qa-label">Link público</div></div>
   </div>
 
   <!-- STATS -->
@@ -1103,6 +1104,16 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
 
   <div style="display:grid;gap:20px;max-width:700px">
+
+    <!-- LINK PÚBLICO DO CATÁLOGO -->
+    <div class="card" style="padding:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:22px">🔗</span>
+        <div style="font-size:14px;font-weight:700;color:var(--text)">Link público do seu catálogo</div>
+      </div>
+      <div id="link-publico-display" style="font-size:12px;color:var(--accent3);background:var(--surface2);border:1.5px solid var(--border2);border-radius:9px;padding:11px 14px;word-break:break-all;margin-bottom:12px">—</div>
+      <button class="btn btn-primary" onclick="copiarLinkCatalogo()" style="width:100%">📋 Copiar link</button>
+    </div>
 
     <!-- PLANO ATUAL -->
     <div class="card" id="plano-card" style="padding:24px;border:2px solid var(--accent)">
@@ -1880,6 +1891,7 @@ async function loadCompanyData() {
       }
       // Preencher slug do catálogo público
       var slugDisplay = document.getElementById("config-slug-display");
+      atualizarLinkPublico();
       if (slugDisplay) {
         var slug = data.slug || '';
         if (slug) {
@@ -2017,25 +2029,15 @@ async function syncOrcsToBackend() {
     for (var i = 0; i < D.orcamentos.length; i++) {
       var orc = D.orcamentos[i];
       if (!orc._synced) {
-        // Não envia ID — backend gera e retorna o ID real
-        var result = await apiPost("/quotations", {
+        await apiPost("/quotations", {
+          id: orc.id,  // ← ENVIAR o ID do frontend (não mudar)
           client_name: orc.cliNome,
           event_date: orc.dataEv,
           items: orc.itens,
           total: orc.total,
           status: orc.status
         });
-        if (result && result.id) {
-          var oldId = orc.id;
-          // Atualiza ID local para o ID do banco
-          orc.id = result.id;
-          orc._synced = true;
-          // Atualiza também o evento vinculado se existir
-          var ev = D.eventos.find(function(e) { return String(e.id) === String(oldId) || String(e.quotationId) === String(oldId); });
-          if (ev) { ev.id = result.id; ev.quotationId = result.id; }
-        } else {
-          orc._synced = true;
-        }
+        orc._synced = true;
       }
     }
     sv();
@@ -2079,7 +2081,7 @@ async function loadOrcsFromBackend() {
       if (dataEv.indexOf('T') > -1) dataEv = dataEv.split('T')[0];
       
       // Se orçamento já existe localmente, MANTER como está (usuário é predominante)
-      var existing = D.orcamentos.find(function(x) { return String(x.id) === String(orc.id); });
+      var existing = D.orcamentos.find(function(x) { return x.id === orc.id; });
       if (!existing) {
         // SÓ adicionar se for NOVO (não existe localmente)
         D.orcamentos.push({
@@ -2165,28 +2167,42 @@ async function syncAllToBackend() {
 }
 
 async function loadEventsFromBackend() {
-  // Usa D.orcamentos ja carregado — evita segunda chamada a /api/quotations
   try {
-    D.orcamentos.forEach(function(orc) {
-      if (orc.status === "Confirmado" && !D.eventos.find(function(e) { return String(e.id) === String(orc.id); })) {
-        D.eventos.push({
-          id: orc.id,
-          cliNome: orc.cliNome || '',
-          tipo: "Evento",
-          dataEv: orc.dataEv || '',
-          hora: "18:00",
-          valor: parseFloat(orc.total) || 0,
-          sinal: orc.sinal || 0,
-          pago: false,
-          itens: orc.itens || [],
-          bufferDays: parseInt(orc.bufferDays) || 0,
-          obs: "",
-          _synced: true
-        });
-      }
-    });
-    sv();
-    renderEst();
+    var evs = await apiGet("/quotations");
+    if (evs && evs.length) {
+      evs.forEach(function(ev) {
+        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return e.id === ev.id; })) {
+          var items = [];
+          try {
+            if (typeof ev.items === 'string') {
+              items = JSON.parse(ev.items);
+            } else {
+              items = ev.items || [];
+            }
+          } catch (e) {
+            items = [];
+          }
+          var dataEv = ev.event_date || '';
+          if (dataEv.indexOf('T') > -1) {
+            dataEv = dataEv.split('T')[0];
+          }
+          D.eventos.push({
+            id: ev.id,
+            cliNome: ev.client_name || '',
+            tipo: "Evento",
+            dataEv: dataEv,
+            hora: "18:00",
+            valor: parseFloat(ev.total) || 0,
+            sinal: 0,
+            pago: false,
+            itens: items,
+            obs: "",
+            _synced: true
+          });
+        }
+      });
+      sv();
+    }
   } catch (err) {
     console.log("Erro ao carregar eventos:", err);
   }
@@ -3083,10 +3099,10 @@ function confirmarOrc(){
   
   o.status='Confirmado';
 
-  // Cria evento COM itens do orçamento (usa o.id para coincidir com o backend)
+  // Cria evento COM itens do orçamento
   var novoEv={
-    id:o.id,
-    quotationId:o.id,
+    id:D.nextId++,
+    quotationId:o.id, // ← Conecta ao orçamento original
     cliNome:o.cliNome,
     cliId:o.cliId,
     tipo:o.tipo,
@@ -3918,15 +3934,25 @@ function delItem(id){
 function buscaCat(v){ catBusca=v.toLowerCase(); renderCat(); }
 
 function copiarLinkCatalogo(){
-  var empresa = userCompany.company_name || '';
-  if(!empresa){ toast('Configure o nome da empresa em Minha Conta.','err'); return; }
-  var slug = empresa.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var slug = userCompany.slug || '';
+  if(!slug){ toast('Slug não configurado. Acesse Minha Conta.','err'); return; }
   var link = 'https://festamais-frontend.vercel.app/catalogo.html?empresa='+slug;
   navigator.clipboard.writeText(link).then(function(){
     toast('✅ Link copiado! Compartilhe com seus clientes.');
   }).catch(function(){
     prompt('Copie o link do seu catálogo:', link);
   });
+}
+
+function atualizarLinkPublico(){
+  var slug = userCompany.slug || '';
+  var el = document.getElementById('link-publico-display');
+  if(!el) return;
+  if(slug){
+    el.textContent = 'festamais-frontend.vercel.app/catalogo.html?empresa=' + slug;
+  } else {
+    el.textContent = 'Slug não configurado.';
+  }
 }
 function renderCat(){
   var lista=D.catalogo.filter(function(i){

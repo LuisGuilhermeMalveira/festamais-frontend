@@ -615,18 +615,17 @@ async function loadAvailability(date) {
       return;
     }
     const d = await r.json();
-    const av = d.availability || {};
-    
-    // av é um objeto tipo: { "38": { stock_total: 10, disponivel: 10 }, "39": { ... } }
+    // availability é um array: [{ id, stock_total, comprometido, disponivel }]
+    const avArray = d.availability || [];
+    const avMap = {};
+    for (const item of avArray) {
+      avMap[String(item.id)] = item;
+    }
     allItems = allItems.map(i => {
-      const itemAvail = av[String(i.id)];
-      let disp = Number(i.stock_total ?? 0); // fallback ao estoque total
-      
-      if (itemAvail) {
-        // itemAvail é um objeto: { stock_total, comprometido, disponivel }
-        disp = Number(itemAvail.disponivel ?? itemAvail.stock_total ?? 0);
-      }
-      
+      const itemAvail = avMap[String(i.id)];
+      const disp = itemAvail
+        ? Math.max(0, Number(itemAvail.disponivel ?? itemAvail.stock_total ?? 0))
+        : Number(i.stock_total ?? 0);
       return {...i, _avail: disp};
     });
   } catch (err) {

@@ -102,7 +102,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* ===================== TABLE (desktop only) ===================== */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;min-width:500px}
+table{width:100%;border-collapse:separate;border-spacing:0 5px;min-width:500px}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap}
 td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
@@ -123,7 +123,7 @@ tbody tr:hover td{background:var(--surface2)}
 .m-orc-card-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 
 /* Cliente mobile card */
-.m-cli-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:none}
+.m-cli-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:5px;display:none}
 .m-cli-card-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .m-cli-avatar{width:44px;height:44px;border-radius:12px;background:var(--accent4)22;border:1px solid var(--accent4)44;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .m-cli-info{flex:1;min-width:0}

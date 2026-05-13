@@ -280,12 +280,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .mob-section-header{background:transparent;border:none;padding:0;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #s-clientes .card{display:block}
 #s-catalogo .card{display:block}
+#cli-mobile,#cat-mobile,#fin-mobile{display:none}
 
 @media(max-width:768px){
-  #s-clientes .card{display:none}
-  #s-catalogo .card{display:none}
-  #mob-clis{margin-top:10px}
-  #mob-cat{margin-top:10px}
+  #cli-desktop,#cat-desktop,#mob-fin-table{display:none}
+  #cli-mobile,#cat-mobile,#fin-mobile{display:block}
+  #mob-clis{margin-top:0}
+  #mob-cat{margin-top:0}
 }
 
 /* ===================== EVENT CARD (agenda) ===================== */
@@ -332,9 +333,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 /* ===================== MOBILE CONTAINERS — hidden on desktop ===================== */
 #mob-clis,#mob-orcs,#mob-cat,#mob-fin{display:none;min-height:0}
 #mob-orcs-table{display:block} /* tabela desktop de orçamentos */
+#mob-orcs-card{display:none}   /* card mobile de orçamentos — escondido no desktop */
 
 @media(max-width:768px) {
-  #mob-orcs-table{display:none} /* esconder tabela no mobile */
+  #mob-orcs-table{display:none}  /* esconder tabela no mobile */
+  #mob-orcs-card{display:block}  /* mostrar card mobile com filtros + cards */
   #mob-clis,#mob-orcs,#mob-cat,#mob-fin{display:block}
   /* Hide entire container if it only has .empty inside */
   #mob-orcs:has(> .empty:only-child){
@@ -936,17 +939,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="btn btn-primary" onclick="abrirOrc()">+ <span class="btn-text-long">Novo orçamento</span></button>
   </div>
 
-  <!-- Mobile/Responsive filters - único conjunto de filtros -->
-  <div id="mob-orcs-header" class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-    <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
-      <button class="status-filter active" data-filter="Todos" onclick="filtroOrc(this,'Todos')">Todos</button>
-      <button class="status-filter" data-filter="Pendente" onclick="filtroOrc(this,'Pendente')">Pendente</button>
-      <button class="status-filter" data-filter="Confirmado" onclick="filtroOrc(this,'Confirmado')">Confirmado</button>
-      <button class="status-filter" data-filter="Cancelado" onclick="filtroOrc(this,'Cancelado')">Cancelados</button>
-    </div>
-    <input class="search-input" type="search" placeholder="🔍 Buscar..." oninput="buscaOrc(this.value)" style="max-width:180px">
-  </div>
-
   <!-- Desktop table -->
   <div class="card" id="mob-orcs-table">
     <div class="table-wrap">
@@ -955,8 +947,21 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
   </div>
 
-  <!-- Mobile cards container -->
-  <div id="mob-orcs"></div>
+  <!-- Mobile: card com filtros + cards -->
+  <div class="card" id="mob-orcs-card">
+    <!-- Filtros + busca -->
+    <div id="mob-orcs-header" class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
+        <button class="status-filter active" data-filter="Todos" onclick="filtroOrc(this,'Todos')">Todos</button>
+        <button class="status-filter" data-filter="Pendente" onclick="filtroOrc(this,'Pendente')">Pendente</button>
+        <button class="status-filter" data-filter="Confirmado" onclick="filtroOrc(this,'Confirmado')">Confirmado</button>
+        <button class="status-filter" data-filter="Cancelado" onclick="filtroOrc(this,'Cancelado')">Cancelados</button>
+      </div>
+      <input class="search-input" type="search" placeholder="🔍 Buscar..." oninput="buscaOrc(this.value)" style="max-width:180px">
+    </div>
+    <!-- Cards mobile container -->
+    <div id="mob-orcs"></div>
+  </div>
 </div>
 
 <!-- AGENDA (sem botão Novo Evento — o evento nasce do orçamento confirmado) -->
@@ -995,11 +1000,12 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
   <!-- Mobile header -->
   <div class="mob-section-header">
-    <span style="font-weight:700;font-size:16px">Estoque</span>
+    <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaEst(this.value)" style="flex:1;max-width:100%">
   </div>
 
-  <!-- Cards container (for desktop and mobile) -->
+  <!-- Cards container -->
   <div class="card">
+    <div class="search-bar"><input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaEst(this.value)"></div>
     <div id="mob-est"></div>
   </div>
 </div>
@@ -1011,13 +1017,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="btn btn-primary" onclick="abrirCli()">+ <span class="btn-text-long">Novo cliente</span></button>
   </div>
 
-  <!-- Mobile header -->
-  <div class="mob-section-header">
-    <input class="search-input" type="search" placeholder="🔍 Buscar cliente..." oninput="buscaCli(this.value)" style="flex:1;max-width:100%">
-  </div>
-
   <!-- Desktop table -->
-  <div class="card">
+  <div class="card" id="cli-desktop">
     <div class="search-bar">
       <input class="search-input" type="search" placeholder="🔍 Buscar cliente..." oninput="buscaCli(this.value)">
     </div>
@@ -1027,23 +1028,19 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
   </div>
 
-  <!-- Mobile cards -->
-  <div id="mob-clis"></div>
+  <!-- Mobile card -->
+  <div class="card" id="cli-mobile">
+    <div class="search-bar">
+      <input class="search-input" type="search" placeholder="🔍 Buscar cliente..." oninput="buscaCli(this.value)" style="width:100%">
+    </div>
+    <div id="mob-clis"></div>
+  </div>
 </div>
 
 <!-- FINANCEIRO -->
 <div class="section" id="s-financeiro">
   <div class="page-header">
     <div><div class="page-title">Financeiro</div><div class="page-sub">Pagamentos e recebimentos</div></div>
-  </div>
-
-  <!-- Mobile/Responsive filters - único conjunto de filtros -->
-  <div id="mob-fin-header" class="mob-section-header" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-    <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
-      <button class="status-filter active" data-finfilterm="Todos" onclick="filtroFin(this,'Todos')">Todos</button>
-      <button class="status-filter" data-finfilterm="Pendente" onclick="filtroFin(this,'Pendente')">Pendentes</button>
-      <button class="status-filter" data-finfilterm="Quitado" onclick="filtroFin(this,'Quitado')">Quitados</button>
-    </div>
   </div>
 
   <div class="fin-grid">
@@ -1060,8 +1057,15 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
   </div>
 
-  <!-- Mobile cards -->
-  <div id="mob-fin"></div>
+  <!-- Mobile card -->
+  <div class="card" id="fin-mobile">
+    <div id="mob-fin-header" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="status-filter active" data-finfilterm="Todos" onclick="filtroFin(this,'Todos')">Todos</button>
+      <button class="status-filter" data-finfilterm="Pendente" onclick="filtroFin(this,'Pendente')">Pendentes</button>
+      <button class="status-filter" data-finfilterm="Quitado" onclick="filtroFin(this,'Quitado')">Quitados</button>
+    </div>
+    <div id="mob-fin"></div>
+  </div>
 </div>
 
 <!-- CATÁLOGO -->
@@ -1074,13 +1078,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
   </div>
 
-  <!-- Mobile header -->
-  <div class="mob-section-header">
-    <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaCat(this.value)" style="flex:1;max-width:100%">
-  </div>
-
   <!-- Desktop table -->
-  <div class="card">
+  <div class="card" id="cat-desktop">
     <div class="search-bar"><input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaCat(this.value)"></div>
     <div class="table-wrap">
       <table><thead><tr><th>Item</th><th>Categoria</th><th>Preço/dia</th><th>Unidade</th><th>Estoque</th><th>Ações</th></tr></thead>
@@ -1088,8 +1087,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     </div>
   </div>
 
-  <!-- Mobile cards -->
-  <div id="mob-cat"></div>
+  <!-- Mobile card -->
+  <div class="card" id="cat-mobile">
+    <div class="search-bar">
+      <input class="search-input" type="search" placeholder="🔍 Buscar item..." oninput="buscaCat(this.value)" style="width:100%">
+    </div>
+    <div id="mob-cat"></div>
+  </div>
 </div>
 
 <!-- SEÇÃO MINHA EMPRESA -->
@@ -3814,18 +3818,28 @@ function delEv(id){
 }
 
 // ===== ESTOQUE =====
-function renderEst(){
+function buscaEst(q){ renderEst(q); }
+
+function renderEst(filtro){
   var container=document.getElementById('mob-est');
+  var q=(filtro||'').toLowerCase().trim();
   
   if(!D.catalogo.length){
     container.innerHTML='<div class="empty" style="margin-top:40px;grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">Nenhum item no estoque.</div><div class="empty-sub" style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="goTo(\'catalogo\');setTimeout(abrirItem,100)">+ Adicionar item ao catálogo</button></div></div>';
     return;
   }
 
+  var catalogo=q ? D.catalogo.filter(function(i){ return (i.nome||'').toLowerCase().includes(q)||(i.cat||'').toLowerCase().includes(q); }) : D.catalogo;
+
+  if(!catalogo.length){
+    container.innerHTML='<div class="empty" style="grid-column:1/-1;padding:40px 0;text-align:center"><div class="empty-icon">🔍</div><div class="empty-text">Nenhum item encontrado.</div></div>';
+    return;
+  }
+
   var hj=new Date().toISOString().slice(0,10);
   var html='';
   
-  D.catalogo.forEach(function(i){
+  catalogo.forEach(function(i){
     // Disponível HOJE
     var compHoje=0;
     D.eventos.forEach(function(e){

@@ -2258,11 +2258,13 @@ async function loadEventsFromBackend() {
             pago: false,
             itens: items,
             obs: "",
+            bufferDays: parseInt(ev.buffer_days) || 0,
             _synced: true
           });
         }
       });
       sv();
+      renderEst();
     }
   } catch (err) {
     console.log("Erro ao carregar eventos:", err);

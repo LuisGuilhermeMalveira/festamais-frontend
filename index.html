@@ -278,6 +278,15 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 /* Mobile section header - sem caixa, só layout */
 .mob-section-header{background:transparent;border:none;padding:0;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#s-clientes .card{display:block}
+#s-catalogo .card{display:block}
+
+@media(max-width:768px){
+  #s-clientes .card{display:none}
+  #s-catalogo .card{display:none}
+  #mob-clis{margin-top:10px}
+  #mob-cat{margin-top:10px}
+}
 
 /* ===================== EVENT CARD (agenda) ===================== */
 .ev-card{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);transition:background .1s}

@@ -1760,27 +1760,61 @@ async function doRegister() {
   btn.textContent = "Criando conta...";
   btn.disabled = true;
 
+  // 🎯 GERAR SLUG AUTOMÁTICO
+  var slug = gerarSlug(company);
+
   try {
     var res = await fetch(API_URL + "/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email, password: pass, company_name: company })
+      body: JSON.stringify({ 
+        email: email, 
+        password: pass, 
+        company_name: company,
+        slug: slug  // ← Enviar slug gerado
+      })
     });
     var data = await res.json();
     if (!res.ok) { showLoginError(data.error || "Erro ao cadastrar"); btn.textContent="Criar conta grátis"; btn.disabled=false; return; }
 
-    showLoginSuccess("✅ Conta criada! Entrando...");
+    // ✅ SUCESSO: Salvar user_id + slug
+    const user = data.user || {};
+    const userId = user.id || data.user_id;
+    const userSlug = user.slug || slug;
+    const catalogUrl = `${window.location.origin}/catalogo.html?empresa=${userId}`;
+
+    // Salvar no localStorage
+    authToken = data.token;
+    localStorage.setItem("fm_token", data.token);
+    localStorage.setItem("fm_user", JSON.stringify({...user, id: userId, slug: userSlug}));
+    localStorage.setItem("fm_catalog_url", catalogUrl);
+    localStorage.setItem("fm_user_id", userId);
+
+    // 🎉 Mostrar mensagem de sucesso com link público
+    showLoginSuccess(`✅ Conta criada! User ID: ${userId}`);
+    
+    // Mostrar link público ao usuário
     setTimeout(function() {
-      authToken = data.token;
-      localStorage.setItem("fm_token", data.token);
-      localStorage.setItem("fm_user", JSON.stringify(data.user));
+      alert(`🎉 Bem-vindo à FestaMais!\n\n📱 Seu ID: ${userId}\n🔗 Link do catálogo público:\n${catalogUrl}\n\nCompartilhe este link com seus clientes!`);
       enterApp();
-    }, 1000);
+    }, 500);
   } catch (err) {
+    console.error("Erro:", err);
     showLoginError("Erro de conexão. Tente novamente.");
     btn.textContent = "Criar conta grátis";
     btn.disabled = false;
   }
+}
+
+// 🔧 FUNÇÃO AUXILIAR: Gerar slug automático
+function gerarSlug(texto) {
+  return texto
+    .toLowerCase()                           // Minúsculas
+    .normalize('NFD')                       // Remove acentos
+    .replace(/[\u0300-\u036f]/g, '')       // Remove diacríticos
+    .replace(/[^a-z0-9]+/g, '-')           // Substitui caracteres especiais por -
+    .replace(/^-+|-+$/g, '')                // Remove - do início/fim
+    .substring(0, 50);                      // Máximo 50 caracteres
 }
 
 function enterApp() {

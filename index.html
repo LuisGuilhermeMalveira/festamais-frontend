@@ -2069,7 +2069,7 @@ async function loadOrcsFromBackend() {
       if (dataEv.indexOf('T') > -1) dataEv = dataEv.split('T')[0];
       
       // Se orçamento já existe localmente, MANTER como está (usuário é predominante)
-      var existing = D.orcamentos.find(function(x) { return x.id === orc.id; });
+      var existing = D.orcamentos.find(function(x) { return String(x.id) === String(orc.id); });
       if (!existing) {
         // SÓ adicionar se for NOVO (não existe localmente)
         D.orcamentos.push({
@@ -2159,7 +2159,7 @@ async function loadEventsFromBackend() {
     var evs = await apiGet("/quotations");
     if (evs && evs.length) {
       evs.forEach(function(ev) {
-        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return e.id === ev.id; })) {
+        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return String(e.id) === String(ev.id); })) {
           var items = [];
           try {
             if (typeof ev.items === 'string') {

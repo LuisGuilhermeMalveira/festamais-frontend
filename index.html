@@ -3179,11 +3179,10 @@ function confirmarOrc(){
   D.eventos.push(novoEv);
   descontarEstoqueComBuffer(o.itens, o.dataEv, userCompany.buffer_days || 0);
 
-  sv(); // Salva LOCALMENTE (feedback imediato)
+  sv();
   fechar('m-ver-orc');renderOrcs();renderDash();renderEst();renderFin();
-  toast('Confirmado! Estoque bloqueado com '+( userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
+  toast('Confirmado! Estoque bloqueado com '+(userCompany.buffer_days || 0)+' dia(s) de segurança. ✅');
   
-  // ENVIAR para o backend E MANTER SINCRONIZADO
   (async function(){
     try {
       const response = await apiPost('/quotations/confirm', {
@@ -4470,25 +4469,22 @@ if (!document.getElementById('buffer-notify-style')) {
 }
 
 async function carregarBufferDays() {
-  // Evita carregar múltiplas vezes
   if (bufferLoaded) return;
   bufferLoaded = true;
 
   const token = localStorage.getItem('fm_token');
   if (!token) return;
-  
+
   try {
     const response = await fetch(API_URL + '/company/buffer', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await response.json();
-    
     if (response.ok && document.getElementById('bufferInput')) {
-      document.getElementById('bufferInput').value = data.buffer_days || 0;
-      // updateBufferUI() removido — input simples não precisa
+      document.getElementById('bufferInput').value = data.buffer_days ?? 0;
     }
   } catch (err) {
-    console.error('Load buffer days error:', err);
+    console.error('carregarBufferDays error:', err);
   }
 }
 

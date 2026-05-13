@@ -313,6 +313,14 @@ select.form-input{cursor:pointer}
         <option value="true">Suspenso</option>
       </select>
     </div>
+    <div class="form-group">
+      <label class="form-label">⏳ Dias de Segurança entre Aluguéis</label>
+      <select class="form-input" id="mo-buffer">
+        <option value="0">0 dias (sem buffer)</option>
+        <option value="1">1 dia</option>
+        <option value="2">2 dias</option>
+      </select>
+    </div>
     <div class="form-actions">
       <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarUsuario()">💾 Salvar</button>
@@ -678,6 +686,7 @@ function abrirModal(id) {
       <div style="font-size:12px;color:var(--text3)">${u.email}</div>
     </div>
   `;
+  document.getElementById('mo-buffer').value = u.buffer_days || 0;
   document.getElementById('mo-user').classList.remove('hide');
 }
 
@@ -691,6 +700,7 @@ async function salvarUsuario() {
   const plan = document.getElementById('mo-plano').value;
   const expira = document.getElementById('mo-expira').value;
   const suspended = document.getElementById('mo-suspended').value === 'true';
+  const buffer_days = parseInt(document.getElementById('mo-buffer').value) || 0;
 
   // Calcular nova data de expiração baseada no plano se não tiver data
   let plan_expires_at = expira ? new Date(expira).toISOString() : null;
@@ -706,7 +716,7 @@ async function salvarUsuario() {
     const r = await fetch(API+'/admin/users/'+userEditId, {
       method:'PUT',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
-      body: JSON.stringify({plan, plan_expires_at, suspended})
+      body: JSON.stringify({plan, plan_expires_at, suspended, buffer_days})
     });
     if(!r.ok) throw new Error();
     toast('✅ Usuário atualizado!','ok');

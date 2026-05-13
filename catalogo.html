@@ -608,16 +608,29 @@ async function loadCompany() {
 async function loadAvailability(date) {
   try {
     const r = await fetch(`${API}/catalog/availability/${slug}?date=${date}`);
-    const d = r.ok ? await r.json() : {};
+    if (!r.ok) {
+      console.error("Availability error:", r.status);
+      allItems = allItems.map(i => ({...i, _avail: Number(i.stock_total ?? 0)}));
+      filterItems();
+      return;
+    }
+    const d = await r.json();
     const av = d.availability || {};
+    
+    // av é um objeto tipo: { "38": { stock_total: 10, disponivel: 10 }, "39": { ... } }
     allItems = allItems.map(i => {
-      const a = av[i.id];
-      const disp = a !== undefined
-        ? (typeof a === 'object' ? (a.disponivel ?? a.stock_total) : a)
-        : i.stock_total ?? 0;
-      return {...i, _avail: Number(disp)};
+      const itemAvail = av[String(i.id)];
+      let disp = Number(i.stock_total ?? 0); // fallback ao estoque total
+      
+      if (itemAvail) {
+        // itemAvail é um objeto: { stock_total, comprometido, disponivel }
+        disp = Number(itemAvail.disponivel ?? itemAvail.stock_total ?? 0);
+      }
+      
+      return {...i, _avail: disp};
     });
-  } catch {
+  } catch (err) {
+    console.error("loadAvailability error:", err);
     allItems = allItems.map(i => ({...i, _avail: Number(i.stock_total ?? 0)}));
   }
   filterItems();

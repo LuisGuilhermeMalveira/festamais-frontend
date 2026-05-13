@@ -3073,10 +3073,10 @@ function confirmarOrc(){
   
   o.status='Confirmado';
 
-  // Cria evento COM itens do orçamento
+  // Cria evento COM itens do orçamento (usa o.id para coincidir com o backend)
   var novoEv={
-    id:D.nextId++,
-    quotationId:o.id, // ← Conecta ao orçamento original
+    id:o.id,
+    quotationId:o.id,
     cliNome:o.cliNome,
     cliId:o.cliId,
     tipo:o.tipo,

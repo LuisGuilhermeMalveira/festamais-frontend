@@ -278,11 +278,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 /* Mobile section header - sem caixa, só layout */
 .mob-section-header{background:transparent;border:none;padding:0;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#s-clientes .card{display:block}
-#s-catalogo .card{display:block}
+/* Desktop: mostrar tabelas, esconder cards mobile */
 #cli-mobile,#cat-mobile,#fin-mobile{display:none}
 
 @media(max-width:768px){
+  /* Mobile: esconder tabelas, mostrar cards */
   #cli-desktop,#cat-desktop,#mob-fin-table{display:none}
   #cli-mobile,#cat-mobile,#fin-mobile{display:block}
   #mob-clis{margin-top:0}

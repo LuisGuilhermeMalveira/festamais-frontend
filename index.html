@@ -2017,15 +2017,25 @@ async function syncOrcsToBackend() {
     for (var i = 0; i < D.orcamentos.length; i++) {
       var orc = D.orcamentos[i];
       if (!orc._synced) {
-        await apiPost("/quotations", {
-          id: orc.id,  // ← ENVIAR o ID do frontend (não mudar)
+        // Não envia ID — backend gera e retorna o ID real
+        var result = await apiPost("/quotations", {
           client_name: orc.cliNome,
           event_date: orc.dataEv,
           items: orc.itens,
           total: orc.total,
           status: orc.status
         });
-        orc._synced = true;
+        if (result && result.id) {
+          var oldId = orc.id;
+          // Atualiza ID local para o ID do banco
+          orc.id = result.id;
+          orc._synced = true;
+          // Atualiza também o evento vinculado se existir
+          var ev = D.eventos.find(function(e) { return String(e.id) === String(oldId) || String(e.quotationId) === String(oldId); });
+          if (ev) { ev.id = result.id; ev.quotationId = result.id; }
+        } else {
+          orc._synced = true;
+        }
       }
     }
     sv();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FestaMais — Sistema de Locação</title>
+<title>Pede Festas — Sistema de Locação</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -716,7 +716,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-mark">🎉 <span>FestaMais</span></div>
+      <div class="login-logo-mark">🎉 <span>Pede Festas</span></div>
       <div class="login-logo-sub">Sistema de Locação</div>
     </div>
     <div class="login-tabs">
@@ -803,7 +803,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <img id="sidebar-logo-img" src="" style="width:100%;height:100%;object-fit:cover">
       </div>
       <span id="sidebar-logo-icon">🎉</span>
-      <span id="sidebar-company-name">FestaMais</span>
+      <span id="sidebar-company-name">Pede Festas</span>
     </div>
     <div class="logo-sub">Sistema de Locação</div>
   </div>
@@ -822,7 +822,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </div>
   <div class="sidebar-bottom">
     <button class="nav-item" onclick="doLogout()" style="color:var(--accent2)"><span class="nav-icon">🚪</span>Sair</button>
-    <div style="font-size:11px;color:var(--text3);padding:4px 10px">FestaMais v4.0 · Conectado ao servidor</div>
+    <div style="font-size:11px;color:var(--text3);padding:4px 10px">Pede Festas v4.0 · Conectado ao servidor</div>
   </div>
 </nav>
 
@@ -845,7 +845,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
   <!-- ONBOARDING (aparece só quando está vazio) -->
   <div id="onboarding-box" style="display:none;background:linear-gradient(135deg,var(--accent) 0%,#f59e0b 100%);border-radius:16px;padding:20px;margin-bottom:20px;color:#000">
-    <div style="font-size:18px;font-weight:800;margin-bottom:6px">🚀 Bem-vindo ao FestaMais!</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px">🚀 Bem-vindo ao Pede Festas!</div>
     <div style="font-size:13px;margin-bottom:14px;opacity:0.8">Siga os passos abaixo para configurar sua empresa</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div id="step-catalogo" class="onb-step" onclick="goTo('catalogo');setTimeout(abrirItem,100)" style="background:rgba(0,0,0,0.15);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
@@ -1323,7 +1323,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   <div style="max-width:500px;width:100%;text-align:center">
     <div style="font-size:48px;margin-bottom:16px">🔒</div>
     <div style="font-size:24px;font-weight:800;margin-bottom:8px">Seu período grátis acabou!</div>
-    <div style="color:var(--text3);margin-bottom:32px">Escolha um plano para continuar usando o FestaMais</div>
+    <div style="color:var(--text3);margin-bottom:32px">Escolha um plano para continuar usando o Pede Festas</div>
     
     <div style="display:grid;gap:16px;margin-bottom:24px">
       <!-- Plano Mensal -->
@@ -1795,7 +1795,7 @@ async function doRegister() {
     
     // Mostrar link público ao usuário
     setTimeout(function() {
-      alert(`🎉 Bem-vindo à FestaMais!\n\n📱 Seu ID: ${userId}\n🔗 Link do catálogo público:\n${catalogUrl}\n\nCompartilhe este link com seus clientes!`);
+      alert(`🎉 Bem-vindo à Pede Festas!\n\n📱 Seu ID: ${userId}\n🔗 Link do catálogo público:\n${catalogUrl}\n\nCompartilhe este link com seus clientes!`);
       enterApp();
     }, 500);
   } catch (err) {
@@ -1983,7 +1983,7 @@ async function trocarSenha() {
 function updateCompanyBranding() {
   var nameEl = document.getElementById("sidebar-company-name");
   if (nameEl) {
-    nameEl.textContent = userCompany.company_name || "FestaMais";
+    nameEl.textContent = userCompany.company_name || "Pede Festas";
   }
   var logoImgWrap = document.getElementById("sidebar-logo-img-wrap");
   var logoImg = document.getElementById("sidebar-logo-img");
@@ -2420,8 +2420,8 @@ function verPlanos() {
 function contratarPlano(tipo) {
   var user = JSON.parse(localStorage.getItem("fm_user") || "{}");
   var msg = tipo === 'anual' 
-    ? "Olá! Quero contratar o Plano Anual do FestaMais por R$ 470/ano. Email: " + (user.email || "")
-    : "Olá! Quero contratar o Plano Mensal do FestaMais por R$ 49/mês. Email: " + (user.email || "");
+    ? "Olá! Quero contratar o Plano Anual do Pede Festas por R$ 470/ano. Email: " + (user.email || "")
+    : "Olá! Quero contratar o Plano Mensal do Pede Festas por R$ 49/mês. Email: " + (user.email || "");
   var url = "https://wa.me/5538991558181?text=" + encodeURIComponent(msg);
   window.open(url, "_blank");
 }
@@ -3100,7 +3100,7 @@ function verOrc(id){
   }).join('');
   document.getElementById('orc-prev').innerHTML=
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
-      +'<div style="font-size:20px;font-weight:800;letter-spacing:-1px">🎉 FestaMais</div>'
+      +'<div style="font-size:20px;font-weight:800;letter-spacing:-1px">🎉 Pede Festas</div>'
       +'<span class="badge '+(o.status==='Confirmado'?'badge-green':o.status==='Cancelado'?'badge-red':'badge-yellow')+'">'+o.status+'</span>'
     +'</div>'
     +'<div style="color:var(--text3);font-size:12px;margin-bottom:18px">Orçamento #'+o.id+' · '+(o.criadoEm?new Date(o.criadoEm).toLocaleDateString('pt-BR'):new Date().toLocaleDateString('pt-BR'))+'</div>'
@@ -3254,7 +3254,7 @@ function gerarPDF(){
     var CL =[220,220,226];
     var BR =[255,255,255];
 
-    var empresa  = userCompany.company_name||'FestaMais';
+    var empresa  = userCompany.company_name||'Pede Festas';
     var telefone = userCompany.phone  ||'';
     var emailEmp = userCompany.email  ||'';
     var cidade   = userCompany.city   ||'';
@@ -3463,7 +3463,7 @@ function gerarContrato(){
     var CL =[220,220,226];
     var BR =[255,255,255];
 
-    var empresa  = userCompany.company_name||'FestaMais';
+    var empresa  = userCompany.company_name||'Pede Festas';
     var telefone = userCompany.phone  ||'';
     var emailEmp = userCompany.email  ||'';
     var cidade   = userCompany.city   ||'';
@@ -3691,7 +3691,7 @@ function enviarWhats(){
   var itens=o.itens.map(function(i){return '  • '+i.qty+'x '+i.nome+': R$ '+(i.preco*i.qty).toFixed(2);}).join('\n');
   var sinal50=Math.round(o.total*0.5*100)/100;
   var saldo=o.total-sinal50;
-  var msg='*FestaMais — Orçamento #'+o.id+'*\n\n'
+  var msg='*Pede Festas — Orçamento #'+o.id+'*\n\n'
     +'Olá '+o.cliNome+'\n\n'
     +'Segue seu orçamento para o '+o.tipo.toLowerCase()+':\n\n'
     +'*DETALHES DO EVENTO*\n'

@@ -322,8 +322,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 /* ===================== MOBILE CONTAINERS — hidden on desktop ===================== */
 /* ===================== MOBILE CONTAINERS — hidden on desktop ===================== */
 #mob-clis,#mob-orcs,#mob-cat,#mob-fin{display:none;min-height:0}
+#mob-orcs-table{display:block} /* tabela desktop de orçamentos */
 
 @media(max-width:768px) {
+  #mob-orcs-table{display:none} /* esconder tabela no mobile */
   #mob-clis,#mob-orcs,#mob-cat,#mob-fin{display:block}
   /* Hide entire container if it only has .empty inside */
   #mob-orcs:has(> .empty:only-child){

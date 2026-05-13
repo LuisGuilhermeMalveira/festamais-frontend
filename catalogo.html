@@ -609,28 +609,29 @@ async function loadAvailability(date) {
   try {
     const r = await fetch(`${API}/catalog/availability/${slug}?date=${date}`);
     if (!r.ok) {
-      console.error("Availability error:", r.status);
-      allItems = allItems.map(i => ({...i, _avail: Number(i.stock_total ?? 0)}));
+      allItems = allItems.map(i => ({ ...i, _avail: Number(i.stock_total ?? 0) }));
       filterItems();
       return;
     }
     const d = await r.json();
-    // availability é um array: [{ id, stock_total, comprometido, disponivel }]
-    const avArray = d.availability || [];
+
+    // Backend retorna array: [{ id, stock_total, comprometido, disponivel }]
+    const avList = Array.isArray(d.availability) ? d.availability : [];
     const avMap = {};
-    for (const item of avArray) {
-      avMap[String(item.id)] = item;
+    for (const a of avList) {
+      avMap[String(a.id)] = Number(a.disponivel ?? 0);
     }
-    allItems = allItems.map(i => {
-      const itemAvail = avMap[String(i.id)];
-      const disp = itemAvail
-        ? Math.max(0, Number(itemAvail.disponivel ?? itemAvail.stock_total ?? 0))
-        : Number(i.stock_total ?? 0);
-      return {...i, _avail: disp};
-    });
+
+    allItems = allItems.map(i => ({
+      ...i,
+      _avail: avMap.hasOwnProperty(String(i.id))
+        ? avMap[String(i.id)]
+        : Number(i.stock_total ?? 0)
+    }));
+
   } catch (err) {
-    console.error("loadAvailability error:", err);
-    allItems = allItems.map(i => ({...i, _avail: Number(i.stock_total ?? 0)}));
+    console.error('loadAvailability error:', err);
+    allItems = allItems.map(i => ({ ...i, _avail: Number(i.stock_total ?? 0) }));
   }
   filterItems();
 }

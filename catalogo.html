@@ -87,104 +87,41 @@ body::before {
   flex-shrink:0; white-space:nowrap;
 }
 
-/* ═══════════════ CALENDARIO VISUAL ═══════════════ */
+/* ═══════════════ DATE HERO ═══════════════ */
 .date-zone {
   position:relative; z-index:1;
-  padding:16px 12px 0;
+  padding:16px 16px 0;
   max-width:720px; margin:0 auto;
 }
-.cal-card {
+.date-card {
   background:linear-gradient(135deg,var(--coral) 0%,#FF8C5A 55%,var(--yellow) 100%);
-  border-radius:var(--r);
-  padding:16px 14px 16px;
+  border-radius:var(--r); padding:18px 16px 20px;
   color:#fff;
-  box-shadow:0 8px 24px rgba(255,94,91,.28);
+  box-shadow:0 8px 24px rgba(255,94,91,.3);
 }
-.cal-title {
-  font-family:'Fredoka',sans-serif;
-  font-size:1.15rem; font-weight:700;
-  text-align:center; margin-bottom:2px;
+.date-card h2 {
+  font-family:'Fredoka',sans-serif; font-size:1.25rem; font-weight:700; margin-bottom:3px;
 }
-.cal-sub {
-  font-size:.78rem; opacity:.92;
-  text-align:center; margin-bottom:14px;
+.date-card p { font-size:.83rem; opacity:.88; margin-bottom:14px }
+.date-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center }
+.date-field {
+  flex:1; min-width:160px;
+  background:rgba(255,255,255,.22); border:1.5px solid rgba(255,255,255,.5);
+  border-radius:var(--rs); padding:0 12px;
+  display:flex; align-items:center; gap:6px;
 }
-.cal-nav {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:10px; gap:8px;
+.date-field input[type="date"] {
+  flex:1; border:none; background:transparent;
+  color:#fff; font-size:.92rem; font-weight:700;
+  padding:11px 0; outline:none; font-family:'Nunito',sans-serif;
 }
-.cal-nav-btn {
-  width:34px; height:34px; min-width:34px;
-  border-radius:50%;
-  background:rgba(255,255,255,.22);
-  color:#fff;
-  font-size:18px; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  border:1.5px solid rgba(255,255,255,.35);
-  cursor:pointer;
-  transition:background .15s, transform .12s, opacity .15s;
-  font-family:inherit;
-  padding:0;
+.date-field input::-webkit-calendar-picker-indicator { filter:invert(1); opacity:.8; cursor:pointer }
+.btn-ok {
+  background:#fff; color:var(--coral); font-weight:800; font-size:.88rem;
+  border-radius:var(--rs); padding:12px 18px; flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.15); transition:transform .15s;
 }
-.cal-nav-btn:active:not(:disabled) { transform:scale(.92); background:rgba(255,255,255,.35) }
-.cal-nav-btn:disabled { opacity:.35; cursor:not-allowed }
-.cal-month {
-  font-family:'Fredoka',sans-serif;
-  font-size:1rem; font-weight:700;
-  text-transform:capitalize;
-  flex:1; text-align:center;
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.cal-dow-row {
-  display:grid;
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:3px;
-  margin-bottom:4px;
-}
-.cal-dow {
-  font-size:.65rem;
-  font-weight:800;
-  text-align:center;
-  letter-spacing:.5px;
-  padding:4px 0;
-  opacity:.82;
-}
-.cal-grid {
-  display:grid;
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:3px;
-}
-.cal-day {
-  aspect-ratio:1;
-  min-height:34px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.85rem; font-weight:700;
-  color:#fff;
-  border-radius:9px;
-  background:rgba(255,255,255,.12);
-  border:1.5px solid transparent;
-  cursor:pointer;
-  transition:background .12s, transform .1s, border-color .12s;
-  min-width:0;
-  user-select:none;
-  -webkit-tap-highlight-color:transparent;
-}
-.cal-day:not(.disabled):not(.empty):hover { background:rgba(255,255,255,.28) }
-.cal-day:not(.disabled):not(.empty):active { transform:scale(.92) }
-.cal-day.empty { background:transparent; cursor:default; pointer-events:none }
-.cal-day.disabled { opacity:.32; cursor:not-allowed; background:rgba(255,255,255,.06) }
-.cal-day.today {
-  border-color:#fff;
-}
-.cal-day.selected {
-  background:#fff;
-  color:var(--coral);
-  border-color:#fff;
-  box-shadow:0 3px 10px rgba(0,0,0,.18);
-}
+.btn-ok:active { transform:scale(.96) }
 
 /* Banner date selected */
 .date-banner {
@@ -549,23 +486,17 @@ body::before {
   </div>
 </header>
 
-<!-- ── DATE PICKER (calendario visual) ── -->
+<!-- ── DATE PICKER ── -->
 <section class="date-zone" id="date-zone">
-  <div class="cal-card" id="date-card">
-    <div class="cal-title">📅 Quando é a sua festa?</div>
-    <div class="cal-sub">Toque na data desejada</div>
-
-    <div class="cal-nav">
-      <button type="button" class="cal-nav-btn" id="cal-prev" onclick="navMonth(-1)" aria-label="Mês anterior">‹</button>
-      <div class="cal-month" id="cal-month">—</div>
-      <button type="button" class="cal-nav-btn" id="cal-next" onclick="navMonth(1)" aria-label="Próximo mês">›</button>
+  <div class="date-card" id="date-card">
+    <h2>📅 Quando é a sua festa?</h2>
+    <p>Selecione a data para ver o estoque disponível em tempo real</p>
+    <div class="date-row">
+      <div class="date-field">
+        <input type="date" id="date-in" min=""/>
+      </div>
+      <button class="btn-ok" onclick="confirmDate()">Ver estoque ✓</button>
     </div>
-
-    <div class="cal-dow-row">
-      <div class="cal-dow">D</div><div class="cal-dow">S</div><div class="cal-dow">T</div>
-      <div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
   </div>
   <div class="date-banner" id="date-banner">
     <span>🎉 Festa em <strong id="date-txt">—</strong></span>
@@ -652,7 +583,7 @@ let cart = {};
 /* ── INIT ── */
 (async () => {
   if (!slug) { showErr('Catálogo não encontrado. Verifique o link.'); return; }
-  renderCalendar();
+  document.getElementById('date-in').min = new Date().toISOString().slice(0,10);
   await loadCompany();
 })();
 
@@ -822,64 +753,17 @@ function renderItems(items) {
   }).join('');
 }
 
-/* ── CALENDARIO VISUAL ── */
-let calCursor = new Date();
-calCursor.setDate(1);
-
-function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  const monthEl = document.getElementById('cal-month');
-  if (!grid || !monthEl) return;
-
-  const year = calCursor.getFullYear();
-  const month = calCursor.getMonth();
-  monthEl.textContent = calCursor.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-
-  // bloquear navegação para meses passados
-  const today = new Date(); today.setHours(0,0,0,0);
-  const firstOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const prevBtn = document.getElementById('cal-prev');
-  if (prevBtn) prevBtn.disabled = (calCursor.getTime() <= firstOfThisMonth.getTime());
-
-  const firstDow = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const todayStr = today.toISOString().slice(0,10);
-
-  let html = '';
-  for (let i=0; i<firstDow; i++) html += '<div class="cal-day empty"></div>';
-  for (let d=1; d<=daysInMonth; d++) {
-    const dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isPast = new Date(dStr+'T00:00:00') < today;
-    const isToday = dStr === todayStr;
-    const isSelected = dStr === selDate;
-    const cls = ['cal-day'];
-    if (isPast) cls.push('disabled');
-    if (isToday) cls.push('today');
-    if (isSelected) cls.push('selected');
-    const onclick = isPast ? '' : ` onclick="pickDate('${dStr}')"`;
-    html += `<div class="${cls.join(' ')}"${onclick}>${d}</div>`;
-  }
-  grid.innerHTML = html;
-}
-
-function navMonth(delta) {
-  calCursor.setMonth(calCursor.getMonth() + delta);
-  renderCalendar();
-}
-
-function pickDate(dStr) {
-  selDate = dStr;
-  const fmt = new Date(dStr+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+/* ── DATE ── */
+function confirmDate() {
+  const val = document.getElementById('date-in').value;
+  if (!val) { toast('📅 Selecione uma data!','w'); return; }
+  selDate = val;
+  const fmt = new Date(val+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('date-txt').textContent = fmt;
   document.getElementById('date-card').style.display = 'none';
   document.getElementById('date-banner').classList.add('show');
   toast('⏳ Verificando disponibilidade…','s');
-  loadAvailability(dStr);
-}
-
-function confirmDate() {
-  if (selDate) pickDate(selDate);
-  else toast('📅 Toque em uma data!','w');
+  loadAvailability(val);
 }
 
 function resetDate() {
@@ -889,8 +773,7 @@ function resetDate() {
   allItems = allItems.map(i => ({...i, _avail: undefined}));
   document.getElementById('date-card').style.display = '';
   document.getElementById('date-banner').classList.remove('show');
-  calCursor = new Date(); calCursor.setDate(1);
-  renderCalendar();
+  document.getElementById('date-in').value = '';
   filterItems();
 }
 

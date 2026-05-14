@@ -432,36 +432,41 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 /* ===================== RESPONSIVE ===================== */
 
 
-/* ═══════════════ ESTOQUE — CARDS RESPONSIVOS ═══════════════ */
+/* ═══════════════ ESTOQUE — DESIGN LIMPO ═══════════════ */
 #mob-est{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
-  gap:14px;
+  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:16px;
 }
-@media(min-width:1024px){ #mob-est{ grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:16px } }
-@media(min-width:1440px){ #mob-est{ grid-template-columns:repeat(auto-fill, minmax(310px, 1fr)) } }
+@media(min-width:1280px){ #mob-est{ grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)) } }
 
+/* Card principal */
 .est-card{
   background:var(--surface);
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
+  border-radius:14px;
+  padding:18px;
   display:flex; flex-direction:column;
-  gap:12px;
+  gap:14px;
   min-width:0;
   overflow:hidden;
+  transition:border-color .2s;
 }
-.est-card-head{
+.est-card:hover{ border-color:var(--border2) }
+
+/* Header */
+.est-head{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   gap:10px;
   min-width:0;
 }
-.est-card-titles{ flex:1; min-width:0; overflow:hidden }
-.est-card-name{
+.est-head-text{ flex:1; min-width:0 }
+.est-name{
   font-weight:700; font-size:15px;
-  line-height:1.25;
+  line-height:1.3;
+  color:var(--text);
   word-break:break-word;
   overflow-wrap:anywhere;
   display:-webkit-box;
@@ -469,82 +474,149 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
-.est-card-cat{
+.est-cat{
   font-size:11px;
   color:var(--text3);
   margin-top:3px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  font-weight:600;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-.est-card-status{
-  font-weight:800; font-size:11px;
+.est-pill{
   flex-shrink:0;
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
   white-space:nowrap;
-  padding:4px 8px;
-  border-radius:20px;
   background:var(--surface2);
 }
-.est-big-num{
+
+/* Métricas grandes - 3 colunas */
+.est-metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  padding:12px 8px;
   background:var(--surface2);
   border-radius:10px;
-  padding:14px 10px;
+}
+.est-metric{
   text-align:center;
-  border:2px solid;
+  min-width:0;
 }
-.est-big-num-val{
-  font-size:32px; font-weight:900;
-  letter-spacing:-.5px;
+.est-metric-val{
+  font-size:22px;
+  font-weight:900;
   line-height:1;
+  letter-spacing:-.5px;
 }
-.est-big-num-lbl{
-  font-size:10px;
+.est-metric-lbl{
+  font-size:9.5px;
   color:var(--text3);
+  margin-top:6px;
   text-transform:uppercase;
-  margin-top:7px;
   font-weight:700;
   letter-spacing:.3px;
 }
-.est-bar{
-  background:var(--surface2);
-  border-radius:6px;
-  height:6px;
-  overflow:hidden;
-}
-.est-bar-fill{ height:100%; border-radius:6px; transition:width .3s }
-.est-cal{
-  display:grid;
-  grid-template-columns:repeat(7, minmax(0, 1fr));
-  gap:4px;
-}
-.est-cal-cell{
-  min-height:46px;
-  border-radius:6px;
-  padding:3px 2px;
+
+/* Barra de progresso */
+.est-progress{
   display:flex;
-  flex-direction:column;
-  justify-content:center;
   align-items:center;
-  gap:1px;
+  gap:10px;
+  font-size:11px;
+}
+.est-bar{
+  flex:1;
+  background:var(--surface2);
+  border-radius:99px;
+  height:5px;
   overflow:hidden;
   min-width:0;
-  border:1px solid;
 }
-.est-cal-today{ outline:2px solid var(--text); outline-offset:-2px }
-.est-cal-dow{ font-size:9px; color:var(--text3); font-weight:600; line-height:1 }
-.est-cal-num{ font-size:11px; font-weight:700; line-height:1.1 }
-.est-cal-day{ font-size:8px; color:var(--text3); line-height:1 }
-.est-foot{
+.est-bar-fill{
+  height:100%;
+  border-radius:99px;
+  transition:width .3s;
+}
+.est-pct{
+  font-weight:700;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* Calendário 30 dias */
+.est-cal-wrap{
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:11px;
-  color:var(--text3);
-  gap:8px;
+  flex-direction:column;
+  gap:6px;
 }
-.est-foot-pct{ font-weight:700 }
+.est-cal-title{
+  font-size:10.5px;
+  color:var(--text3);
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:.4px;
+}
+.est-cal-dows{
+  display:grid;
+  grid-template-columns:repeat(7, minmax(0, 1fr));
+  gap:3px;
+}
+.est-cal-dow{
+  font-size:9px;
+  color:var(--text3);
+  font-weight:700;
+  text-align:center;
+  padding:2px 0;
+  text-transform:uppercase;
+}
+.est-cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7, minmax(0, 1fr));
+  gap:3px;
+}
+.est-cal-cell{
+  aspect-ratio:1;
+  min-height:30px;
+  border-radius:5px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  border:1px solid;
+  overflow:hidden;
+  min-width:0;
+}
+.est-cal-day{
+  font-size:9px;
+  color:var(--text3);
+  line-height:1;
+  font-weight:600;
+}
+.est-cal-qty{
+  font-size:11px;
+  font-weight:800;
+  line-height:1.1;
+}
+.est-cal-today{
+  outline:2px solid var(--text);
+  outline-offset:-2px;
+}
+
+/* Empty placeholder dentro do calendário (dias que ainda não começaram) */
+.est-cal-empty{
+  background:transparent !important;
+  border-color:transparent !important;
+}
 
 /* ═══════════════════════════════════════════════ */
+
 
 /* ===================== BOTTOM NAV MOBILE ===================== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:none;justify-content:space-around;align-items:flex-end;z-index:95;padding:0;height:70px;padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -3844,7 +3916,7 @@ function buscaEst(q){ renderEst(q); }
 function renderEst(filtro){
   var container=document.getElementById('mob-est');
   var q=(filtro||'').toLowerCase().trim();
-  
+
   if(!D.catalogo.length){
     container.innerHTML='<div class="empty" style="margin-top:40px;grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">Nenhum item no estoque.</div><div class="empty-sub" style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="goTo(\'catalogo\');setTimeout(abrirItem,100)">+ Adicionar item ao catálogo</button></div></div>';
     return;
@@ -3858,78 +3930,86 @@ function renderEst(filtro){
   }
 
   var hj=new Date().toISOString().slice(0,10);
-  var html='';
-  
-  catalogo.forEach(function(i){
-    // Disponível HOJE
-    var compHoje=0;
+  var hojeDow=new Date(hj+'T12:00:00').getDay(); // 0=Dom
+  var diasLbl=['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+
+  // Helper: calcula comprometido de um item em uma data
+  function compEmData(item, data){
+    var c=0;
     D.eventos.forEach(function(e){
-      if(e.itens){
-        var it=e.itens.find(function(x){return x.id===i.id;});
-        if(it){
-          var bufferDays = e.bufferDays || 0;
-          var eventDate = new Date(e.dataEv + 'T00:00:00');
-          var checkDate = new Date(hj + 'T00:00:00');
-          var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
-          if(Math.abs(diffDays) <= bufferDays) compHoje+=it.qty;
-        }
-      }
+      if(!e.itens) return;
+      var it=e.itens.find(function(x){return x.id===item.id;});
+      if(!it) return;
+      var buf=e.bufferDays||0;
+      var eventDate=new Date(e.dataEv+'T00:00:00');
+      var checkDate=new Date(data+'T00:00:00');
+      var diff=Math.floor((eventDate-checkDate)/(1000*60*60*24));
+      if(Math.abs(diff)<=buf) c+=it.qty;
     });
+    return c;
+  }
+
+  var html='';
+
+  catalogo.forEach(function(i){
+    var compHoje=compEmData(i,hj);
     var dispHoje=i.estoque-compHoje;
-    var pct=i.estoque>0?Math.round(dispHoje/i.estoque*100):0;
-    var cor=pct>60?'var(--accent3)':pct>30?'var(--accent)':'var(--accent2)';
-    var alerta=dispHoje<0?'🚫 CRÍTICO':dispHoje<=i.estoque*0.3?'⚠️ ALERTA':'✓ OK';
-    var corAlerta=dispHoje<0?'var(--accent2)':dispHoje<=i.estoque*0.3?'var(--accent)':'var(--accent3)';
-    
-    // Mini Calendário - 30 dias
-    var cal='';
-    var dias=['D','S','T','Q','Q','S','S'];
+    var pct=i.estoque>0?Math.round(Math.max(0,dispHoje)/i.estoque*100):0;
+
+    // Cor principal e pill
+    var cor, pillBg, pillCor, pillTxt;
+    if(dispHoje<=0){ cor='#ff6b6b'; pillBg='rgba(255,107,107,.15)'; pillCor='#ff6b6b'; pillTxt='🚫 Esgotado'; }
+    else if(dispHoje<=i.estoque*0.3){ cor='#f59e0b'; pillBg='rgba(245,158,11,.15)'; pillCor='#f59e0b'; pillTxt='⚠️ Baixo'; }
+    else{ cor='#4ade9e'; pillBg='rgba(74,222,158,.15)'; pillCor='#4ade9e'; pillTxt='✓ Disponível'; }
+
+    // Cabeçalho dos dias da semana (sempre Dom..Sáb)
+    var dowsHtml='';
+    for(var d=0;d<7;d++){
+      dowsHtml+='<div class="est-cal-dow">'+diasLbl[d].charAt(0)+'</div>';
+    }
+
+    // Grade de 30 dias começando em hoje
+    // Para alinhar com a coluna do dia da semana, preencher células vazias antes
+    var cells='';
+    for(var v=0; v<hojeDow; v++){
+      cells+='<div class="est-cal-cell est-cal-empty"></div>';
+    }
     for(var d=0;d<=29;d++){
       var data=somarDias(hj,d);
-      var comp=0;
-      D.eventos.forEach(function(e){
-        if(e.itens){
-          var it=e.itens.find(function(x){return x.id===i.id;});
-          if(it){
-            var bufferDays = e.bufferDays || 0;
-            var eventDate = new Date(e.dataEv + 'T00:00:00');
-            var checkDate = new Date(data + 'T00:00:00');
-            var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
-            if(Math.abs(diffDays) <= bufferDays) comp+=it.qty;
-          }
-        }
-      });
-      var dispDia=i.estoque-comp;
+      var comp=compEmData(i,data);
+      var dispDia=Math.max(0, i.estoque-comp);
       var corCalDia=dispDia<=0?'#ff6b6b':dispDia<=i.estoque*0.3?'#f59e0b':'#4ade9e';
-      var todayCls = (data===hj) ? ' est-cal-today' : '';
-      cal+='<div class="est-cal-cell'+todayCls+'" style="background:'+corCalDia+'20;border-color:'+corCalDia+'40">'
-        +'<div class="est-cal-dow">'+dias[new Date(data+'T12:00:00').getDay()]+'</div>'
-        +'<div class="est-cal-num" style="color:'+corCalDia+'">'+Math.max(0,dispDia)+'</div>'
+      var todayCls=(data===hj)?' est-cal-today':'';
+      cells+='<div class="est-cal-cell'+todayCls+'" style="background:'+corCalDia+'18;border-color:'+corCalDia+'45" title="'+data.split('-').reverse().join('/')+': '+dispDia+'/'+i.estoque+'">'
         +'<div class="est-cal-day">'+data.slice(8,10)+'</div>'
+        +'<div class="est-cal-qty" style="color:'+corCalDia+'">'+dispDia+'</div>'
       +'</div>';
     }
-    
+
     html+='<div class="est-card">'
-      +'<div class="est-card-head">'
-        +'<div class="est-card-titles">'
-          +'<div class="est-card-name">'+i.nome+'</div>'
-          +'<div class="est-card-cat">'+i.cat+'</div>'
+      +'<div class="est-head">'
+        +'<div class="est-head-text">'
+          +'<div class="est-name">'+i.nome+'</div>'
+          +'<div class="est-cat">'+(i.cat||'Geral')+'</div>'
         +'</div>'
-        +'<div class="est-card-status" style="color:'+corAlerta+'">'+alerta+'</div>'
+        +'<div class="est-pill" style="background:'+pillBg+';color:'+pillCor+'">'+pillTxt+'</div>'
       +'</div>'
-      +'<div class="est-big-num" style="border-color:'+cor+'">'
-        +'<div class="est-big-num-val" style="color:'+cor+'">'+Math.max(0,dispHoje)+'</div>'
-        +'<div class="est-big-num-lbl">📅 Hoje</div>'
+      +'<div class="est-metrics">'
+        +'<div class="est-metric"><div class="est-metric-val" style="color:'+cor+'">'+Math.max(0,dispHoje)+'</div><div class="est-metric-lbl">Hoje</div></div>'
+        +'<div class="est-metric"><div class="est-metric-val">'+i.estoque+'</div><div class="est-metric-lbl">Total</div></div>'
+        +'<div class="est-metric"><div class="est-metric-val" style="color:'+cor+'">'+pct+'%</div><div class="est-metric-lbl">Disponível</div></div>'
       +'</div>'
-      +'<div class="est-bar"><div class="est-bar-fill" style="background:'+cor+';width:'+pct+'%"></div></div>'
-      +'<div class="est-cal">'+cal+'</div>'
-      +'<div class="est-foot">'
-        +'<span class="est-foot-pct" style="color:'+cor+'">'+pct+'% disponível</span>'
-        +'<span>'+Math.max(0,dispHoje)+'/'+i.estoque+'</span>'
+      +'<div class="est-progress">'
+        +'<div class="est-bar"><div class="est-bar-fill" style="background:'+cor+';width:'+pct+'%"></div></div>'
+      +'</div>'
+      +'<div class="est-cal-wrap">'
+        +'<div class="est-cal-title">📅 Próximos 30 dias</div>'
+        +'<div class="est-cal-dows">'+dowsHtml+'</div>'
+        +'<div class="est-cal-grid">'+cells+'</div>'
       +'</div>'
     +'</div>';
   });
-  
+
   container.innerHTML=html;
 }
 

@@ -2017,15 +2017,28 @@ async function syncOrcsToBackend() {
     for (var i = 0; i < D.orcamentos.length; i++) {
       var orc = D.orcamentos[i];
       if (!orc._synced) {
-        await apiPost("/quotations", {
-          id: orc.id,  // ← ENVIAR o ID do frontend (não mudar)
+        // Não envia ID — backend gera e retorna o ID real
+        var result = await apiPost("/quotations", {
           client_name: orc.cliNome,
           event_date: orc.dataEv,
           items: orc.itens,
           total: orc.total,
           status: orc.status
         });
-        orc._synced = true;
+        if (result && result.id) {
+          var oldId = orc.id;
+          orc.id = result.id;
+          orc._synced = true;
+          // Atualiza evento vinculado se já existe
+          D.eventos.forEach(function(ev){
+            if(String(ev.id)===String(oldId) || String(ev.quotationId)===String(oldId)){
+              ev.id = result.id;
+              ev.quotationId = result.id;
+            }
+          });
+        } else {
+          orc._synced = true;
+        }
       }
     }
     sv();
@@ -2069,7 +2082,7 @@ async function loadOrcsFromBackend() {
       if (dataEv.indexOf('T') > -1) dataEv = dataEv.split('T')[0];
       
       // Se orçamento já existe localmente, MANTER como está (usuário é predominante)
-      var existing = D.orcamentos.find(function(x) { return x.id === orc.id; });
+      var existing = D.orcamentos.find(function(x) { return String(x.id) === String(orc.id); });
       if (!existing) {
         // SÓ adicionar se for NOVO (não existe localmente)
         D.orcamentos.push({
@@ -2155,42 +2168,30 @@ async function syncAllToBackend() {
 }
 
 async function loadEventsFromBackend() {
+  // Usa D.orcamentos já carregado — não chama API de novo
   try {
-    var evs = await apiGet("/quotations");
-    if (evs && evs.length) {
-      evs.forEach(function(ev) {
-        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return e.id === ev.id; })) {
-          var items = [];
-          try {
-            if (typeof ev.items === 'string') {
-              items = JSON.parse(ev.items);
-            } else {
-              items = ev.items || [];
-            }
-          } catch (e) {
-            items = [];
-          }
-          var dataEv = ev.event_date || '';
-          if (dataEv.indexOf('T') > -1) {
-            dataEv = dataEv.split('T')[0];
-          }
-          D.eventos.push({
-            id: ev.id,
-            cliNome: ev.client_name || '',
-            tipo: "Evento",
-            dataEv: dataEv,
-            hora: "18:00",
-            valor: parseFloat(ev.total) || 0,
-            sinal: 0,
-            pago: false,
-            itens: items,
-            obs: "",
-            _synced: true
-          });
-        }
-      });
-      sv();
-    }
+    D.orcamentos.forEach(function(orc){
+      if(orc.status==="Confirmado" && !D.eventos.find(function(e){return String(e.id)===String(orc.id);})){
+        D.eventos.push({
+          id: orc.id,
+          quotationId: orc.id,
+          cliNome: orc.cliNome || '',
+          tipo: "Evento",
+          dataEv: orc.dataEv || '',
+          hora: "18:00",
+          valor: parseFloat(orc.total) || 0,
+          sinal: orc.sinal || 0,
+          pago: false,
+          itens: orc.itens || [],
+          bufferDays: parseInt(orc.bufferDays) || 0,
+          obs: "",
+          _synced: true
+        });
+      }
+    });
+    sv();
+    if(typeof renderEst === 'function') renderEst();
+    if(typeof renderCal === 'function') renderCal();
   } catch (err) {
     console.log("Erro ao carregar eventos:", err);
   }
@@ -2990,7 +2991,7 @@ function updateBadge(){
   if(n>0){bn.style.display='';bn.textContent=n;}else{bn.style.display='none';}
 }
 function delOrc(id){
-  var o=D.orcamentos.find(function(x){return x.id===id;});if(!o)return;
+  var o=D.orcamentos.find(function(x){return String(x.id)===String(id);});if(!o)return;
   if(o.status==='Cancelado'){
     confirmar('Excluir permanentemente o orçamento <strong>#'+o.id+'</strong>?<br><span style="font-size:12px;color:var(--text3)">Esta ação não pode ser desfeita.</span>',async function(){
       try {
@@ -3007,7 +3008,7 @@ function delOrc(id){
       D.eventos = D.eventos.filter(function(e){
         return String(e.id)!==String(id) && String(e.quotationId)!==String(id);
       });
-      D.orcamentos=D.orcamentos.filter(function(x){return x.id!==id;});
+      D.orcamentos=D.orcamentos.filter(function(x){return String(x.id)!==String(id);});
       sv();renderOrcs();renderEst();renderFin();renderDash();toast('Orçamento excluído permanentemente.');
     });
   } else {
@@ -3033,7 +3034,7 @@ function delOrc(id){
   }
 }
 function verOrc(id){
-  var o=D.orcamentos.find(function(x){return x.id===id;});if(!o)return;
+  var o=D.orcamentos.find(function(x){return String(x.id)===String(id);});if(!o)return;
   orcAId=id;
   var ih=o.itens.map(function(i){
     // Buscar item no catálogo para pegar preço e unidade
@@ -3093,10 +3094,10 @@ function confirmarOrc(){
   
   o.status='Confirmado';
 
-  // Cria evento COM itens do orçamento
+  // Cria evento COM itens do orçamento (usa o.id pra coincidir com backend)
   var novoEv={
-    id:D.nextId++,
-    quotationId:o.id, // ← Conecta ao orçamento original
+    id:o.id,
+    quotationId:o.id,
     cliNome:o.cliNome,
     cliId:o.cliId,
     tipo:o.tipo,

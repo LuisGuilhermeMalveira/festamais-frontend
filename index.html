@@ -3807,10 +3807,10 @@ function renderEst(filtro){
       var dispDia=i.estoque-comp;
       var corCalDia=dispDia<=0?'#ff6b6b':dispDia<=i.estoque*0.3?'#f59e0b':'#4ade9e';
       var isToday=data===hj?'border:2px solid var(--text);font-weight:700;':'';
-      cal+='<div style="aspect-ratio:1;background:'+corCalDia+'20;border:1px solid '+corCalDia+'40;border-radius:6px;padding:4px;text-align:center;'+isToday+'display:flex;flex-direction:column;justify-content:center;align-items:center">'
-        +'<div style="font-size:8px;color:var(--text3)">'+dias[new Date(data+'T12:00:00').getDay()]+'</div>'
-        +'<div style="font-size:10px;font-weight:700;color:'+corCalDia+'">'+Math.max(0,dispDia)+'</div>'
-        +'<div style="font-size:7px;color:var(--text3)">'+data.slice(8,10)+'</div>'
+      cal+='<div style="min-height:48px;background:'+corCalDia+'20;border:1px solid '+corCalDia+'40;border-radius:6px;padding:3px 2px;text-align:center;'+isToday+'display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;overflow:hidden;min-width:0">'
+        +'<div style="font-size:9px;color:var(--text3);line-height:1;font-weight:600">'+dias[new Date(data+'T12:00:00').getDay()]+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:'+corCalDia+';line-height:1.1">'+Math.max(0,dispDia)+'</div>'
+        +'<div style="font-size:8px;color:var(--text3);line-height:1">'+data.slice(8,10)+'</div>'
       +'</div>';
     }
     

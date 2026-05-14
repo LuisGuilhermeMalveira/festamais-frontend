@@ -214,6 +214,113 @@ body::before {
 /* Esconder o input nativo, mas mantê-lo no DOM */
 .date-row { display:none !important }
 
+
+/* ═══════════════ CTA DE DATA (botão que abre modal) ═══════════════ */
+.date-cta {
+  background:linear-gradient(135deg,var(--coral) 0%,#FF8C5A 55%,var(--yellow) 100%);
+  border-radius:var(--r);
+  padding:16px 18px;
+  color:#fff;
+  box-shadow:0 8px 24px rgba(255,94,91,.28);
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s, box-shadow .15s;
+}
+.date-cta:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(255,94,91,.35) }
+.date-cta:active { transform:translateY(0); box-shadow:0 4px 14px rgba(255,94,91,.3) }
+.date-cta-icon {
+  font-size:1.8rem;
+  background:rgba(255,255,255,.22);
+  width:48px; height:48px;
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.3);
+}
+.date-cta-text { flex:1; min-width:0 }
+.date-cta-title {
+  font-family:'Fredoka',sans-serif;
+  font-size:1.05rem; font-weight:700;
+  line-height:1.2;
+}
+.date-cta-sub {
+  font-size:.78rem; opacity:.92;
+  margin-top:3px;
+}
+.date-cta-chevron {
+  font-size:1.6rem; opacity:.85;
+  font-weight:300;
+  flex-shrink:0;
+  line-height:1;
+}
+
+/* ═══════════════ MODAL DO CALENDÁRIO ═══════════════ */
+.cal-modal {
+  display:none;
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:9999;
+  align-items:flex-end;
+  justify-content:center;
+  animation:fadeIn .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.cal-modal.show { display:flex }
+.cal-modal-card {
+  background:#fff;
+  width:100%;
+  max-width:540px;
+  border-radius:22px 22px 0 0;
+  padding:0;
+  overflow:hidden;
+  animation:slideUp .3s ease;
+  max-height:92vh;
+  display:flex; flex-direction:column;
+}
+.cal-modal-head {
+  padding:18px 18px 8px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--border);
+}
+.cal-modal-title {
+  font-family:'Fredoka',sans-serif;
+  font-size:1.1rem; font-weight:700;
+  color:var(--text);
+  flex:1;
+}
+.cal-modal-close {
+  width:34px; height:34px;
+  border-radius:50%;
+  border:none;
+  background:var(--surface);
+  color:var(--text);
+  font-size:18px; font-weight:600;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, transform .12s;
+  flex-shrink:0;
+}
+.cal-modal-close:hover { background:#E5DDD5 }
+.cal-modal-close:active { transform:scale(.9) }
+.cal-modal-body { padding:16px 18px 22px; overflow:auto }
+
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+/* Desktop: centralizar modal */
+@media (min-width:768px) {
+  .cal-modal { align-items:center }
+  .cal-modal-card {
+    border-radius:22px;
+    max-width:480px;
+    animation:scaleIn .25s ease;
+  }
+  @keyframes scaleIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+}
+
 /* Banner date selected */
 .date-banner {
   display:none; margin-top:0;
@@ -578,26 +685,27 @@ body::before {
   .brand-city { font-size:.82rem; margin-top:4px }
   .hdr-pill { font-size:.7rem; padding:5px 12px }
 
-  /* Layout em duas colunas: sidebar (calendário) + grid de itens */
+  /* CTA de data centralizado em desktop */
   .date-zone {
     max-width:1280px; margin:0 auto;
     padding:24px 32px 0;
   }
-  .date-card {
+  .date-cta {
     max-width:560px;
     margin:0 auto;
-    padding:24px 24px 26px;
+    padding:20px 24px;
   }
-  .date-card h2 { font-size:1.45rem; margin-bottom:6px }
-  .date-card p { font-size:.92rem; margin-bottom:18px }
+  .date-cta-title { font-size:1.2rem }
+  .date-cta-sub { font-size:.88rem; margin-top:4px }
+  .date-cta-icon { width:54px; height:54px; font-size:2rem }
 
-  .cal-wrap { padding:16px 14px 14px; border-radius:16px }
-  .cal-month { font-size:1.1rem }
+  /* Calendário dentro do modal — células maiores em desktop */
   .cal-day { height:46px; font-size:1rem; border-radius:11px }
+  .cal-month { font-size:1.1rem }
   .cal-nav-btn { width:38px; height:38px; font-size:20px }
   .cal-dow { font-size:.75rem; padding:6px 0 }
 
-  /* Date banner em desktop também respira */
+  /* Date banner respira mais em desktop */
   .date-banner {
     max-width:560px;
     margin:14px auto 0;
@@ -667,12 +775,34 @@ body::before {
 
 <!-- ── DATE PICKER ── -->
 <section class="date-zone" id="date-zone">
-  <div class="date-card" id="date-card">
-    <h2>📅 Quando é a sua festa?</h2>
-    <p>Toque na data desejada</p>
+  <!-- CTA inicial: botão festivo abre modal -->
+  <div class="date-cta" id="date-card" onclick="openCalModal()">
+    <div class="date-cta-icon">📅</div>
+    <div class="date-cta-text">
+      <div class="date-cta-title">Selecione a data da festa</div>
+      <div class="date-cta-sub">Toque aqui para escolher o dia</div>
+    </div>
+    <div class="date-cta-chevron">›</div>
+  </div>
 
-    <!-- Calendário visual -->
-    <div class="cal-wrap" id="cal-wrap">
+  <!-- Banner verde após selecionar data -->
+  <div class="date-banner" id="date-banner">
+    <span>🎉 Festa em <strong id="date-txt">—</strong></span>
+    <button class="btn-change" onclick="resetDate()">Mudar data</button>
+  </div>
+
+  <!-- Input nativo escondido (mantido pra compatibilidade) -->
+  <input type="date" id="date-in" min="" style="display:none"/>
+</section>
+
+<!-- MODAL DO CALENDÁRIO -->
+<div class="cal-modal" id="cal-modal" onclick="closeCalModalBg(event)">
+  <div class="cal-modal-card">
+    <div class="cal-modal-head">
+      <div class="cal-modal-title">📅 Quando é a sua festa?</div>
+      <button type="button" class="cal-modal-close" onclick="closeCalModal()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="cal-modal-body">
       <div class="cal-nav">
         <button type="button" class="cal-nav-btn" id="cal-prev" onclick="navMonth(-1)" aria-label="Mês anterior">‹</button>
         <div class="cal-month" id="cal-month">—</div>
@@ -684,19 +814,8 @@ body::before {
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
-
-    <div class="date-row">
-      <div class="date-field">
-        <input type="date" id="date-in" min=""/>
-      </div>
-      <button class="btn-ok" onclick="confirmDate()">Ver estoque ✓</button>
-    </div>
   </div>
-  <div class="date-banner" id="date-banner">
-    <span>🎉 Festa em <strong id="date-txt">—</strong></span>
-    <button class="btn-change" onclick="resetDate()">Mudar data</button>
-  </div>
-</section>
+</div>
 
 <!-- ── CATALOG ── -->
 <main class="catalog" id="catalog" style="display:none">
@@ -1188,15 +1307,43 @@ function navMonth(delta) {
 
 function pickCalDate(dStr) {
   try {
-    // Seta o input nativo (compatibilidade) e dispara o fluxo existente
     const input = document.getElementById('date-in');
     if (input) input.value = dStr;
     selDate = dStr;
     renderCalendar();
-    // Chama o fluxo existente — sem reescrever nada
+    closeCalModal();
     if (typeof confirmDate === 'function') confirmDate();
   } catch(e) { console.error(e); }
 }
+
+function openCalModal() {
+  try {
+    const m = document.getElementById('cal-modal');
+    if (!m) return;
+    m.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    renderCalendar();
+  } catch(e) { console.error(e); }
+}
+
+function closeCalModal() {
+  try {
+    const m = document.getElementById('cal-modal');
+    if (!m) return;
+    m.classList.remove('show');
+    document.body.style.overflow = '';
+  } catch(e) { console.error(e); }
+}
+
+function closeCalModalBg(ev) {
+  // Fecha apenas se clicou no overlay, não no card interno
+  if (ev && ev.target && ev.target.id === 'cal-modal') closeCalModal();
+}
+
+// Fechar com ESC no desktop
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') closeCalModal();
+});
 </script>
 </body>
 </html>

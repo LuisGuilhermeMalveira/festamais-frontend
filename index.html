@@ -3978,7 +3978,7 @@ function renderEst(filtro){
       var data=somarDias(hj,d);
       var comp=compEmData(i,data);
       var dispDia=Math.max(0, i.estoque-comp);
-      var corCalDia=dispDia<=0?'#ff6b6b':dispDia<=i.estoque*0.3?'#f59e0b':'#4ade9e';
+      var corCalDia=dispDia<=0?'#ff6b6b':dispDia<i.estoque?'#f59e0b':'#4ade9e';
       var todayCls=(data===hj)?' est-cal-today':'';
       cells+='<div class="est-cal-cell'+todayCls+'" style="background:'+corCalDia+'18;border-color:'+corCalDia+'45" title="'+data.split('-').reverse().join('/')+': '+dispDia+'/'+i.estoque+'">'
         +'<div class="est-cal-day">'+data.slice(8,10)+'</div>'

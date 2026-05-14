@@ -1277,22 +1277,25 @@ function sendWA() {
 
   const lines = vals.map(({item,qty}) => {
     const sub = Number(item.price_per_day||0)*qty;
-    return `• ${qty}× ${item.name} — ${fmtBRL(sub)}`;
+    return `- ${qty}x ${item.name} (${fmtBRL(sub)})`;
   });
   const total = vals.reduce((s,{item,qty})=>s+Number(item.price_per_day||0)*qty,0);
 
   const greet = clientName
-    ? `Olá! Meu nome é *${clientName}*. Vim pelo catálogo online e gostaria de solicitar um orçamento 🎉`
-    : `Olá! Vim pelo catálogo online e gostaria de solicitar um orçamento 🎉`;
+    ? `Olá! Meu nome é *${clientName}* e vim pelo catálogo online.`
+    : `Olá! Vim pelo catálogo online.`;
+
   const msg = [
     greet,
     '',
-    `📅 Data do evento: *${dateStr}*`,
+    `Gostaria de solicitar um orçamento para os itens abaixo:`,
+    '',
+    `*Data do evento:* ${dateStr}`,
     '',
     `*Itens desejados:*`,
     ...lines,
     '',
-    `💰 *Total estimado: ${fmtBRL(total)}*`,
+    `*Total estimado:* ${fmtBRL(total)}`,
     '',
     `Aguardo confirmação de disponibilidade. Obrigado!`
   ].join('\n');

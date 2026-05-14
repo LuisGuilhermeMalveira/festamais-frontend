@@ -321,6 +321,61 @@ body::before {
   @keyframes scaleIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
 }
 
+
+/* ═══════════════ CAMPOS DO MODAL ═══════════════ */
+.cal-field { margin-bottom:18px }
+.cal-field-lbl {
+  display:block;
+  font-size:.78rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:8px;
+  letter-spacing:.2px;
+}
+.cal-input {
+  width:100%;
+  padding:12px 14px;
+  font-size:1rem;
+  font-family:'Nunito',sans-serif;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  background:#FFFBF5;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.cal-input:focus {
+  border-color:var(--coral);
+  box-shadow:0 0 0 3px rgba(255,94,91,.12);
+}
+.cal-input::placeholder { color:var(--muted); opacity:.8 }
+
+/* Botão Continuar */
+.cal-continue {
+  width:100%;
+  background:linear-gradient(135deg,var(--coral),#E54845);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:14px;
+  font-family:'Fredoka',sans-serif;
+  font-size:1.05rem;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(255,94,91,.35);
+  transition:transform .15s, box-shadow .15s, opacity .15s;
+}
+.cal-continue:not(:disabled):active {
+  transform:scale(.98);
+  box-shadow:0 3px 10px rgba(255,94,91,.3);
+}
+.cal-continue:disabled {
+  background:#E5DDD5;
+  color:#B8AFA8;
+  box-shadow:none;
+  cursor:not-allowed;
+}
+
 /* Banner date selected */
 .date-banner {
   display:none; margin-top:0;
@@ -787,32 +842,49 @@ body::before {
 
   <!-- Banner verde após selecionar data -->
   <div class="date-banner" id="date-banner">
-    <span>🎉 Festa em <strong id="date-txt">—</strong></span>
-    <button class="btn-change" onclick="resetDate()">Mudar data</button>
+    <span><span id="date-greet"></span><strong id="date-txt">—</strong></span>
+    <button class="btn-change" onclick="resetDate()">Mudar</button>
   </div>
 
   <!-- Input nativo escondido (mantido pra compatibilidade) -->
   <input type="date" id="date-in" min="" style="display:none"/>
 </section>
 
-<!-- MODAL DO CALENDÁRIO -->
+<!-- MODAL DO CALENDÁRIO + NOME -->
 <div class="cal-modal" id="cal-modal" onclick="closeCalModalBg(event)">
   <div class="cal-modal-card">
     <div class="cal-modal-head">
-      <div class="cal-modal-title">📅 Quando é a sua festa?</div>
+      <div class="cal-modal-title">🎉 Sua festa</div>
       <button type="button" class="cal-modal-close" onclick="closeCalModal()" aria-label="Fechar">✕</button>
     </div>
     <div class="cal-modal-body">
-      <div class="cal-nav">
-        <button type="button" class="cal-nav-btn" id="cal-prev" onclick="navMonth(-1)" aria-label="Mês anterior">‹</button>
-        <div class="cal-month" id="cal-month">—</div>
-        <button type="button" class="cal-nav-btn" id="cal-next" onclick="navMonth(1)" aria-label="Próximo mês">›</button>
+
+      <!-- Campo nome -->
+      <div class="cal-field">
+        <label class="cal-field-lbl" for="cal-name">👤 Seu nome</label>
+        <input type="text" id="cal-name" class="cal-input" placeholder="Como podemos te chamar?"
+               autocomplete="name" oninput="updateContinueBtn()" />
       </div>
-      <div class="cal-dows">
-        <div class="cal-dow">D</div><div class="cal-dow">S</div><div class="cal-dow">T</div>
-        <div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div>
+
+      <!-- Calendário -->
+      <div class="cal-field">
+        <label class="cal-field-lbl">📅 Data da festa</label>
+        <div class="cal-nav">
+          <button type="button" class="cal-nav-btn" id="cal-prev" onclick="navMonth(-1)" aria-label="Mês anterior">‹</button>
+          <div class="cal-month" id="cal-month">—</div>
+          <button type="button" class="cal-nav-btn" id="cal-next" onclick="navMonth(1)" aria-label="Próximo mês">›</button>
+        </div>
+        <div class="cal-dows">
+          <div class="cal-dow">D</div><div class="cal-dow">S</div><div class="cal-dow">T</div>
+          <div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
       </div>
-      <div class="cal-grid" id="cal-grid"></div>
+
+      <!-- Botão continuar -->
+      <button type="button" class="cal-continue" id="cal-continue" onclick="confirmCalModal()" disabled>
+        Continuar →
+      </button>
     </div>
   </div>
 </div>
@@ -1074,6 +1146,8 @@ function confirmDate() {
   selDate = val;
   const fmt = new Date(val+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('date-txt').textContent = fmt;
+  const greetEl = document.getElementById('date-greet');
+  if (greetEl) greetEl.textContent = clientName ? `🎉 ${clientName}, sua festa é em ` : '🎉 Festa em ';
   document.getElementById('date-card').style.display = 'none';
   document.getElementById('date-banner').classList.add('show');
   toast('⏳ Verificando disponibilidade…','s');
@@ -1088,12 +1162,14 @@ function resetDate() {
   document.getElementById('date-card').style.display = '';
   document.getElementById('date-banner').classList.remove('show');
   document.getElementById('date-in').value = '';
-  // volta o calendário pro mês atual
+  // Mantém o nome para próxima reserva, mas abre o modal pra editar se quiser
   try {
     calCursor = new Date(); calCursor.setDate(1);
     renderCalendar();
   } catch(e){}
   filterItems();
+  // Reabre o modal pra escolher de novo
+  setTimeout(openCalModal, 100);
 }
 
 /* ── CART ── */
@@ -1205,8 +1281,11 @@ function sendWA() {
   });
   const total = vals.reduce((s,{item,qty})=>s+Number(item.price_per_day||0)*qty,0);
 
+  const greet = clientName
+    ? `Olá! Meu nome é *${clientName}*. Vim pelo catálogo online e gostaria de solicitar um orçamento 🎉`
+    : `Olá! Vim pelo catálogo online e gostaria de solicitar um orçamento 🎉`;
   const msg = [
-    `Olá! Vim pelo catálogo online e gostaria de solicitar um orçamento 🎉`,
+    greet,
     '',
     `📅 Data do evento: *${dateStr}*`,
     '',
@@ -1305,12 +1384,37 @@ function navMonth(delta) {
   } catch(e) { console.error(e); }
 }
 
+// Nome do cliente para a mensagem do WhatsApp
+let clientName = '';
+
 function pickCalDate(dStr) {
   try {
     const input = document.getElementById('date-in');
     if (input) input.value = dStr;
     selDate = dStr;
     renderCalendar();
+    updateContinueBtn();
+  } catch(e) { console.error(e); }
+}
+
+function updateContinueBtn() {
+  try {
+    const nameEl = document.getElementById('cal-name');
+    const btn = document.getElementById('cal-continue');
+    if (!btn) return;
+    const nameOk = nameEl && nameEl.value.trim().length >= 2;
+    const dateOk = !!selDate;
+    btn.disabled = !(nameOk && dateOk);
+  } catch(e) { console.error(e); }
+}
+
+function confirmCalModal() {
+  try {
+    const nameEl = document.getElementById('cal-name');
+    const name = nameEl ? nameEl.value.trim() : '';
+    if (name.length < 2) { toast('Digite seu nome','w'); nameEl && nameEl.focus(); return; }
+    if (!selDate) { toast('Selecione a data','w'); return; }
+    clientName = name;
     closeCalModal();
     if (typeof confirmDate === 'function') confirmDate();
   } catch(e) { console.error(e); }
@@ -1322,7 +1426,15 @@ function openCalModal() {
     if (!m) return;
     m.classList.add('show');
     document.body.style.overflow = 'hidden';
+    // Restaura valores se reabrir
+    const nameEl = document.getElementById('cal-name');
+    if (nameEl && clientName) nameEl.value = clientName;
     renderCalendar();
+    updateContinueBtn();
+    // Foca no nome se estiver vazio, senão no calendário
+    setTimeout(function(){
+      if (nameEl && !nameEl.value) nameEl.focus();
+    }, 250);
   } catch(e) { console.error(e); }
 }
 
@@ -1336,11 +1448,9 @@ function closeCalModal() {
 }
 
 function closeCalModalBg(ev) {
-  // Fecha apenas se clicou no overlay, não no card interno
   if (ev && ev.target && ev.target.id === 'cal-modal') closeCalModal();
 }
 
-// Fechar com ESC no desktop
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') closeCalModal();
 });

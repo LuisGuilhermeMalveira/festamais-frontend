@@ -231,7 +231,7 @@ body::before {
 /* ═══════════════ CATALOG AREA ═══════════════ */
 .catalog {
   position:relative; z-index:1;
-  max-width:720px; margin:0 auto;
+  width:100%; margin:0 auto;
   padding:14px 16px;
 }
 
@@ -281,11 +281,12 @@ body::before {
 /* ═══════════════ GRID ═══════════════ */
 .items-grid {
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(auto-fill, minmax(155px, 1fr));
   gap:12px;
 }
-@media(min-width:500px) { .items-grid { gap:14px } }
-@media(min-width:640px) { .items-grid { grid-template-columns:repeat(3,1fr); gap:16px } }
+@media(min-width:480px) { .items-grid { grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:14px } }
+@media(min-width:768px) { .items-grid { grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:16px } }
+@media(min-width:1200px){ .items-grid { grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:18px } }
 
 /* ═══════════════ ITEM CARD ═══════════════ */
 .item-card {

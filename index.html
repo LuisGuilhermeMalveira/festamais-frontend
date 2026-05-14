@@ -302,7 +302,19 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .ev-actions{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 
 /* ===================== ESTOQUE GRID LAYOUT ===================== */
+#mob-est{display:grid;grid-template-columns:1fr;gap:12px}
 
+@media(min-width:600px) {
+  #mob-est{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(min-width:1000px) {
+  #mob-est{grid-template-columns:repeat(3,1fr)}
+}
+
+@media(min-width:1400px) {
+  #mob-est{grid-template-columns:repeat(4,1fr)}
+}
 
 /* Estoque card timeline - prevent layout shift */
 .estoque-timeline-wrap{height:80px;overflow:hidden}
@@ -430,171 +442,13 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .est-day-detail-avail{font-weight:700;color:var(--accent3)}
 
 /* ===================== RESPONSIVE ===================== */
-
-
-/* ═══════════════ ESTOQUE — DESIGN LIMPO ═══════════════ */
-#mob-est{
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-  gap:16px;
-}
-@media(min-width:1280px){ #mob-est{ grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)) } }
-
-.est-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:18px;
-  display:flex; flex-direction:column;
-  gap:14px;
-  min-width:0;
-  overflow:hidden;
-  transition:border-color .2s;
-}
-.est-card:hover{ border-color:var(--border2) }
-
-.est-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-  min-width:0;
-}
-.est-head-text{ flex:1; min-width:0 }
-.est-name{
-  font-weight:700; font-size:15px;
-  line-height:1.3;
-  color:var(--text);
-  word-break:break-word;
-  overflow-wrap:anywhere;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.est-cat{
-  font-size:11px;
-  color:var(--text3);
-  margin-top:3px;
-  text-transform:uppercase;
-  letter-spacing:.3px;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.est-pill{
-  flex-shrink:0;
-  padding:5px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-  white-space:nowrap;
-  background:var(--surface2);
+@media(max-width:1200px){
+  #mob-est{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
 }
 
-.est-metrics{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-  padding:12px 8px;
-  background:var(--surface2);
-  border-radius:10px;
+@media(max-width:900px){
+  #mob-est{grid-template-columns:repeat(2,1fr)}
 }
-.est-metric{ text-align:center; min-width:0 }
-.est-metric-val{
-  font-size:22px;
-  font-weight:900;
-  line-height:1;
-  letter-spacing:-.5px;
-}
-.est-metric-lbl{
-  font-size:9.5px;
-  color:var(--text3);
-  margin-top:6px;
-  text-transform:uppercase;
-  font-weight:700;
-  letter-spacing:.3px;
-}
-
-.est-progress{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:11px;
-}
-.est-bar{
-  flex:1;
-  background:var(--surface2);
-  border-radius:99px;
-  height:5px;
-  overflow:hidden;
-  min-width:0;
-}
-.est-bar-fill{
-  height:100%;
-  border-radius:99px;
-  transition:width .3s;
-}
-
-.est-cal-wrap{ display:flex; flex-direction:column; gap:6px }
-.est-cal-title{
-  font-size:10.5px;
-  color:var(--text3);
-  text-transform:uppercase;
-  font-weight:700;
-  letter-spacing:.4px;
-}
-.est-cal-dows{
-  display:grid;
-  grid-template-columns:repeat(7, minmax(0, 1fr));
-  gap:3px;
-}
-.est-cal-dow{
-  font-size:9px;
-  color:var(--text3);
-  font-weight:700;
-  text-align:center;
-  padding:2px 0;
-  text-transform:uppercase;
-}
-.est-cal-grid{
-  display:grid;
-  grid-template-columns:repeat(7, minmax(0, 1fr));
-  gap:3px;
-}
-.est-cal-cell{
-  aspect-ratio:1;
-  min-height:30px;
-  border-radius:5px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  border:1px solid;
-  overflow:hidden;
-  min-width:0;
-}
-.est-cal-day{
-  font-size:9px;
-  color:var(--text3);
-  line-height:1;
-  font-weight:600;
-}
-.est-cal-qty{
-  font-size:11px;
-  font-weight:800;
-  line-height:1.1;
-}
-.est-cal-today{
-  outline:2px solid var(--text);
-  outline-offset:-2px;
-}
-.est-cal-empty{
-  background:transparent !important;
-  border-color:transparent !important;
-}
-/* ═══════════════════════════════════════════════ */
 
 /* ===================== BOTTOM NAV MOBILE ===================== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:none;justify-content:space-around;align-items:flex-end;z-index:95;padding:0;height:70px;padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -610,6 +464,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 }
 
 @media(max-width:768px){
+  #mob-est{grid-template-columns:1fr}
   .quick-actions{grid-template-columns:repeat(2,1fr)}
   .grid-2{grid-template-columns:1fr}
   .fin-grid{grid-template-columns:1fr}
@@ -2162,28 +2017,15 @@ async function syncOrcsToBackend() {
     for (var i = 0; i < D.orcamentos.length; i++) {
       var orc = D.orcamentos[i];
       if (!orc._synced) {
-        // Não envia ID — backend gera e retorna o ID real
-        var result = await apiPost("/quotations", {
+        await apiPost("/quotations", {
+          id: orc.id,  // ← ENVIAR o ID do frontend (não mudar)
           client_name: orc.cliNome,
           event_date: orc.dataEv,
           items: orc.itens,
           total: orc.total,
           status: orc.status
         });
-        if (result && result.id) {
-          var oldId = orc.id;
-          orc.id = result.id;
-          orc._synced = true;
-          // Atualiza evento vinculado se já existe
-          D.eventos.forEach(function(ev){
-            if(String(ev.id)===String(oldId) || String(ev.quotationId)===String(oldId)){
-              ev.id = result.id;
-              ev.quotationId = result.id;
-            }
-          });
-        } else {
-          orc._synced = true;
-        }
+        orc._synced = true;
       }
     }
     sv();
@@ -2227,7 +2069,7 @@ async function loadOrcsFromBackend() {
       if (dataEv.indexOf('T') > -1) dataEv = dataEv.split('T')[0];
       
       // Se orçamento já existe localmente, MANTER como está (usuário é predominante)
-      var existing = D.orcamentos.find(function(x) { return String(x.id) === String(orc.id); });
+      var existing = D.orcamentos.find(function(x) { return x.id === orc.id; });
       if (!existing) {
         // SÓ adicionar se for NOVO (não existe localmente)
         D.orcamentos.push({
@@ -2313,30 +2155,42 @@ async function syncAllToBackend() {
 }
 
 async function loadEventsFromBackend() {
-  // Usa D.orcamentos já carregado — não chama API de novo
   try {
-    D.orcamentos.forEach(function(orc){
-      if(orc.status==="Confirmado" && !D.eventos.find(function(e){return String(e.id)===String(orc.id);})){
-        D.eventos.push({
-          id: orc.id,
-          quotationId: orc.id,
-          cliNome: orc.cliNome || '',
-          tipo: "Evento",
-          dataEv: orc.dataEv || '',
-          hora: "18:00",
-          valor: parseFloat(orc.total) || 0,
-          sinal: orc.sinal || 0,
-          pago: false,
-          itens: orc.itens || [],
-          bufferDays: parseInt(orc.bufferDays) || 0,
-          obs: "",
-          _synced: true
-        });
-      }
-    });
-    sv();
-    if(typeof renderEst === 'function') renderEst();
-    if(typeof renderCal === 'function') renderCal();
+    var evs = await apiGet("/quotations");
+    if (evs && evs.length) {
+      evs.forEach(function(ev) {
+        if (ev.status === "Confirmado" && !D.eventos.find(function(e) { return e.id === ev.id; })) {
+          var items = [];
+          try {
+            if (typeof ev.items === 'string') {
+              items = JSON.parse(ev.items);
+            } else {
+              items = ev.items || [];
+            }
+          } catch (e) {
+            items = [];
+          }
+          var dataEv = ev.event_date || '';
+          if (dataEv.indexOf('T') > -1) {
+            dataEv = dataEv.split('T')[0];
+          }
+          D.eventos.push({
+            id: ev.id,
+            cliNome: ev.client_name || '',
+            tipo: "Evento",
+            dataEv: dataEv,
+            hora: "18:00",
+            valor: parseFloat(ev.total) || 0,
+            sinal: 0,
+            pago: false,
+            itens: items,
+            obs: "",
+            _synced: true
+          });
+        }
+      });
+      sv();
+    }
   } catch (err) {
     console.log("Erro ao carregar eventos:", err);
   }
@@ -3136,7 +2990,7 @@ function updateBadge(){
   if(n>0){bn.style.display='';bn.textContent=n;}else{bn.style.display='none';}
 }
 function delOrc(id){
-  var o=D.orcamentos.find(function(x){return String(x.id)===String(id);});if(!o)return;
+  var o=D.orcamentos.find(function(x){return x.id===id;});if(!o)return;
   if(o.status==='Cancelado'){
     confirmar('Excluir permanentemente o orçamento <strong>#'+o.id+'</strong>?<br><span style="font-size:12px;color:var(--text3)">Esta ação não pode ser desfeita.</span>',async function(){
       try {
@@ -3153,7 +3007,7 @@ function delOrc(id){
       D.eventos = D.eventos.filter(function(e){
         return String(e.id)!==String(id) && String(e.quotationId)!==String(id);
       });
-      D.orcamentos=D.orcamentos.filter(function(x){return String(x.id)!==String(id);});
+      D.orcamentos=D.orcamentos.filter(function(x){return x.id!==id;});
       sv();renderOrcs();renderEst();renderFin();renderDash();toast('Orçamento excluído permanentemente.');
     });
   } else {
@@ -3179,7 +3033,7 @@ function delOrc(id){
   }
 }
 function verOrc(id){
-  var o=D.orcamentos.find(function(x){return String(x.id)===String(id);});if(!o)return;
+  var o=D.orcamentos.find(function(x){return x.id===id;});if(!o)return;
   orcAId=id;
   var ih=o.itens.map(function(i){
     // Buscar item no catálogo para pegar preço e unidade
@@ -3239,10 +3093,10 @@ function confirmarOrc(){
   
   o.status='Confirmado';
 
-  // Cria evento COM itens do orçamento (usa o.id pra coincidir com backend)
+  // Cria evento COM itens do orçamento
   var novoEv={
-    id:o.id,
-    quotationId:o.id,
+    id:D.nextId++,
+    quotationId:o.id, // ← Conecta ao orçamento original
     cliNome:o.cliNome,
     cliId:o.cliId,
     tipo:o.tipo,
@@ -3901,7 +3755,7 @@ function buscaEst(q){ renderEst(q); }
 function renderEst(filtro){
   var container=document.getElementById('mob-est');
   var q=(filtro||'').toLowerCase().trim();
-
+  
   if(!D.catalogo.length){
     container.innerHTML='<div class="empty" style="margin-top:40px;grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">Nenhum item no estoque.</div><div class="empty-sub" style="margin-top:12px"><button class="btn btn-primary btn-sm" onclick="goTo(\'catalogo\');setTimeout(abrirItem,100)">+ Adicionar item ao catálogo</button></div></div>';
     return;
@@ -3915,78 +3769,77 @@ function renderEst(filtro){
   }
 
   var hj=new Date().toISOString().slice(0,10);
-  var hojeDow=new Date(hj+'T12:00:00').getDay();
-  var diasLbl=['D','S','T','Q','Q','S','S'];
-
-  function compEmData(item, data){
-    var c=0;
-    D.eventos.forEach(function(e){
-      if(!e.itens) return;
-      var it=e.itens.find(function(x){return x.id===item.id;});
-      if(!it) return;
-      var buf=e.bufferDays||0;
-      var eventDate=new Date(e.dataEv+'T00:00:00');
-      var checkDate=new Date(data+'T00:00:00');
-      var diff=Math.floor((eventDate-checkDate)/(1000*60*60*24));
-      if(Math.abs(diff)<=buf) c+=it.qty;
-    });
-    return c;
-  }
-
   var html='';
-
+  
   catalogo.forEach(function(i){
-    var compHoje=compEmData(i,hj);
+    // Disponível HOJE
+    var compHoje=0;
+    D.eventos.forEach(function(e){
+      if(e.itens){
+        var it=e.itens.find(function(x){return x.id===i.id;});
+        if(it){
+          var bufferDays = e.bufferDays || 0;
+          var eventDate = new Date(e.dataEv + 'T00:00:00');
+          var checkDate = new Date(hj + 'T00:00:00');
+          var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
+          if(Math.abs(diffDays) <= bufferDays) compHoje+=it.qty;
+        }
+      }
+    });
     var dispHoje=i.estoque-compHoje;
-    var pct=i.estoque>0?Math.round(Math.max(0,dispHoje)/i.estoque*100):0;
-
-    var cor, pillBg, pillCor, pillTxt;
-    if(dispHoje<=0){ cor='#ff6b6b'; pillBg='rgba(255,107,107,.15)'; pillCor='#ff6b6b'; pillTxt='🚫 Esgotado'; }
-    else if(dispHoje<i.estoque){ cor='#f59e0b'; pillBg='rgba(245,158,11,.15)'; pillCor='#f59e0b'; pillTxt='⚠️ Parcial'; }
-    else{ cor='#4ade9e'; pillBg='rgba(74,222,158,.15)'; pillCor='#4ade9e'; pillTxt='✓ Disponível'; }
-
-    var dowsHtml='';
-    for(var d=0;d<7;d++) dowsHtml+='<div class="est-cal-dow">'+diasLbl[d]+'</div>';
-
-    var cells='';
-    for(var v=0; v<hojeDow; v++) cells+='<div class="est-cal-cell est-cal-empty"></div>';
+    var pct=i.estoque>0?Math.round(dispHoje/i.estoque*100):0;
+    var cor=pct>60?'var(--accent3)':pct>30?'var(--accent)':'var(--accent2)';
+    var alerta=dispHoje<0?'🚫 CRÍTICO':dispHoje<=i.estoque*0.3?'⚠️ ALERTA':'✓ OK';
+    var corAlerta=dispHoje<0?'var(--accent2)':dispHoje<=i.estoque*0.3?'var(--accent)':'var(--accent3)';
+    
+    // Mini Calendário - 30 dias
+    var cal='';
+    var dias=['D','S','T','Q','Q','S','S'];
     for(var d=0;d<=29;d++){
       var data=somarDias(hj,d);
-      var comp=compEmData(i,data);
-      var dispDia=Math.max(0, i.estoque-comp);
-      // Cor do dia: verde só quando estoque está completo
-      var corCalDia=dispDia<=0?'#ff6b6b':dispDia<i.estoque?'#f59e0b':'#4ade9e';
-      var todayCls=(data===hj)?' est-cal-today':'';
-      cells+='<div class="est-cal-cell'+todayCls+'" style="background:'+corCalDia+'18;border-color:'+corCalDia+'45" title="'+data.split('-').reverse().join('/')+': '+dispDia+'/'+i.estoque+'">'
-        +'<div class="est-cal-day">'+data.slice(8,10)+'</div>'
-        +'<div class="est-cal-qty" style="color:'+corCalDia+'">'+dispDia+'</div>'
+      var comp=0;
+      D.eventos.forEach(function(e){
+        if(e.itens){
+          var it=e.itens.find(function(x){return x.id===i.id;});
+          if(it){
+            var bufferDays = e.bufferDays || 0;
+            var eventDate = new Date(e.dataEv + 'T00:00:00');
+            var checkDate = new Date(data + 'T00:00:00');
+            var diffDays = Math.floor((eventDate - checkDate) / (1000 * 60 * 60 * 24));
+            if(Math.abs(diffDays) <= bufferDays) comp+=it.qty;
+          }
+        }
+      });
+      var dispDia=i.estoque-comp;
+      var corCalDia=dispDia<=0?'#ff6b6b':dispDia<=i.estoque*0.3?'#f59e0b':'#4ade9e';
+      var isToday=data===hj?'border:2px solid var(--text);font-weight:700;':'';
+      cal+='<div style="aspect-ratio:1;background:'+corCalDia+'20;border:1px solid '+corCalDia+'40;border-radius:6px;padding:4px;text-align:center;'+isToday+'display:flex;flex-direction:column;justify-content:center;align-items:center">'
+        +'<div style="font-size:8px;color:var(--text3)">'+dias[new Date(data+'T12:00:00').getDay()]+'</div>'
+        +'<div style="font-size:10px;font-weight:700;color:'+corCalDia+'">'+Math.max(0,dispDia)+'</div>'
+        +'<div style="font-size:7px;color:var(--text3)">'+data.slice(8,10)+'</div>'
       +'</div>';
     }
-
-    html+='<div class="est-card">'
-      +'<div class="est-head">'
-        +'<div class="est-head-text">'
-          +'<div class="est-name">'+i.nome+'</div>'
-          +'<div class="est-cat">'+(i.cat||'Geral')+'</div>'
-        +'</div>'
-        +'<div class="est-pill" style="background:'+pillBg+';color:'+pillCor+'">'+pillTxt+'</div>'
+    
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px">'
+        +'<div><div style="font-weight:700;font-size:15px">'+i.nome+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px">'+i.cat+'</div></div>'
+        +'<div style="color:'+corAlerta+';font-weight:800;font-size:11px">'+alerta+'</div>'
       +'</div>'
-      +'<div class="est-metrics">'
-        +'<div class="est-metric"><div class="est-metric-val" style="color:'+cor+'">'+Math.max(0,dispHoje)+'</div><div class="est-metric-lbl">Hoje</div></div>'
-        +'<div class="est-metric"><div class="est-metric-val">'+i.estoque+'</div><div class="est-metric-lbl">Total</div></div>'
-        +'<div class="est-metric"><div class="est-metric-val" style="color:'+cor+'">'+pct+'%</div><div class="est-metric-lbl">Disponível</div></div>'
+      +'<div style="background:var(--surface2);border-radius:9px;padding:12px;text-align:center;margin-bottom:12px;border:2px solid '+cor+';">'
+        +'<div style="font-size:28px;font-weight:900;letter-spacing:-.5px;color:'+cor+'">'+Math.max(0,dispHoje)+'</div>'
+        +'<div style="font-size:10px;color:var(--text3);text-transform:uppercase;margin-top:6px;font-weight:700">📅 Hoje</div>'
       +'</div>'
-      +'<div class="est-progress">'
-        +'<div class="est-bar"><div class="est-bar-fill" style="background:'+cor+';width:'+pct+'%"></div></div>'
+      +'<div style="background:var(--surface2);border-radius:6px;height:6px;margin-bottom:12px;overflow:hidden"><div style="height:100%;background:'+cor+';border-radius:6px;width:'+pct+'%"></div></div>'
+      +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px">'
+        +cal
       +'</div>'
-      +'<div class="est-cal-wrap">'
-        +'<div class="est-cal-title">📅 Próximos 30 dias</div>'
-        +'<div class="est-cal-dows">'+dowsHtml+'</div>'
-        +'<div class="est-cal-grid">'+cells+'</div>'
+      +'<div style="font-size:9px;color:var(--text3);display:flex;justify-content:space-between">'
+        +'<span style="color:'+cor+'">'+pct+'% disponível</span>'
+        +'<span>'+Math.max(0,dispHoje)+'/'+i.estoque+'</span>'
       +'</div>'
     +'</div>';
   });
-
+  
   container.innerHTML=html;
 }
 
@@ -3994,15 +3847,35 @@ function renderEst(filtro){
 function previewFotoItem(input){
   if(!input.files||!input.files[0])return;
   var file=input.files[0];
-  if(file.size>2*1024*1024){toast('Foto muito grande. Máximo 2MB.','err');return;}
+  if(file.size>10*1024*1024){toast('Foto muito grande. Máximo 10MB.','err');return;}
+  if(!file.type.startsWith('image/')){toast('Arquivo precisa ser uma imagem.','err');return;}
+  toast('Otimizando imagem…');
   var reader=new FileReader();
   reader.onload=function(e){
-    var b64=e.target.result;
-    document.getElementById('item-foto').value=b64;
-    var prev=document.getElementById('item-foto-preview');
-    prev.innerHTML='<img src="'+b64+'" style="width:100%;height:100%;object-fit:cover">';
-    document.getElementById('item-foto-remover').style.display='block';
+    var img=new Image();
+    img.onload=function(){
+      // Redimensiona mantendo proporção, máx 800px no lado maior
+      var MAX=800;
+      var w=img.width, h=img.height;
+      if(w>h && w>MAX){ h=Math.round(h*MAX/w); w=MAX; }
+      else if(h>MAX){ w=Math.round(w*MAX/h); h=MAX; }
+      var canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      // Converte para JPEG comprimido (qualidade 0.82)
+      var b64=canvas.toDataURL('image/jpeg',0.82);
+      document.getElementById('item-foto').value=b64;
+      var prev=document.getElementById('item-foto-preview');
+      prev.innerHTML='<img src="'+b64+'" style="width:100%;height:100%;object-fit:cover">';
+      document.getElementById('item-foto-remover').style.display='block';
+      var kb=Math.round(b64.length*3/4/1024);
+      toast('✓ Foto otimizada ('+kb+' KB)');
+    };
+    img.onerror=function(){ toast('Não foi possível ler a imagem.','err'); };
+    img.src=e.target.result;
   };
+  reader.onerror=function(){ toast('Erro ao ler arquivo.','err'); };
   reader.readAsDataURL(file);
 }
 function removerFotoItem(){
@@ -4053,12 +3926,12 @@ function salvarItem(){
   if(eid){
     var idx=D.catalogo.findIndex(function(i){return i.id===parseInt(eid);});
     if(idx>-1){D.catalogo[idx].nome=nome;D.catalogo[idx].cat=cat;D.catalogo[idx].preco=preco;D.catalogo[idx].estoque=qtd;D.catalogo[idx].unid=unid;D.catalogo[idx].foto=foto;}
-    fetch(API_URL+"/catalog/"+eid,{method:"PATCH",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid,photo:foto})}).catch(function(e){console.log("Erro sync catalogo:",e);});
+    fetch(API_URL+"/catalog/"+eid,{method:"PATCH",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid,photo:foto})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).catch(function(e){console.log("Erro sync catalogo:",e);toast('⚠️ Item salvo localmente mas falhou no servidor.','err');});
     toast('Item atualizado! ✏️');
   } else {
     var novoItem={id:D.nextId++,nome:nome,cat:cat,preco:preco,unid:unid,estoque:qtd,alugado:0,foto:foto};
     D.catalogo.push(novoItem);
-    fetch(API_URL+"/catalog",{method:"POST",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid,photo:foto})}).then(function(r){return r.json();}).then(function(data){if(data.id){loadCatalogFromAPI();}}).catch(function(e){console.log("Erro sync catalogo:",e);});
+    fetch(API_URL+"/catalog",{method:"POST",headers:{"Authorization":"Bearer "+authToken,"Content-Type":"application/json"},body:JSON.stringify({name:nome,category:cat,price_per_day:preco,stock_total:qtd,unit:unid,photo:foto})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(data){if(data.id){loadCatalogFromAPI();}}).catch(function(e){console.log("Erro sync catalogo:",e);toast('⚠️ Item salvo localmente mas falhou no servidor.','err');});
     toast('Item adicionado! 🏷️');
   }
   sv();fechar('m-item');renderCat();renderEst();
